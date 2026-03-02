@@ -50,8 +50,6 @@ public class LoginViewController {
 
     @GetMapping("/")
     public String rootRedirect() {
-        // let Spring Security handle unauthenticated users; authenticated users
-        // will end up at dashboard anyway
         return "redirect:/dashboard";
     }
 }

@@ -8,13 +8,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import aulasenora.service.UsuarioDetailsService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final aulasenora.service.CustomUserDetailsService userDetailsService;
+    private final UsuarioDetailsService userDetailsService;
 
-    public SecurityConfig(aulasenora.service.CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(UsuarioDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
