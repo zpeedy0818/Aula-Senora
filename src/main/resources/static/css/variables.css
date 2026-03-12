@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors - More refined and professional */
+    --primary: hsl(222, 47%, 11%);
+    /* Deep Navy */
+    --primary-accent: hsl(221, 83%, 53%);
+    /* Vibrant Blue for accents */
+    --primary-light: hsl(221, 83%, 95%);
+
+    --secondary: hsl(35, 95%, 55%);
+    /* Warm Amber */
+    --secondary-light: hsl(35, 95%, 90%);
+
+    /* Neutral Colors - softer backgrounds */
+    --bg-color: hsl(210, 40%, 98%);
+    --surface-color: hsl(0, 0%, 100%);
+    --text-primary: hsl(222, 47%, 15%);
+    --text-secondary: hsl(215, 16%, 47%);
+    --border-color: hsl(214, 32%, 91%);
+    --border-color-muted: hsl(214, 32%, 95%);
+
+    /* Feedback Colors */
+    --success: hsl(142, 70%, 25%);
+    --success-bg: hsl(142, 70%, 95%);
+    --warning: hsl(45, 93%, 47%);
+    --error: hsl(0, 84%, 44%);
+    --error-bg: hsl(0, 84%, 97%);
+
+    /* Typography */
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+}
+
+/* Dark Mode optional */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: hsl(210, 30%, 8%);
+        --surface-color: hsl(210, 30%, 12%);
+        --text-primary: hsl(0, 0%, 98%);
+        --text-secondary: hsl(210, 20%, 75%);
+        --border-color: hsl(210, 30%, 25%);
+        --border-color-muted: hsl(210, 30%, 18%);
+
+        /* Adjust brand colors for dark mode contrast */
+        --primary: hsl(221, 83%, 60%);
+        --primary-accent: hsl(221, 83%, 70%);
+        --primary-light: hsl(221, 50%, 18%);
+
+        --secondary: hsl(35, 95%, 60%);
+        --secondary-light: hsl(35, 50%, 18%);
+
+        /* Feedback Colors */
+        --success: hsl(142, 70%, 45%);
+        --success-bg: hsl(142, 50%, 15%);
+        --warning: hsl(45, 93%, 55%);
+        --error: hsl(0, 84%, 60%);
+        --error-bg: hsl(0, 84%, 18%);
+    }
+}
