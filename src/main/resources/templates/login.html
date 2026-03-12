@@ -1,29 +1,74 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
 <head>
-    <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
+
 <body>
-    <div class="card">
-        <h2>Iniciar Sesión</h2>
+    <div layout:fragment="content" class="container"
+        style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: var(--space-xl) var(--space-md);">
 
-        <div th:if="${mensaje}" class="mensaje-exito" th:text="${mensaje}"></div>
-        <div th:if="${error}" class="mensaje-error" th:text="${error}"></div>
+        <div class="card w-full" style="max-width: 450px;">
+            <div class="text-center mb-xl">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-sm">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                <h1 style="font-size: 1.75rem; margin-bottom: 0;">Bienvenido a Aula Señora</h1>
+                <p class="text-secondary mt-sm">Por favor, ingresa tus credenciales</p>
+            </div>
 
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="Tu usuario" required/>
+            <!-- Error Message Alert -->
+            <div th:if="${param.error}"
+                style="background-color: #fee2e2; border: 1px solid var(--error); color: var(--error); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); font-size: 0.9rem;"
+                role="alert">
+                Usuario o contraseña incorrectos.
             </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" name="password" placeholder="Tu contraseña" required/>
+
+            <!-- Logout Message Alert -->
+            <div th:if="${param.logout}"
+                style="background-color: #dcfce7; border: 1px solid var(--success); color: var(--success); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); font-size: 0.9rem;"
+                role="alert">
+                Has cerrado sesión exitosamente.
             </div>
-            <button type="submit">Ingresar</button>
-        </form>
-        <p style="text-align:center; margin-top:1rem;">¿Aún no tienes cuenta creada? <a th:href="@{/registrar}">Registrarse</a></p>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username" class="form-label">Correo Electrónico / Usuario</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus
+                        aria-required="true" placeholder="estudiante@ejemplo.com">
+                </div>
+
+                <div class="form-group mb-lg">
+                    <label for="password" class="form-label flex justify-between">
+                        Contraseña
+                        <a th:href="@{/forgot-password}" class="text-sm font-normal">¿Olvidaste tu contraseña?</a>
+                    </label>
+                    <input type="password" id="password" name="password" class="form-control" required
+                        aria-required="true" placeholder="••••••••">
+                </div>
+
+                <div class="form-group flex justify-between items-center mb-xl">
+                    <label class="flex items-center gap-xs cursor-pointer text-sm">
+                        <input type="checkbox" name="remember-me" style="accent-color: var(--primary);">
+                        <span>Recordarme</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full"
+                    style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Ingresar</button>
+            </form>
+
+            <div class="text-center mt-xl border-t border-color-muted pt-md text-sm">
+                ¿Aún no tienes cuenta? <a th:href="@{/register}" class="font-bold">Regístrate aquí</a>
+            </div>
+        </div>
+
     </div>
 </body>
+
 </html>

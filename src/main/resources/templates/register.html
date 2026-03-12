@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Registro</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-2xl"
+        style="padding: var(--space-2xl) var(--space-md); min-height: 80vh;">
+
+        <div class="text-center mb-xl">
+            <h1 style="font-size: 2rem; margin-bottom: var(--space-sm);">Únete a nuestra comunidad</h1>
+            <p class="text-secondary max-w-2xl mx-auto" style="max-width: 600px; margin: 0 auto;">
+                Elige tu perfil para continuar. ¿Buscas ayuda con tus materias o quieres compartir tu conocimiento como
+                voluntario?
+            </p>
+        </div>
+
+        <!-- Role Selection Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-lg"
+            style="max-width: 800px; margin: 0 auto; margin-bottom: var(--space-2xl);">
+
+            <!-- Student Option -->
+            <a href="#student-form" class="card text-center block transition-all"
+                style="cursor: pointer; text-decoration: none; border: 2px solid transparent;"
+                onclick="showForm('student')">
+                <div class="icon-wrapper mb-md mx-auto flex items-center justify-center"
+                    style="width: 64px; height: 64px; background-color: var(--primary-light); color: var(--primary-dark); border-radius: 50%;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                    </svg>
+                </div>
+                <h3 class="card-title text-primary">Estudiante</h3>
+                <p class="text-secondary text-sm">Necesito apoyo académico, repasar temas o resolver dudas
+                    extracurriculares en áreas básicas.</p>
+            </a>
+
+            <!-- Volunteer Option -->
+            <a href="#volunteer-form" class="card text-center block transition-all"
+                style="cursor: pointer; text-decoration: none; border: 2px solid transparent;"
+                onclick="showForm('volunteer')">
+                <div class="icon-wrapper mb-md mx-auto flex items-center justify-center"
+                    style="width: 64px; height: 64px; background-color: var(--secondary-light); color: var(--secondary-dark); border-radius: 50%;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+                <h3 class="card-title text-secondary">Voluntario</h3>
+                <p class="text-secondary text-sm">Soy universitario o profesional y quiero donar mi tiempo para realizar
+                    tutorías personalizadas.</p>
+            </a>
+
+        </div>
+
+        <!-- Forms Container -->
+        <div id="forms-container" style="max-width: 600px; margin: 0 auto; display: none;" class="card">
+
+            <div class="form-header text-center mb-lg border-b border-color-muted pb-md">
+                <h2 id="form-title" style="margin-bottom: 0;">Registro</h2>
+                <button type="button" onclick="resetSelection()" class="btn btn-outline btn-sm mt-sm"
+                    style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">Cambiar Perfil</button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error mb-md"
+                style="background-color: var(--error-bg); border: 1px solid var(--error); color: var(--error); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-size: 0.9rem;">
+                <p th:text="${error}" style="margin-bottom: 0; color: var(--error);"></p>
+            </div>
+
+            <form th:action="@{/register}" method="post">
+                <input type="hidden" id="role-input" name="rol" value="">
+
+                <div class="form-group">
+                    <label for="username" class="form-label">Nombre de Usuario</label>
+                    <input type="text" id="username" name="username" class="form-control" required
+                        placeholder="Ej: mariaperez24">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">Nombres</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control" required
+                            placeholder="Ej: Maria">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Apellidos</label>
+                        <input type="text" id="lastName" name="lastName" class="form-control" required
+                            placeholder="Ej: Perez">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" class="form-control" required
+                        placeholder="correo@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-control" required
+                        placeholder="Mínimo 8 caracteres">
+                    <p class="text-sm opacity-70 mt-xs">Usa una combinación de letras, números y símbolos.</p>
+                </div>
+
+                <!-- Volunteer specific fields (hidden by default) -->
+                <div id="volunteer-fields" style="display: none;" class="mt-md p-md bg-color-muted rounded-md mb-md">
+                    <h4 class="mb-sm" style="font-size: 1rem;">Información Adicional para Voluntarios</h4>
+                    <div class="form-group">
+                        <label for="institution" class="form-label">Universidad / Institución</label>
+                        <input type="text" id="institution" name="institution" class="form-control"
+                            placeholder="Ej: Universidad del Valle">
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="skills" class="form-label">Áreas de Especialidad</label>
+                        <input type="text" id="skills" name="skills" class="form-control"
+                            placeholder="Ej: Matemáticas, Física, Programación">
+                    </div>
+                </div>
+
+                <div class="form-group flex gap-sm mt-lg">
+                    <input type="checkbox" id="terms" required
+                        style="margin-top: 0.25rem; accent-color: var(--primary);">
+                    <label for="terms" class="text-sm cursor-pointer opacity-90">
+                        Acepto los <a th:href="@{/terms}" target="_blank">Términos de Servicio</a> y la <a
+                            th:href="@{/privacy}" target="_blank">Política de Tratamiento de Datos</a> (Ley 1581 de
+                        2012).
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full mt-md"
+                    style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Crear Cuenta</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Page Specific Script -->
+    <th:block layout:fragment="page-js">
+        <script>
+            function showForm(role) {
+                const container = document.getElementById('forms-container');
+                const title = document.getElementById('form-title');
+                const roleInput = document.getElementById('role-input');
+                const volunteerFields = document.getElementById('volunteer-fields');
+
+                // Set visible form state
+                container.style.display = 'block';
+                if (role === 'student') {
+                    title.textContent = 'Registro de Estudiante';
+                    title.className = 'text-primary';
+                    volunteerFields.style.display = 'none';
+                    roleInput.value = 'ESTUDIANTE';
+                } else if (role === 'volunteer') {
+                    title.textContent = 'Registro de Voluntario';
+                    title.className = 'text-secondary';
+                    volunteerFields.style.display = 'block';
+                    roleInput.value = 'VOLUNTARIO';
+                }
+
+                // Smooth scroll to form
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function resetSelection() {
+                const container = document.getElementById('forms-container');
+                container.style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Auto-select if URL param is present
+            document.addEventListener('DOMContentLoaded', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const presetRole = urlParams.get('role');
+                if (presetRole) {
+                    showForm(presetRole);
+                }
+            });
+        </script>
+    </th:block>
+
+</body>
+
+</html>
