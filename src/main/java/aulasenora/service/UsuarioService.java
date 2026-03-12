@@ -25,8 +25,10 @@ public class UsuarioService {
             throw new RuntimeException("El email ya está en uso");
         }
 
-        // asignar rol por defecto de estudiante siempre que se registre desde el formulario
-        usuario.setRol("ESTUDIANTE");
+        // Asignar rol. Si ya viene con uno (desde el controller), se respeta.
+        if (usuario.getRol() == null || usuario.getRol().equals("USER")) {
+            usuario.setRol("ESTUDIANTE");
+        }
 
         // Encriptar la contraseña antes de guardar
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
