@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Historial - Estudiante</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Welcome Section -->
+        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">Historial de Tutorías 📚</h1>
+                <p class="text-secondary">Revisa tus sesiones pasadas y recursos descargados.</p>
+            </div>
+            <a th:href="@{/student/dashboard}" class="btn btn-outline shadow-md">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    class="mr-sm" style="margin-right:0.5rem;">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Volver al Panel
+            </a>
+        </div>
+
+        <!-- Student Secondary Nav -->
+        <div class="flex gap-md border-b border-color-muted mb-xl overflow-x-auto pb-sm">
+            <a th:href="@{/student/dashboard}"
+                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
+                style="text-decoration:none;">Resumen</a>
+            <a th:href="@{/student/history}" class="text-primary font-bold border-b-2 px-sm py-xs"
+                style="text-decoration:none; border-color: var(--primary);">Historial</a>
+            <a th:href="@{/student/profile}"
+                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
+                style="text-decoration:none;">Mi Perfil</a>
+        </div>
+
+        <div class="card p-0 overflow-hidden mb-xl">
+            <div class="p-md bg-gray-50 border-b border-color-muted flex justify-between items-center">
+                <h2 class="section-title" style="margin:0; font-size: 1.1rem;">Sesiones Completadas</h2>
+                <div class="flex gap-sm">
+                    <select class="form-control" style="padding: 0.25rem 0.5rem; width: auto; appearance: auto;">
+                        <option>Todas las materias</option>
+                        <option>Matemáticas</option>
+                        <option>Física</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- History Item 1 -->
+            <div
+                class="p-lg border-b border-color-muted flex flex-col sm:flex-row justify-between gap-md hover:bg-gray-50 transition-colors">
+                <div>
+                    <div class="flex items-center gap-sm mb-xs">
+                        <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
+                        <span class="text-sm text-secondary font-medium">Hace 1 semana</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-xs">Álgebra Lineal - Sistemas de Ecuaciones</h4>
+                    <p class="text-secondary text-sm">Sesión por chat de 45 minutos. Se resolvieron dudas sobre el
+                        método de reducción y sustitución.</p>
+                </div>
+                <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[150px]">
+                    <div class="flex items-center gap-xs text-sm text-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Voluntario: David R.
+                    </div>
+                    <button class="btn btn-outline btn-sm text-xs" style="padding: 0.25rem 0.5rem;">Ver Notas</button>
+                </div>
+            </div>
+
+            <!-- History Item 2 -->
+            <div class="p-lg flex flex-col sm:flex-row justify-between gap-md hover:bg-gray-50 transition-colors">
+                <div>
+                    <div class="flex items-center gap-sm mb-xs">
+                        <span class="badge" style="background-color: #fef3c7; color: #b45309;">Física</span>
+                        <span class="text-sm text-secondary font-medium">Hace 2 semanas</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-xs">Dinámica y Leyes de Newton</h4>
+                    <p class="text-secondary text-sm">Videollamada de 1 hora. Ejercicios prácticos de diagramas de
+                        cuerpo libre con fricción.</p>
+                </div>
+                <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[150px]">
+                    <div class="flex items-center gap-xs text-sm text-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Voluntaria: Sofía V.
+                    </div>
+                    <button class="btn btn-outline btn-sm text-xs" style="padding: 0.25rem 0.5rem;">Ver Notas</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

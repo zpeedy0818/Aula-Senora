@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Panel de Estudiante</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Welcome Section -->
+        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">Hola, <span
+                        th:text="${#authentication.name}">Estudiante</span> 👋</h1>
+                <p class="text-secondary">Aquí tienes un resumen de tus solicitudes y materias.</p>
+            </div>
+            <button class="btn btn-primary btn-lg shadow-md"
+                onclick="document.getElementById('help-modal').classList.remove('hidden')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    class="mr-sm" style="margin-right:0.5rem;">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+                Solicitar Ayuda
+            </button>
+        </div>
+
+        <!-- Student Secondary Nav -->
+        <div class="flex gap-md border-b border-color-muted mb-xl overflow-x-auto pb-sm">
+            <a th:href="@{/student/dashboard}" class="text-primary font-bold border-b-2 px-sm py-xs"
+                style="text-decoration:none; border-color: var(--primary);">Resumen</a>
+            <a th:href="@{/student/history}"
+                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
+                style="text-decoration:none;">Historial</a>
+            <a th:href="@{/student/profile}"
+                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
+                style="text-decoration:none;">Mi Perfil</a>
+        </div>
+
+        <!-- Dashboard Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-2xl">
+
+            <div class="card bg-primary text-white"
+                style="background-color: var(--primary); color: white; border: none;">
+                <h3 class="card-title text-white" style="color: white; font-size: 1.1rem; opacity: 0.9;">Tutorías
+                    Activas</h3>
+                <div class="flex items-end justify-between mt-md">
+                    <span style="font-size: 2.5rem; font-weight: 700; line-height: 1;">2</span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        opacity="0.8">
+                        <path d="m15 14-4-4-4 4" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Horas de Estudio</h3>
+                <div class="flex items-end justify-between mt-md">
+                    <span
+                        style="font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--text-primary);">12.5<span
+                            class="text-sm text-secondary ml-xs">hrs</span></span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Materias Reforzadas</h3>
+                <div class="flex gap-sm mt-md flex-wrap">
+                    <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
+                    <span class="badge" style="background-color: #fef3c7; color: #b45309;">Física</span>
+                    <span class="badge" style="background-color: #dcfce7; color: #15803d;">Biología</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Content Area: Requests -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+
+            <!-- Pending Requests List -->
+            <div class="col-span-1 lg:col-span-2">
+                <h2 class="section-title mb-md flex items-center justify-between">
+                    Mis Solicitudes
+                    <a href="#" class="text-sm text-primary font-normal">Ver todas</a>
+                </h2>
+
+                <div id="requests-list" class="card p-0 overflow-hidden">
+                    <!-- Request Item -->
+                    <div
+                        class="p-lg border-b border-color-muted flex flex-col sm:flex-row justify-between gap-md transition-all hover:bg-gray-50">
+                        <div>
+                            <div class="flex items-center gap-sm mb-xs">
+                                <span class="badge" style="background-color: #fee2e2; color: #b91c1c;">Álgebra</span>
+                                <span class="text-sm text-secondary font-medium">Hace 2 horas</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-xs">Ayuda con ecuaciones cuadráticas</h4>
+                            <p class="text-secondary text-sm line-clamp-2">No entiendo cómo aplicar la fórmula general
+                                cuando la raíz es negativa, me enredo mucho en el último paso.</p>
+                        </div>
+                        <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[120px]">
+                            <span class="badge badge-warning">En espera</span>
+                        </div>
+                    </div>
+
+                    <!-- Request Item -->
+                    <div class="p-lg flex flex-col sm:flex-row justify-between gap-md transition-all hover:bg-gray-50">
+                        <div>
+                            <div class="flex items-center gap-sm mb-xs">
+                                <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Química</span>
+                                <span class="text-sm text-secondary font-medium">Ayer</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-xs">Balanceo de ecuaciones</h4>
+                            <p class="text-secondary text-sm line-clamp-2">Tengo un examen la próxima semana y necesito
+                                repasar el método de óxido-reducción.</p>
+                        </div>
+                        <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[120px]">
+                            <span class="badge badge-success">Asignado</span>
+                            <div class="flex items-center gap-xs text-xs text-secondary">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                Voluntario: Ana P.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar / Resources -->
+            <div class="col-span-1">
+                <h2 class="section-title mb-md">Recursos Recomendados</h2>
+                <div class="card flex flex-col gap-md">
+                    <!-- Resource Item -->
+                    <a href="#" class="flex gap-md items-start group" style="text-decoration:none;">
+                        <div
+                            class="p-xs bg-primary-light text-primary-dark rounded-md group-hover:bg-primary group-hover:text-white transition-colors">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary group-hover:underline text-sm mb-xs">Guía: Fracciones
+                                Básicas</h4>
+                            <p class="text-xs text-secondary">Documento PDF - 2MB</p>
+                        </div>
+                    </a>
+
+                    <!-- Resource Item -->
+                    <a href="#" class="flex gap-md items-start group" style="text-decoration:none;">
+                        <div
+                            class="p-xs bg-secondary-light text-secondary-dark rounded-md group-hover:bg-secondary group-hover:text-white transition-colors">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="23 7 16 12 23 17 23 7" />
+                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary group-hover:underline text-sm mb-xs">Video: Leyes de
+                                Newton</h4>
+                            <p class="text-xs text-secondary">Video - 15 min</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Request Help Modal -->
+    <th:block layout:fragment="page-js">
+        <div id="help-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-lg bg-surface relative"
+                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('help-modal').classList.add('hidden')" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg">Nueva Solicitud de Ayuda</h2>
+
+                <!-- Use actual endpoint based on backend config -->
+                <form id="help-form" th:action="@{/student/request-help}" method="post">
+
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Materia / Área</label>
+                        <select id="subject" name="subject" class="form-control" required
+                            style="appearance: auto; cursor:pointer;">
+                            <option value="">Selecciona una materia...</option>
+                            <option value="matematicas">Matemáticas</option>
+                            <option value="lenguaje">Lenguaje / Español</option>
+                            <option value="ciencias">Ciencias Naturales</option>
+                            <option value="sociales">Ciencias Sociales</option>
+                            <option value="ingles">Inglés</option>
+                            <option value="tecnologia">Tecnología e Informática</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title" class="form-label">Título de tu solicitud</label>
+                        <input type="text" id="title" name="title" class="form-control" required
+                            placeholder="Ej: Ayuda con división de dos cifras">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Describe tu duda en detalle</label>
+                        <textarea id="description" name="description" class="form-control" rows="4" required
+                            placeholder="Explica qué es lo que no entiendes o en qué ejercicio te quedaste atascado..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label mb-sm">¿Cómo prefieres recibir la ayuda?</label>
+                        <div class="flex gap-md flex-col sm:flex-row">
+                            <label
+                                class="flex items-center gap-xs cursor-pointer p-sm border border-color-muted rounded-md flex-1 hover:border-primary transition-colors">
+                                <input type="radio" name="format" value="text" checked
+                                    style="accent-color: var(--primary);">
+                                <span>Por Mensaje / Chat</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-xs cursor-pointer p-sm border border-color-muted rounded-md flex-1 hover:border-primary transition-colors">
+                                <input type="radio" name="format" value="video" style="accent-color: var(--primary);">
+                                <span>Videollamada</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('help-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Utility to close modal when clicking outside
+            document.getElementById('help-modal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            // Utility to close on escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !document.getElementById('help-modal').classList.contains('hidden')) {
+                    document.getElementById('help-modal').classList.add('hidden');
+                }
+            });
+            // Intercept form submission for MVP demo
+            document.getElementById('help-form').addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent page reload
+
+                const subjectSelect = document.getElementById('subject');
+                const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
+                const title = document.getElementById('title').value;
+                const desc = document.getElementById('description').value;
+
+                const newRequestHTML = `
+                    <div class="p-lg border-b border-color-muted flex flex-col sm:flex-row justify-between gap-md transition-all hover:bg-gray-50" style="background-color: #f0fdf4; animation: fadeIn 0.5s;">
+                        <div>
+                            <div class="flex items-center gap-sm mb-xs">
+                                <span class="badge" style="background-color: var(--primary-light); color: var(--primary);">${subjectText}</span>
+                                <span class="text-sm text-secondary font-medium">Justo ahora</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-xs">${title}</h4>
+                            <p class="text-secondary text-sm line-clamp-2">${desc}</p>
+                        </div>
+                        <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[120px]">
+                            <span class="badge badge-warning">En espera</span>
+                        </div>
+                    </div>
+                `;
+
+                // Inject at the top of the list
+                document.getElementById('requests-list').insertAdjacentHTML('afterbegin', newRequestHTML);
+
+                // Close modal and reset form
+                document.getElementById('help-modal').classList.add('hidden');
+                this.reset();
+            });
+        </script>
+    </th:block>
+</body>
+
+</html>

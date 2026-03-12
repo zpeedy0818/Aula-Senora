@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Panel de Voluntario</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Welcome Section -->
+        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">Hola, <span
+                        th:text="${#authentication.name}">Voluntario</span> 🎓</h1>
+                <p class="text-secondary">Gracias por donar tu tiempo. Aquí puedes gestionar tutorías y recursos.</p>
+            </div>
+            <button class="btn btn-secondary btn-lg shadow-md"
+                onclick="document.getElementById('resource-modal').classList.remove('hidden')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    class="mr-sm" style="margin-right:0.5rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                Subir Recurso
+            </button>
+        </div>
+
+        <!-- Dashboard Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-2xl">
+
+            <div class="card bg-secondary text-white"
+                style="background-color: var(--secondary); color: white; border: none;">
+                <h3 class="card-title text-white" style="color: white; font-size: 1.1rem; opacity: 0.9;">Estudiantes
+                    Ayudados</h3>
+                <div class="flex items-end justify-between mt-md">
+                    <span style="font-size: 2.5rem; font-weight: 700; line-height: 1;">42</span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        opacity="0.8">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Horas Donadas</h3>
+                <div class="flex items-end justify-between mt-md">
+                    <span
+                        style="font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--text-primary);">38</span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Mis Especialidades</h3>
+                <div class="flex gap-sm mt-md flex-wrap">
+                    <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
+                    <span class="badge" style="background-color: #fce7f3; color: #be185d;">Física</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Content Area: Requests & Sessions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
+
+            <!-- Pending Requests Feed -->
+            <div class="col-span-1">
+                <h2 class="section-title mb-md flex items-center justify-between">
+                    Solicitudes Pendientes
+                    <span class="badge badge-warning text-xs">Nuevas</span>
+                </h2>
+
+                <div class="card p-0 overflow-hidden flex flex-col gap-[1px] bg-color-muted">
+
+                    <!-- Request Item -->
+                    <div class="p-lg bg-surface transition-all hover:bg-gray-50">
+                        <div class="flex items-center justify-between mb-sm">
+                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
+                            <span class="text-xs text-secondary font-medium">Hace 15 min</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-xs">Dudas con trigonometría</h4>
+                        <p class="text-secondary text-sm mb-md line-clamp-2">Hola, no entiendo bien cómo sacar el seno y
+                            coseno en un triángulo rectángulo cuando me falta la hipotenusa.</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex items-center gap-xs text-secondary">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                Estudiante: Carlos M.
+                            </div>
+                            <button class="btn btn-primary btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar
+                                Tutoría</button>
+                        </div>
+                    </div>
+
+                    <!-- Request Item -->
+                    <div class="p-lg bg-surface transition-all hover:bg-gray-50">
+                        <div class="flex items-center justify-between mb-sm">
+                            <span class="badge" style="background-color: #fef3c7; color: #b45309;">Física</span>
+                            <span class="text-xs text-secondary font-medium">Hace 2 horas</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-xs">Caída libre</h4>
+                        <p class="text-secondary text-sm mb-md line-clamp-2">Necesito ayuda para resolver un taller
+                            sobre ecuaciones de caída libre y gravedad.</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex items-center gap-xs text-secondary">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                Estudiante: Maria J.
+                            </div>
+                            <button class="btn btn-primary btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar
+                                Tutoría</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Active Sessions & Shared Resources -->
+            <div class="col-span-1 flex flex-col gap-xl">
+
+                <!-- Active Sessions -->
+                <div>
+                    <h2 class="section-title mb-md">Tutorías Activas</h2>
+                    <div class="card p-md">
+                        <div class="flex items-center gap-md p-sm border border-success rounded-md bg-green-50"
+                            style="background-color: #f0fdf4; border-color: var(--success);">
+                            <div
+                                class="w-12 h-12 bg-success text-white rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="m15 14-4-4-4 4" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm">Matemáticas Básicas con Luis</h4>
+                                <p class="text-xs text-secondary mt-xs">Chat activo • Último mensaje hace 5 min</p>
+                            </div>
+                            <button class="btn btn-outline btn-sm"
+                                style="color: var(--success); border-color: var(--success);">Abrir Chat</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Resources -->
+                <div>
+                    <h2 class="section-title mb-md">Mis Recursos Compartidos</h2>
+                    <div class="card p-0">
+                        <ul class="list-none m-0">
+                            <!-- Resource 1 -->
+                            <li
+                                class="p-md border-b border-color-muted flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center gap-md">
+                                    <div class="text-primary opacity-80">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <polyline points="14 2 14 8 20 8" />
+                                            <line x1="16" y1="13" x2="8" y2="13" />
+                                            <line x1="16" y1="17" x2="8" y2="17" />
+                                            <polyline points="10 9 9 9 8 9" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold">Resumen Derivadas (PDF)</h4>
+                                        <p class="text-xs text-secondary mt-xs">15 descargas • Subido ayer</p>
+                                    </div>
+                                </div>
+                                <button class="text-secondary hover:text-error transition-colors p-xs"
+                                    aria-label="Eliminar recurso">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path
+                                            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                </button>
+                            </li>
+                            <!-- Resource 2 -->
+                            <li class="p-md flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center gap-md">
+                                    <div class="text-secondary opacity-80">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold">Video: Leyes de Exponentes</h4>
+                                        <p class="text-xs text-secondary mt-xs">42 visitas • Subido hace 1 mes</p>
+                                    </div>
+                                </div>
+                                <button class="text-secondary hover:text-error transition-colors p-xs"
+                                    aria-label="Eliminar recurso">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path
+                                            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Upload Resource Modal -->
+    <th:block layout:fragment="page-js">
+        <div id="resource-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-lg bg-surface relative"
+                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('resource-modal').classList.add('hidden')"
+                    aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg">Subir Nuevo Recurso</h2>
+
+                <!-- Use actual endpoint based on backend config -->
+                <form th:action="@{/volunteer/upload-resource}" method="post" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label for="resource-title" class="form-label">Título del Recurso</label>
+                        <input type="text" id="resource-title" name="title" class="form-control" required
+                            placeholder="Ej: Guía de Factorización">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resource-subject" class="form-label">Materia Asociada</label>
+                        <select id="resource-subject" name="subject" class="form-control" required
+                            style="appearance: auto; cursor:pointer;">
+                            <option value="">Selecciona una materia...</option>
+                            <option value="matematicas">Matemáticas</option>
+                            <option value="lenguaje">Lenguaje / Español</option>
+                            <option value="ciencias">Ciencias Naturales</option>
+                            <option value="fisica">Física</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-sm">
+                        <label class="form-label">Tipo de Recurso</label>
+                        <div class="flex gap-md">
+                            <label class="flex items-center gap-xs cursor-pointer p-xs">
+                                <input type="radio" name="type" value="file" checked
+                                    style="accent-color: var(--primary);"
+                                    onchange="document.getElementById('file-upload').style.display='block'; document.getElementById('link-upload').style.display='none';">
+                                <span>Archivo (PDF, Word)</span>
+                            </label>
+                            <label class="flex items-center gap-xs cursor-pointer p-xs">
+                                <input type="radio" name="type" value="link" style="accent-color: var(--primary);"
+                                    onchange="document.getElementById('file-upload').style.display='none'; document.getElementById('link-upload').style.display='block';">
+                                <span>Enlace Externo (YouTube, etc)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="file-upload"
+                        class="form-group p-lg border-2 border-dashed border-color-muted rounded-md text-center bg-gray-50 mb-md hover:border-primary transition-colors cursor-pointer"
+                        onclick="document.getElementById('file-input').click()">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" class="mx-auto mb-sm text-secondary">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <p class="text-sm font-medium">Haz clic aquí para seleccionar un archivo</p>
+                        <p class="text-xs text-secondary mt-xs">PDF, DOCX, PPTX (Max. 10MB)</p>
+                        <input type="file" id="file-input" name="file" class="hidden"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx">
+                    </div>
+
+                    <div id="link-upload" class="form-group" style="display: none;">
+                        <label for="resource-url" class="form-label">URL del Enlace</label>
+                        <input type="url" id="resource-url" name="url" class="form-control"
+                            placeholder="https://youtube.com/...">
+                    </div>
+
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('resource-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-secondary">Subir Recurso</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Utility to close modal
+            document.getElementById('resource-modal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !document.getElementById('resource-modal').classList.contains('hidden')) {
+                    document.getElementById('resource-modal').classList.add('hidden');
+                }
+            });
+
+            // File input preview
+            document.getElementById('file-input').addEventListener('change', function (e) {
+                if (this.files && this.files[0]) {
+                    const textP = this.parentElement.querySelector('p.font-medium');
+                    textP.textContent = 'Archivo seleccionado: ' + this.files[0].name;
+                    textP.classList.add('text-primary');
+                }
+            });
+        </script>
+    </th:block>
+</body>
+
+</html>

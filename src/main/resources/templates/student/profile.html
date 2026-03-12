@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Mi Perfil - Estudiante</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Welcome Section -->
+        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">Mi Perfil 👤</h1>
+                <p class="text-secondary">Gestiona tu información personal y preferencias de estudio.</p>
+            </div>
+            <a th:href="@{/student/dashboard}" class="btn btn-outline shadow-md">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-sm" style="margin-right:0.5rem;">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Volver al Panel
+            </a>
+        </div>
+
+        <!-- Student Secondary Nav -->
+        <div class="flex gap-md border-b border-color-muted mb-xl overflow-x-auto pb-sm">
+            <a th:href="@{/student/dashboard}" class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors" style="text-decoration:none;">Resumen</a>
+            <a th:href="@{/student/history}" class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors" style="text-decoration:none;">Historial</a>
+            <a th:href="@{/student/profile}" class="text-primary font-bold border-b-2 px-sm py-xs" style="text-decoration:none; border-color: var(--primary);">Mi Perfil</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+            <!-- Profile Sidebar -->
+            <div class="col-span-1">
+                <div class="card flex flex-col items-center text-center">
+                    <div class="w-32 h-32 rounded-full bg-primary-light flex items-center justify-center text-primary text-4xl font-bold mb-md" style="background-color: #e0f2fe; color: #0369a1;">
+                        <span th:text="${#strings.substring(#authentication.name, 0, 1)}">E</span>
+                    </div>
+                    <h2 class="font-bold text-xl mb-xs" th:text="${#authentication.name}">Estudiante</h2>
+                    <p class="text-secondary mb-md">Estudiante de Secundaria</p>
+                    <span class="badge badge-success mb-lg">Cuenta Activa</span>
+                    
+                    <button class="btn btn-outline w-full mb-sm">Cambiar Foto</button>
+                    <button class="btn btn-outline w-full text-error" style="color: var(--error); border-color: var(--error-bg); background-color: var(--error-bg);">Eliminar Cuenta</button>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="col-span-1 md:col-span-2">
+                <div class="card">
+                    <h3 class="section-title mb-lg">Información Personal</h3>
+                    
+                    <form th:action="@{/student/profile/update}" method="post">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+                            <div class="form-group">
+                                <label for="firstName" class="form-label">Nombre</label>
+                                <input type="text" id="firstName" name="firstName" class="form-control" th:value="${#authentication.name}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName" class="form-label">Apellidos</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control" value="Pérez" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" class="form-control" value="estudiante@correo.com" required readonly style="background-color: var(--bg-color); cursor: not-allowed;">
+                            <p class="text-xs text-secondary mt-xs">El correo no puede ser modificado una vez registrado.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="grade" class="form-label">Grado / Nivel</label>
+                            <select id="grade" name="grade" class="form-control" style="appearance: auto;">
+                                <option value="6">Sexto Grado</option>
+                                <option value="7">Séptimo Grado</option>
+                                <option value="8">Octavo Grado</option>
+                                <option value="9" selected>Noveno Grado</option>
+                                <option value="10">Décimo Grado</option>
+                                <option value="11">Undécimo Grado</option>
+                            </select>
+                        </div>
+
+                        <h3 class="section-title mt-xl mb-md">Preferencias de Estudio</h3>
+                        <p class="text-sm text-secondary mb-md">Selecciona las materias en las que más sueles necesitar refuerzo.</p>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-sm mb-xl">
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" checked style="accent-color: var(--primary);"> Matemáticas
+                            </label>
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" checked style="accent-color: var(--primary);"> Física
+                            </label>
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" style="accent-color: var(--primary);"> Química
+                            </label>
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" checked style="accent-color: var(--primary);"> Biología
+                            </label>
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" style="accent-color: var(--primary);"> Lenguaje
+                            </label>
+                            <label class="flex items-center gap-sm p-sm border border-color-muted rounded-md cursor-pointer hover:border-primary transition-colors">
+                                <input type="checkbox" style="accent-color: var(--primary);"> Inglés
+                            </label>
+                        </div>
+
+                        <div class="flex justify-end gap-md pt-md border-t border-color-muted">
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
