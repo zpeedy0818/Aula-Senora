@@ -30,9 +30,8 @@ public class LoginViewController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         // obtener rol principal sin prefijo ROLE_
-        org.springframework.security.core.Authentication auth =
-                org.springframework.security.core.context.SecurityContextHolder
-                        .getContext().getAuthentication();
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
         String rol = auth.getAuthorities().stream()
                 .map(gr -> gr.getAuthority())
                 .filter(r -> r.startsWith("ROLE_"))
@@ -42,14 +41,14 @@ public class LoginViewController {
         model.addAttribute("rol", rol);
 
         return switch (rol) {
-            case "ADMIN" -> "dashboard-admin";
-            case "VOLUNTARIO" -> "dashboard-voluntario";
-            default -> "dashboard-estudiante";
+            case "ADMIN" -> "admin/dashboard";
+            case "VOLUNTARIO" -> "volunteer/dashboard";
+            default -> "student/dashboard";
         };
     }
 
     @GetMapping("/")
     public String rootRedirect() {
-        return "redirect:/dashboard";
+        return "index";
     }
 }

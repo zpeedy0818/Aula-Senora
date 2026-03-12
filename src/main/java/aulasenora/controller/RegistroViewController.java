@@ -11,7 +11,7 @@ import aulasenora.model.Usuario;
 import aulasenora.service.UsuarioService;
 
 @Controller
-@RequestMapping("/registrar")
+@RequestMapping("/register")
 public class RegistroViewController {
 
     private final UsuarioService usuarioService;
@@ -23,18 +23,22 @@ public class RegistroViewController {
     @GetMapping
     public String mostrarFormulario(Model model) {
         model.addAttribute("usuario", new Usuario());
-        return "registro";
+        return "register";
     }
 
-    @PostMapping("/success")
+    @PostMapping
     public String registrar(@ModelAttribute Usuario usuario, Model model) {
         try {
+            // Check if role is provided (default to ESTUDIANTE if not)
+            if (usuario.getRol() == null || usuario.getRol().isEmpty() || usuario.getRol().equals("USER")) {
+                usuario.setRol("ESTUDIANTE");
+            }
+
             usuarioService.registrar(usuario);
-            // después de registrarse, llevar al login con mensaje
             return "redirect:/login?registerSuccess";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            return "registro";
+            return "register";
         }
     }
 }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <header th:fragment="header" class="main-header">
+        <div class="container navbar flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a th:href="@{/}" class="brand-logo flex items-center gap-sm">
+                <!-- SVG Icon representing Education/Solidarity -->
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="brand-icon">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+                <span class="brand-text">Aula Señora</span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav hidden-mobile">
+                <ul class="nav-links flex items-center gap-md" style="margin-bottom:0; list-style:none;">
+                    <li><a th:href="@{/}" class="nav-link">Inicio</a></li>
+                    <li><a th:href="@{/about}" class="nav-link">Nosotros</a></li>
+
+                    <!-- Unauthenticated Users -->
+                    <li sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/login}" class="btn btn-outline" style="padding: 0.35rem 1rem;">Iniciar Sesión</a>
+                    </li>
+                    <li sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/register}" class="btn btn-primary" style="padding: 0.35rem 1rem;">Regístrate</a>
+                    </li>
+
+                    <!-- Authenticated Users -->
+                    <li sec:authorize="isAuthenticated()" class="dropdown">
+                        <button class="nav-link dropdown-toggle flex items-center gap-xs" aria-expanded="false"
+                            aria-haspopup="true">
+                            <span sec:authentication="name">Usuario</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu hidden shadow-md">
+                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/dashboard}">Mi Panel</a></li>
+                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/profile}">Mi Perfil</a></li>
+                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/history}">Mi Historial</a>
+                            </li>
+                            <li sec:authorize="hasRole('VOLUNTEER')"><a th:href="@{/volunteer/dashboard}">Panel
+                                    Voluntario</a></li>
+                            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/dashboard}">Administración</a>
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="logout-btn w-full text-left">Cerrar Sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="mobile-menu-btn hidden-desktop" aria-label="Menú principal"
+                aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <nav id="mobile-menu" class="mobile-nav hidden">
+            <ul class="mobile-nav-links flex flex-col">
+                <li><a th:href="@{/}" class="mobile-nav-link">Inicio</a></li>
+                <li><a th:href="@{/about}" class="mobile-nav-link">Nosotros</a></li>
+                <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="mobile-nav-link">Iniciar Sesión</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}"
+                        class="mobile-nav-link text-primary font-bold">Regístrate</a></li>
+
+                <li sec:authorize="isAuthenticated()">
+                    <div class="mobile-user-section">
+                        <span class="mobile-username text-sm" sec:authentication="name">Usuario</span>
+                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/dashboard}"
+                                class="mobile-nav-link">Mi Panel</a></div>
+                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/profile}"
+                                class="mobile-nav-link">Mi Perfil</a></div>
+                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/history}"
+                                class="mobile-nav-link">Mi Historial</a></div>
+                        <div sec:authorize="hasRole('VOLUNTEER')"><a th:href="@{/volunteer/dashboard}"
+                                class="mobile-nav-link">Panel Voluntario</a></div>
+                        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/dashboard}"
+                                class="mobile-nav-link">Administración</a></div>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="mobile-nav-link logout-btn w-full text-left">Cerrar
+                                Sesión</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+</body>
+
+</html>

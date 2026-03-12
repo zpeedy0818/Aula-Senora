@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Inicio</title>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+
+        <!-- Hero Section -->
+        <section class="hero-section"
+            style="background: linear-gradient(135deg, var(--bg-color) 0%, var(--primary-light) 100%); padding: var(--space-2xl) 0;">
+            <div class="container grid grid-cols-1 md:grid-cols-2 gap-xl items-center">
+                <div class="hero-content">
+                    <span class="badge badge-primary mb-md">Educación como derecho fundamental</span>
+                    <h1 class="hero-title" style="font-size: 3rem; margin-bottom: var(--space-md);">Acompañamiento
+                        Académico Solidario</h1>
+                    <p class="hero-subtitle"
+                        style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                        Conectamos a estudiantes del sistema educativo colombiano con voluntarios universitarios y
+                        profesionales para fortalecer su aprendizaje de forma gratuita y accesible.
+                    </p>
+                    <div class="hero-actions flex gap-md">
+                        <a th:href="@{/register?role=student}" class="btn btn-primary btn-lg">Soy Estudiante</a>
+                        <a th:href="@{/register?role=volunteer}" class="btn btn-outline btn-lg bg-white">Quiero ser
+                            Voluntario</a>
+                    </div>
+                </div>
+                <div class="hero-image flex justify-center hidden-mobile" style="position: relative;">
+                    <div
+                        style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); border: 8px solid white; transform: rotate(2deg);">
+                        <img th:src="@{/img/hero-bg.png}" alt="Acompañamiento Académico"
+                            style="max-width: 100%; height: auto; display: block;">
+                    </div>
+                    <!-- Decoración visual extra -->
+                    <div
+                        style="position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px; background-color: var(--secondary); opacity: 0.1; border-radius: 50%; z-index: -1;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features / Value Proposition Section -->
+        <section class="features-section py-2xl"
+            style="padding: var(--space-2xl) 0; background-color: var(--surface-color);">
+            <div class="container text-center">
+                <h2 class="section-title mb-sm">¿Por qué usar Aula Señora?</h2>
+                <p class="section-subtitle max-w-2xl mx-auto mb-xl"
+                    style="margin-left: auto; margin-right: auto; max-width: 600px; color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                    Nuestra plataforma está diseñada pensando en la inclusión y en superar los rezagos académicos con
+                    herramientas accesibles.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                    <!-- Feature 1 -->
+                    <div class="card text-center flex flex-col items-center">
+                        <div class="icon-wrapper mb-md"
+                            style="background-color: var(--primary-light); color: var(--primary-dark); padding: 1rem; border-radius: 50%;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Apoyo Personalizado</h3>
+                        <p>Recibe ayuda directa en áreas como matemáticas, lenguaje y ciencias con explicaciones claras
+                            y ejemplos prácticos.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="card text-center flex flex-col items-center">
+                        <div class="icon-wrapper mb-md"
+                            style="background-color: var(--secondary-light); color: var(--secondary-dark); padding: 1rem; border-radius: 50%;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="m12 16 4-4-4-4" />
+                                <path d="M8 12h8" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Accesibilidad Total</h3>
+                        <p>Diseño optimizado para conexiones limitadas y soporte para opciones de accesibilidad visual y
+                            auditiva.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="card text-center flex flex-col items-center">
+                        <div class="icon-wrapper mb-md"
+                            style="background-color: #dcfce7; color: var(--success); padding: 1rem; border-radius: 50%;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Comunidad Solidaria</h3>
+                        <p>Voluntarios comprometidos con la equidad educativa dispuestos a compartir su conocimiento y
+                            tiempo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section"
+            style="padding: var(--space-2xl) 0; background-color: var(--primary); color: white; text-align: center;">
+            <div class="container">
+                <h2 style="color: white; margin-bottom: var(--space-md);">¿Listo para empezar a aprender o enseñar?</h2>
+                <p
+                    style="color: rgba(255,255,255,0.9); margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Únete a nuestra comunidad hoy mismo y forma parte del cambio en la educación colombiana.
+                </p>
+                <a th:href="@{/register}" class="btn bg-white"
+                    style="color: var(--primary); font-weight: bold; padding: 0.75rem 2rem; font-size: 1.1rem;">Comenzar
+                    Ahora</a>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+
+</html>

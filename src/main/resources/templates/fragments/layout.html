@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Aula Señora</title>
+    
+    <!-- Meta Descriptions para SEO y Accesibilidad -->
+    <meta name="description" content="Plataforma de acompañamiento académico solidario - Aula Señora">
+    
+    <!-- Archivos CSS Globales -->
+    <link rel="stylesheet" th:href="@{/css/variables.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/components.css}" />
+    
+    <!-- Custom Page CSS -->
+    <th:block layout:fragment="page-css"></th:block>
+</head>
+<body class="site-wrapper">
+    
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Main Content Area -->
+    <main class="site-content" layout:fragment="content">
+        <!-- Content will be injected here by specific views -->
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Archivo JS Global -->
+    <script th:src="@{/js/main.js}"></script>
+    
+    <!-- Custom Page JS -->
+    <th:block layout:fragment="page-js"></th:block>
+
+</body>
+</html>
