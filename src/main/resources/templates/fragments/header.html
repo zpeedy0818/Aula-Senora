@@ -23,7 +23,6 @@
             <nav class="desktop-nav hidden-mobile">
                 <ul class="nav-links flex items-center gap-md" style="margin-bottom:0; list-style:none;">
                     <li><a th:href="@{/}" class="nav-link">Inicio</a></li>
-                    <li><a th:href="@{/about}" class="nav-link">Nosotros</a></li>
 
                     <!-- Unauthenticated Users -->
                     <li sec:authorize="!isAuthenticated()">
@@ -79,7 +78,6 @@
         <nav id="mobile-menu" class="mobile-nav hidden">
             <ul class="mobile-nav-links flex flex-col">
                 <li><a th:href="@{/}" class="mobile-nav-link">Inicio</a></li>
-                <li><a th:href="@{/about}" class="mobile-nav-link">Nosotros</a></li>
                 <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="mobile-nav-link">Iniciar Sesión</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}"
