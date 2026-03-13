@@ -24,6 +24,12 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = false)
     private String rol = "USER"; // will be overridden during registration
 
     // Getters y Setters
@@ -38,6 +44,12 @@ public class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
