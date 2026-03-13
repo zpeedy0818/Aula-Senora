@@ -25,18 +25,6 @@
             </button>
         </div>
 
-        <!-- Student Secondary Nav -->
-        <div class="flex gap-md border-b border-color-muted mb-xl overflow-x-auto pb-sm">
-            <a th:href="@{/student/dashboard}" class="text-primary font-bold border-b-2 px-sm py-xs"
-                style="text-decoration:none; border-color: var(--primary);">Resumen</a>
-            <a th:href="@{/student/history}"
-                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
-                style="text-decoration:none;">Historial</a>
-            <a th:href="@{/student/profile}"
-                class="text-secondary hover:text-primary font-medium px-sm py-xs transition-colors"
-                style="text-decoration:none;">Mi Perfil</a>
-        </div>
-
         <!-- Dashboard Widgets -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-2xl">
 
@@ -183,7 +171,7 @@
     <th:block layout:fragment="page-js">
         <div id="help-modal"
             class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
-            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center;">
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
             <div class="card w-full max-w-lg bg-surface relative"
                 style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
                 <button type="button"

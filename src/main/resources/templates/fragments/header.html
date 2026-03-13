@@ -43,14 +43,18 @@
                                 <path d="m6 9 6 6 6-6" />
                             </svg>
                         </button>
-                        <ul class="dropdown-menu hidden shadow-md">
-                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/dashboard}">Mi Panel</a></li>
-                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/profile}">Mi Perfil</a></li>
-                            <li sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/history}">Mi Historial</a>
+                        <ul class="dropdown-menu hidden shadow-md"
+                            style="list-style: none; margin: 0; padding: 0.5rem 0;">
+                            <li sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/profile}">Mi
+                                    Perfil</a></li>
+                            <li sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/history}">Mi
+                                    Historial</a>
                             </li>
-                            <li sec:authorize="hasRole('VOLUNTEER')"><a th:href="@{/volunteer/dashboard}">Panel
+                            <li sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')"><a
+                                    th:href="@{/volunteer/dashboard}">Panel
                                     Voluntario</a></li>
-                            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/dashboard}">Administración</a>
+                            <li sec:authorize="hasAnyRole('ADMIN', 'USER')"><a
+                                    th:href="@{/admin/dashboard}">Administración</a>
                             </li>
                             <li>
                                 <form th:action="@{/logout}" method="post">
@@ -84,15 +88,13 @@
                 <li sec:authorize="isAuthenticated()">
                     <div class="mobile-user-section">
                         <span class="mobile-username text-sm" sec:authentication="name">Usuario</span>
-                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/dashboard}"
-                                class="mobile-nav-link">Mi Panel</a></div>
-                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/profile}"
+                        <div sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/profile}"
                                 class="mobile-nav-link">Mi Perfil</a></div>
-                        <div sec:authorize="hasRole('STUDENT')"><a th:href="@{/student/history}"
+                        <div sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/history}"
                                 class="mobile-nav-link">Mi Historial</a></div>
-                        <div sec:authorize="hasRole('VOLUNTEER')"><a th:href="@{/volunteer/dashboard}"
+                        <div sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')"><a th:href="@{/volunteer/dashboard}"
                                 class="mobile-nav-link">Panel Voluntario</a></div>
-                        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/dashboard}"
+                        <div sec:authorize="hasAnyRole('ADMIN', 'USER')"><a th:href="@{/admin/dashboard}"
                                 class="mobile-nav-link">Administración</a></div>
                         <form th:action="@{/logout}" method="post">
                             <button type="submit" class="mobile-nav-link logout-btn w-full text-left">Cerrar
