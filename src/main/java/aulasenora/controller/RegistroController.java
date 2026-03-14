@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import aulasenora.dto.RegistroDTO;
 import aulasenora.model.Usuario;
 import aulasenora.service.UsuarioService;
 
@@ -20,9 +21,9 @@ public class RegistroController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> registrar(@RequestBody RegistroDTO registroDTO) {
         try {
-            Usuario nuevo = usuarioService.registrar(usuario);
+            Usuario nuevo = usuarioService.registrar(registroDTO);
             nuevo.setPassword(null); // No devolver la contraseña en la respuesta
             return ResponseEntity.ok(nuevo);
         } catch (RuntimeException e) {
