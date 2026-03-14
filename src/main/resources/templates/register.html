@@ -3,6 +3,7 @@
 
 <head>
     <title>Registro</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -73,38 +74,43 @@
                 <p th:text="${error}" style="margin-bottom: 0; color: var(--error);"></p>
             </div>
 
-            <form th:action="@{/register}" method="post">
-                <input type="hidden" id="role-input" name="rol" value="">
+            <form th:action="@{/register}" th:object="${registroDTO}" method="post">
+                <input type="hidden" id="role-input" th:field="*{rol}">
 
                 <div class="form-group">
                     <label for="username" class="form-label">Nombre de Usuario</label>
-                    <input type="text" id="username" name="username" class="form-control" required
+                    <input type="text" id="username" th:field="*{username}" class="form-control" required
                         placeholder="Ej: mariaperez24">
+                    <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error" style="color: var(--error); font-size: 0.85rem; margin-top: 0.25rem;"></p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
                     <div class="form-group">
                         <label for="firstName" class="form-label">Nombres</label>
-                        <input type="text" id="firstName" name="firstName" class="form-control" required
+                        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required
                             placeholder="Ej: Maria">
+                        <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-error" style="color: var(--error); font-size: 0.85rem; margin-top: 0.25rem;"></p>
                     </div>
                     <div class="form-group">
                         <label for="lastName" class="form-label">Apellidos</label>
-                        <input type="text" id="lastName" name="lastName" class="form-control" required
+                        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required
                             placeholder="Ej: Perez">
+                        <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-error" style="color: var(--error); font-size: 0.85rem; margin-top: 0.25rem;"></p>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="email" class="form-label">Correo Electrónico</label>
-                    <input type="email" id="email" name="email" class="form-control" required
+                    <input type="email" id="email" th:field="*{email}" class="form-control" required
                         placeholder="correo@ejemplo.com">
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error" style="color: var(--error); font-size: 0.85rem; margin-top: 0.25rem;"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" id="password" name="password" class="form-control" required
+                    <input type="password" id="password" th:field="*{password}" class="form-control" required
                         placeholder="Mínimo 8 caracteres">
+                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error" style="color: var(--error); font-size: 0.85rem; margin-top: 0.25rem;"></p>
                     <p class="text-sm opacity-70 mt-xs">Usa una combinación de letras, números y símbolos.</p>
                 </div>
 
@@ -113,17 +119,17 @@
                     <h4 class="mb-sm" style="font-size: 1rem;">Información Adicional para Voluntarios</h4>
                     <div class="form-group">
                         <label for="institution" class="form-label">Universidad / Institución</label>
-                        <input type="text" id="institution" name="institution" class="form-control"
+                        <input type="text" id="institution" th:field="*{institution}" class="form-control"
                             placeholder="Ej: Universidad del Valle">
                     </div>
                     <div class="form-group mb-0">
                         <label for="skills" class="form-label">Áreas de Especialidad</label>
-                        <input type="text" id="skills" name="skills" class="form-control"
+                        <input type="text" id="skills" th:field="*{skills}" class="form-control"
                             placeholder="Ej: Matemáticas, Física, Programación">
                     </div>
                 </div>
 
-                <div class="form-group flex gap-sm mt-lg">
+                <div class="form-group flex gap-sm mt-lg mb-md">
                     <input type="checkbox" id="terms" required
                         style="margin-top: 0.25rem; accent-color: var(--primary);">
                     <label for="terms" class="text-sm cursor-pointer opacity-90">
@@ -131,6 +137,10 @@
                             th:href="@{/privacy}" target="_blank">Política de Tratamiento de Datos</a> (Ley 1581 de
                         2012).
                     </label>
+                </div>
+                
+                <div class="form-group flex justify-center mt-md">
+                    <div class="g-recaptcha" data-sitekey="6LdEyYksAAAAAO3NxMh5-xHpx_ItGtUF62px5NaU"></div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-full mt-md"

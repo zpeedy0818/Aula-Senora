@@ -7,23 +7,28 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import aulasenora.service.UsuarioDetailsService;
+import aulasenora.service.RecaptchaService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
         private final UsuarioDetailsService userDetailsService;
+        private final RecaptchaService recaptchaService;
 
-        public SecurityConfig(UsuarioDetailsService userDetailsService) {
+        public SecurityConfig(UsuarioDetailsService userDetailsService, RecaptchaService recaptchaService) {
                 this.userDetailsService = userDetailsService;
+                this.recaptchaService = recaptchaService;
         }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf.disable())
+                                .addFilterBefore(new RecaptchaFilter(recaptchaService), UsernamePasswordAuthenticationFilter.class)
                                 .authorizeHttpRequests(auth -> auth
                                                 // allow registration, login and static resources
                                                 .requestMatchers("/", "/register", "/registrar", "/registrar/success",

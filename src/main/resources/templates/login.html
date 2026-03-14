@@ -3,6 +3,7 @@
 
 <head>
     <title>Iniciar Sesión</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -52,11 +53,15 @@
                         aria-required="true" placeholder="••••••••">
                 </div>
 
-                <div class="form-group flex justify-between items-center mb-xl">
+                <div class="form-group flex justify-between items-center mb-md">
                     <label class="flex items-center gap-xs cursor-pointer text-sm">
                         <input type="checkbox" name="remember-me" style="accent-color: var(--primary);">
                         <span>Recordarme</span>
                     </label>
+                </div>
+
+                <div class="form-group flex justify-center mb-xl">
+                    <div class="g-recaptcha" data-sitekey="6LdEyYksAAAAAO3NxMh5-xHpx_ItGtUF62px5NaU"></div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-full"
