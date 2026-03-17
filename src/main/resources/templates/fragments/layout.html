@@ -14,6 +14,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css(v=10)}" />
     <link rel="stylesheet" th:href="@{/css/components.css(v=2)}" />
 
+    <!-- AOS (Animaciones) & Toastify (Notificaciones) CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <!-- Custom Page CSS -->
     <th:block layout:fragment="page-css"></th:block>
 </head>
@@ -33,6 +37,10 @@
 
     <!-- Archivo JS Global -->
     <script th:src="@{/js/main.js}"></script>
+
+    <!-- AOS & Toastify JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- Custom Page JS -->
     <th:block layout:fragment="page-js"></th:block>

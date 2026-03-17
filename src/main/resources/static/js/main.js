@@ -1,5 +1,16 @@
 // Global App Logic for Aula Señora
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Initialize AOS (Animate On Scroll)
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50
+        });
+    }
+
     // Mobile Navigation Toggle
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -36,3 +47,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Global Toastify Utility Functions
+window.showToast = function(message, type = 'info') {
+    if (typeof Toastify !== 'undefined') {
+        let className = 'modern-toast modern-toast-info';
+        if (type === 'success') className = 'modern-toast modern-toast-success';
+        if (type === 'error') className = 'modern-toast modern-toast-error';
+
+        Toastify({
+            text: message,
+            duration: 4000,
+            close: true,
+            gravity: "bottom", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            className: className,
+            style: {
+                background: "" // Override Toastify's default inline background to use our CSS classes
+            }
+        }).showToast();
+    } else {
+        // Fallback
+        alert(message);
+    }
+};

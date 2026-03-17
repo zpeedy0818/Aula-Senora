@@ -11,32 +11,37 @@
 
         <!-- Hero Section -->
         <section class="hero-section"
-            style="background: linear-gradient(135deg, var(--bg-color) 0%, var(--primary-light) 100%); padding: var(--space-2xl) 0;">
-            <div class="container grid grid-cols-1 md:grid-cols-2 gap-xl items-center">
-                <div class="hero-content">
-                    <span class="badge badge-primary mb-md">Educación como derecho fundamental</span>
-                    <h1 class="hero-title" style="font-size: 3rem; margin-bottom: var(--space-md);">Acompañamiento
-                        Académico Solidario</h1>
+            style="background: linear-gradient(135deg, var(--bg-color) 0%, var(--primary-light) 100%); padding: var(--space-2xl) 0; position: relative;">
+            
+            <!-- Animated Background Blobs -->
+            <div class="animate-float" style="position: absolute; top: -50px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; z-index: 0; pointer-events: none;"></div>
+            <div class="animate-pulse-slow" style="position: absolute; bottom: 0; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; z-index: 0; pointer-events: none;"></div>
+            
+            <div class="container grid grid-cols-1 md:grid-cols-2 gap-xl items-center" style="position: relative; z-index: 1;">
+                <div class="hero-content" data-aos="fade-right">
+                    <span class="badge badge-primary mb-md" data-aos="fade-down" data-aos-delay="100">Educación como derecho fundamental</span>
+                    <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: var(--space-md); font-weight: 800; letter-spacing: -1px; line-height: 1.1;">Acompañamiento
+                        <span style="background: linear-gradient(135deg, var(--primary), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Académico Solidario</span></h1>
                     <p class="hero-subtitle"
-                        style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                        style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--space-xl); max-width: 90%;">
                         Conectamos a estudiantes del sistema educativo colombiano con voluntarios universitarios y
                         profesionales para fortalecer su aprendizaje de forma gratuita y accesible.
                     </p>
-                    <div class="hero-actions flex gap-md">
-                        <a th:href="@{/register?role=student}" class="btn btn-primary btn-lg">Soy Estudiante</a>
-                        <a th:href="@{/register?role=volunteer}" class="btn btn-outline btn-lg bg-white">Quiero ser
+                    <div class="hero-actions flex gap-md" data-aos="fade-up" data-aos-delay="200">
+                        <a th:href="@{/register?role=student}" class="btn btn-primary btn-lg" style="padding: 1rem 2rem; font-size: 1.1rem;">Soy Estudiante</a>
+                        <a th:href="@{/register?role=volunteer}" class="btn btn-outline btn-lg bg-white" style="padding: 1rem 2rem; font-size: 1.1rem;">Quiero ser
                             Voluntario</a>
                     </div>
                 </div>
-                <div class="hero-image flex justify-center hidden-mobile" style="position: relative;">
+                <div class="hero-image flex justify-center hidden-mobile" data-aos="fade-left" data-aos-delay="300" style="position: relative;">
                     <div
-                        style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); border: 8px solid white; transform: rotate(2deg);">
+                        style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg), 0 20px 40px rgba(0,0,0,0.1); border: 8px solid white; transform: rotate(2deg); transition: transform 0.5s ease;" onmouseover="this.style.transform='rotate(0deg) scale(1.02)'" onmouseout="this.style.transform='rotate(2deg) scale(1)'">
                         <img th:src="@{/img/hero-bg.png}" alt="Acompañamiento Académico"
                             style="max-width: 100%; height: auto; display: block;">
                     </div>
                     <!-- Decoración visual extra -->
-                    <div
-                        style="position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px; background-color: var(--secondary); opacity: 0.1; border-radius: 50%; z-index: -1;">
+                    <div class="animate-float"
+                        style="position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px; background: linear-gradient(135deg, var(--secondary), var(--warning)); opacity: 0.2; border-radius: 50%; z-index: -1;">
                     </div>
                 </div>
             </div>
@@ -46,8 +51,8 @@
         <section class="features-section py-2xl"
             style="padding: var(--space-2xl) 0; background-color: var(--surface-color);">
             <div class="container text-center">
-                <h2 class="section-title mb-sm">¿Por qué usar Aula Señora?</h2>
-                <p class="section-subtitle max-w-2xl mx-auto mb-xl"
+                <h2 class="section-title mb-sm" data-aos="fade-up">¿Por qué usar Aula Señora?</h2>
+                <p class="section-subtitle max-w-2xl mx-auto mb-xl" data-aos="fade-up" data-aos-delay="100"
                     style="margin-left: auto; margin-right: auto; max-width: 600px; color: var(--text-secondary); margin-bottom: var(--space-xl);">
                     Nuestra plataforma está diseñada pensando en la inclusión y en superar los rezagos académicos con
                     herramientas accesibles.
@@ -55,9 +60,9 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
                     <!-- Feature 1 -->
-                    <div class="card text-center flex flex-col items-center">
+                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="100">
                         <div class="icon-wrapper mb-md"
-                            style="background-color: var(--primary-light); color: var(--primary-dark); padding: 1rem; border-radius: 50%;">
+                            style="background: linear-gradient(135deg, var(--primary-light), white); color: var(--primary-dark); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
@@ -70,9 +75,9 @@
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="card text-center flex flex-col items-center">
+                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
                         <div class="icon-wrapper mb-md"
-                            style="background-color: var(--secondary-light); color: var(--secondary-dark); padding: 1rem; border-radius: 50%;">
+                            style="background: linear-gradient(135deg, var(--secondary-light), white); color: var(--secondary-dark); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <circle cx="12" cy="12" r="10" />
@@ -86,9 +91,9 @@
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="card text-center flex flex-col items-center">
+                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
                         <div class="icon-wrapper mb-md"
-                            style="background-color: #dcfce7; color: var(--success); padding: 1rem; border-radius: 50%;">
+                            style="background: linear-gradient(135deg, #dcfce7, white); color: var(--success); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -107,16 +112,22 @@
 
         <!-- Call to Action -->
         <section class="cta-section"
-            style="padding: var(--space-2xl) 0; background-color: var(--primary); color: white; text-align: center;">
-            <div class="container">
-                <h2 style="color: white; margin-bottom: var(--space-md);">¿Listo para empezar a aprender o enseñar?</h2>
-                <p
+            style="padding: var(--space-2xl) 0; background: linear-gradient(135deg, var(--primary), var(--primary-accent)); color: white; text-align: center; position: relative;">
+            
+            <!-- Deco circles -->
+            <div style="position: absolute; top: 10%; left: 5%; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+            <div style="position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05);"></div>
+            
+            <div class="container" style="position: relative; z-index: 1;">
+                <h2 data-aos="fade-up" style="color: white; margin-bottom: var(--space-md); font-weight: 700;">¿Listo para empezar a aprender o enseñar?</h2>
+                <p data-aos="fade-up" data-aos-delay="100"
                     style="color: rgba(255,255,255,0.9); margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">
                     Únete a nuestra comunidad hoy mismo y forma parte del cambio en la educación colombiana.
                 </p>
-                <a th:href="@{/register}" class="btn bg-white"
-                    style="color: var(--primary); font-weight: bold; padding: 0.75rem 2rem; font-size: 1.1rem;">Comenzar
-                    Ahora</a>
+                <div data-aos="zoom-in" data-aos-delay="200">
+                    <a th:href="@{/register}" class="btn bg-white"
+                        style="color: var(--primary); font-weight: bold; padding: 0.75rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-full); box-shadow: 0 10px 25px rgba(0,0,0,0.2);">Comenzar Ahora</a>
+                </div>
             </div>
         </section>
 
