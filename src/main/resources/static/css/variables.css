@@ -1,30 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* Brand Colors - More refined and professional */
-    --primary: hsl(222, 47%, 11%);
-    /* Deep Navy */
-    --primary-accent: hsl(221, 83%, 53%);
-    /* Vibrant Blue for accents */
-    --primary-light: hsl(221, 83%, 95%);
+    /* Brand Colors - Ocean & Aurora */
+    --primary: hsl(221, 83%, 30%);
+    /* Deep Vibrant Blue */
+    --primary-accent: hsl(230, 85%, 60%);
+    /* Electric Indigo */
+    --primary-light: hsl(221, 83%, 96%);
+    /* Icy White */
 
-    --secondary: hsl(35, 95%, 55%);
-    /* Warm Amber */
-    --secondary-light: hsl(35, 95%, 90%);
+    --secondary: hsl(180, 70%, 45%);
+    /* Vibrant Teal/Cyan */
+    --secondary-dark: hsl(180, 70%, 35%);
+    --secondary-light: hsl(180, 70%, 94%);
+    /* Minty background */
 
     /* Neutral Colors - softer backgrounds */
     --bg-color: hsl(210, 40%, 98%);
     --surface-color: hsl(0, 0%, 100%);
     --text-primary: hsl(222, 47%, 15%);
     --text-secondary: hsl(215, 16%, 47%);
-    --border-color: hsl(214, 32%, 91%);
+    --border-color: hsl(220, 20%, 92%);
     --border-color-muted: hsl(214, 32%, 95%);
 
     /* Feedback Colors */
-    --success: hsl(142, 70%, 25%);
+    --success: hsl(142, 70%, 40%);
     --success-bg: hsl(142, 70%, 95%);
     --warning: hsl(45, 93%, 47%);
-    --error: hsl(0, 84%, 44%);
+    --error: hsl(0, 84%, 55%);
     --error-bg: hsl(0, 84%, 97%);
 
     /* Typography */
@@ -57,26 +60,33 @@
 /* Dark Mode optional */
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg-color: hsl(210, 30%, 8%);
-        --surface-color: hsl(210, 30%, 12%);
+        /* Deep slate backgrounds for less eye strain */
+        --bg-color: hsl(222, 47%, 7%);
+        --surface-color: hsl(222, 47%, 11%);
+        
+        /* High contrast text */
         --text-primary: hsl(0, 0%, 98%);
-        --text-secondary: hsl(210, 20%, 75%);
-        --border-color: hsl(210, 30%, 25%);
-        --border-color-muted: hsl(210, 30%, 18%);
+        --text-secondary: hsl(210, 20%, 80%);
+        
+        /* Subtle borders */
+        --border-color: hsl(210, 30%, 20%);
+        --border-color-muted: hsl(210, 30%, 15%);
 
-        /* Adjust brand colors for dark mode contrast */
-        --primary: hsl(221, 83%, 60%);
-        --primary-accent: hsl(221, 83%, 70%);
-        --primary-light: hsl(221, 50%, 18%);
+        /* Adjusted brand colors for dark mode context (softer glowing effect) */
+        --primary: hsl(221, 83%, 65%);
+        --primary-accent: hsl(230, 85%, 75%);
+        --primary-light: hsl(221, 50%, 15%);
 
-        --secondary: hsl(35, 95%, 60%);
-        --secondary-light: hsl(35, 50%, 18%);
+        /* Teal adapted for dark backgrounds */
+        --secondary: hsl(180, 70%, 50%);
+        --secondary-dark: hsl(180, 70%, 40%);
+        --secondary-light: hsl(180, 50%, 15%);
 
-        /* Feedback Colors */
-        --success: hsl(142, 70%, 45%);
+        /* Feedback Colors adjusted for dark mode */
+        --success: hsl(142, 70%, 50%);
         --success-bg: hsl(142, 50%, 15%);
         --warning: hsl(45, 93%, 55%);
-        --error: hsl(0, 84%, 60%);
+        --error: hsl(0, 84%, 65%);
         --error-bg: hsl(0, 84%, 18%);
     }
 }

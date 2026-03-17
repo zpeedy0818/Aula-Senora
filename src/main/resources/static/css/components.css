@@ -17,32 +17,34 @@
 
 .btn:hover {
     text-decoration: none;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px); /* Increased lift */
+    box-shadow: var(--shadow-md), 0 8px 15px rgba(0, 0, 0, 0.1); /* Richer shadow on hover */
 }
 
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px); /* More natural click feel */
 }
 
 .btn-primary {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary-accent) 0%, var(--primary) 100%);
     color: white;
+    border: none;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark, hsl(222, 47%, 8%)) 100%);
     color: white;
 }
 
 .btn-secondary {
-    background-color: var(--secondary);
+    background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary) 100%);
     color: white;
+    border: none;
 }
 
 .btn-secondary:hover {
-    background-color: var(--secondary-dark);
-    color: white;
+    background: linear-gradient(135deg, var(--secondary) 0%, hsl(180, 70%, 55%) 100%);
+    color: var(--primary); /* Deep blue text for contrast against bright teal */
 }
 
 .btn-outline {
@@ -53,7 +55,7 @@
 
 .btn-outline:hover {
     background-color: var(--primary);
-    color: white;
+    color: white !important; /* Force white text against dark primary background */
 }
 
 /* Cards */
@@ -62,13 +64,34 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: var(--space-xl);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Smoother bounce transition */
     border: 1px solid var(--border-color);
+    position: relative;
+    z-index: 1;
+}
+
+.card::after {
+    /* Create a glowing shadow element behind the card for smoother rendering */
+    content: "";
+    border-radius: var(--radius-lg);
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px); /* Higher lift */
+    border-color: var(--primary-light); /* Highlight border on hover */
+}
+
+.card:hover::after {
+    opacity: 1; /* Fade in the larger shadow */
 }
 
 .card-title {
@@ -132,5 +155,5 @@
 
 .badge-warning {
     background-color: var(--warning);
-    color: black;
+    color: hsl(222, 47%, 11%); /* High contrast dark text instead of pure black */
 }

@@ -470,14 +470,25 @@ img {
 
 /* Main Header & Navigation */
 .main-header {
-    background-color: var(--surface-color);
-    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent base */
+    backdrop-filter: blur(12px); /* Glassmorphism effect */
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5); /* Subtle border */
     position: sticky;
     top: 0;
     z-index: 1000;
     height: 72px;
     display: flex;
     align-items: center;
+    transition: all var(--transition-normal);
+}
+
+/* Dark mode glassmorphism adjustment */
+@media (prefers-color-scheme: dark) {
+    .main-header {
+        background-color: rgba(15, 23, 42, 0.85);
+        border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+    }
 }
 
 .navbar {
@@ -528,13 +539,24 @@ button.nav-link {
     position: absolute;
     top: 100%;
     right: 0;
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: var(--radius-md);
     min-width: 200px;
     padding: var(--space-sm) 0;
     margin-top: var(--space-sm);
     z-index: 1001;
+    box-shadow: var(--shadow-lg);
+}
+
+/* Dark mode dropdown adjustment */
+@media (prefers-color-scheme: dark) {
+    .dropdown-menu {
+        background: rgba(30, 41, 59, 0.95);
+        border: 1px solid rgba(51, 65, 85, 0.8);
+    }
 }
 
 .dropdown-menu li a,
@@ -651,4 +673,48 @@ button.nav-link {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
+}
+
+/* Dynamic Background Animations */
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* Base custom styles for modern toasts */
+.modern-toast {
+    font-family: var(--font-family) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-sm) var(--space-md) !important;
+    font-weight: 500 !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.modern-toast-success {
+    background: linear-gradient(to right, #00b09b, #96c93d) !important;
+    color: white !important;
+}
+
+.modern-toast-error {
+    background: linear-gradient(to right, #ff5f6d, #ffc371) !important;
+    color: white !important;
+}
+
+.modern-toast-info {
+    background: linear-gradient(to right, #2193b0, #6dd5ed) !important;
+    color: white !important;
 }
