@@ -69,13 +69,28 @@
                     style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">Cambiar Perfil</button>
             </div>
 
-            <div th:if="${error}" class="alert alert-error mb-md"
-                style="background-color: var(--error-bg); border: 1px solid var(--error); color: var(--error); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-size: 0.9rem;">
-                <p th:text="${error}" style="margin-bottom: 0; color: var(--error);"></p>
-            </div>
+
 
             <form th:action="@{/register}" th:object="${registroDTO}" method="post">
                 <input type="hidden" id="role-input" th:field="*{rol}">
+
+                <!-- Registration Error Toast -->
+                <script th:if="${error}">
+                    document.addEventListener('DOMContentLoaded', () => {
+                        setTimeout(() => {
+                            showToast('[[${error}]]', 'error');
+                        }, 100);
+                    });
+                </script>
+                
+                <!-- Specific Field Errors Toast (General hint) -->
+                <script th:if="${#fields.hasErrors('*')}">
+                    document.addEventListener('DOMContentLoaded', () => {
+                        setTimeout(() => {
+                            showToast('Revisa los campos marcados en rojo', 'error');
+                        }, 200);
+                    });
+                </script>
 
                 <div class="form-group">
                     <label for="username" class="form-label">Nombre de Usuario</label>
@@ -183,12 +198,26 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // Auto-select if URL param is present
+            // Auto-select if URL param is present or if returning from server with a role
             document.addEventListener('DOMContentLoaded', () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const presetRole = urlParams.get('role');
+                
+                // Get pre-filled role from hidden input (if server returned object with role)
+                const activeRole = document.getElementById('role-input').value;
+
                 if (presetRole) {
-                    showForm(presetRole);
+                    showForm(presetRole === 'volunteer' ? 'volunteer' : 'student');
+                } else if (activeRole && activeRole !== "") {
+                    showForm(activeRole.toLowerCase() === 'voluntario' ? 'volunteer' : 'student');
+                }
+                
+                // Show success toast if param is preset
+                const successParam = urlParams.get('success');
+                if(successParam !== null) {
+                    setTimeout(() => {
+                        showToast('Registro exitoso. Ya puedes iniciar sesión.', 'success');
+                    }, 100);
                 }
             });
         </script>

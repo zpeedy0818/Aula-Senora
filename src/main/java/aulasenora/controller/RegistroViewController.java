@@ -41,6 +41,7 @@ public class RegistroViewController {
                             Model model) {
         
         if (bindingResult.hasErrors()) {
+            model.addAttribute("error", "Por favor completa el formulario correctamente.");
             return "register";
         }
 

@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 .env
+# Logs
+application.log
+maven_output.log

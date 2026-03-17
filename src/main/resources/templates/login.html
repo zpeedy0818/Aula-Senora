@@ -22,19 +22,23 @@
                 <p class="text-secondary mt-sm">Por favor, ingresa tus credenciales</p>
             </div>
 
-            <!-- Error Message Alert -->
-            <div th:if="${param.error}"
-                style="background-color: #fee2e2; border: 1px solid var(--error); color: var(--error); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); font-size: 0.9rem;"
-                role="alert">
-                Usuario o contraseña incorrectos.
-            </div>
+            <!-- Error Message Alert via Toastify -->
+            <script th:if="${param.error}">
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        showToast('Usuario o contraseña incorrectos', 'error');
+                    }, 100);
+                });
+            </script>
 
-            <!-- Logout Message Alert -->
-            <div th:if="${param.logout}"
-                style="background-color: #dcfce7; border: 1px solid var(--success); color: var(--success); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); font-size: 0.9rem;"
-                role="alert">
-                Has cerrado sesión exitosamente.
-            </div>
+            <!-- Logout Message Alert via Toastify -->
+            <script th:if="${param.logout}">
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        showToast('Has cerrado sesión exitosamente', 'success');
+                    }, 100);
+                });
+            </script>
 
             <!-- Login Form -->
             <form th:action="@{/login}" method="post">
