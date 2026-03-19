@@ -11,34 +11,29 @@ Este es el repositorio oficial del proyecto Aula Señora. Sigue estos pasos exac
 
 ## Configuración del Entorno
 
-Para que la aplicación se conecte a la base de datos de Supabase, necesitas crear un archivo de configuración local:
+Para realizar el desarrollo local, es necesario configurar las variables de entorno para la conexión a la base de datos:
 
-1.  Crea un archivo llamado `.env` en la raíz del proyecto (donde está este `README.md`).
-2.  Copia y pega el siguiente contenido (solicita la contraseña al administrador si no la tienes):
+1.  Crea un archivo llamado `.env` en la raíz del proyecto.
+2.  Define las siguientes variables con sus respectivos valores (solicítalos al administrador del proyecto):
 
 ```env
-# Configuración de Supabase
-SPRING_DATASOURCE_URL=jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:6543/postgres
-SPRING_DATASOURCE_USERNAME=postgres.gdyzhnhijyfgohtlbfqd
-SPRING_DATASOURCE_PASSWORD=ParaTOd0s2724
+SPRING_DATASOURCE_URL=
+SPRING_DATASOURCE_USERNAME=
+SPRING_DATASOURCE_PASSWORD=
+RECAPTCHA_SITE_KEY=
+RECAPTCHA_SECRET_KEY=
 ```
 
 ## Cómo Ejecutar el Proyecto
 
-Hemos incluido un script que carga automáticamente las variables del `.env` por ti.
+Una vez configurado el archivo `.env`, puedes ejecutar la aplicación directamente usando Maven:
 
-### En Windows (PowerShell):
-Ejecuta el siguiente comando en la terminal:
-```powershell
-./run-dev.ps1
-```
-
-### En Mac/Linux:
-Si no usas PowerShell, asegúrate de exportar las variables de tu `.env` y luego ejecuta:
 ```bash
 ./mvnw spring-boot:run
 ```
 
+**Nota para usuarios de Windows:** Asegúrate de que las variables de entorno de tu archivo `.env` estén cargadas en tu sesión de PowerShell antes de ejecutar `mvnw`.
+
 ## Notas Adicionales
-- El archivo `.env` está en el `.gitignore` por seguridad. No intentes subirlo al repositorio.
+- El archivo `.env` está en el `.gitignore` por seguridad. **Nunca** lo subas al repositorio.
 - Si ves errores de "Bad SQL Grammar" al inicio, es normal mientras Hibernate sincroniza las tablas por primera vez.
