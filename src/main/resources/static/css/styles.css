@@ -718,3 +718,99 @@ button.nav-link {
     background: linear-gradient(to right, #2193b0, #6dd5ed) !important;
     color: white !important;
 }
+
+/* Bottom Navigation Bar (Mobile Only) */
+.bottom-nav {
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    height: 64px;
+    z-index: 2000;
+    padding-bottom: var(--safe-area-inset-bottom);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-nav-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bottom-nav-item {
+    flex: 1;
+}
+
+.bottom-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.bottom-nav-link i {
+    font-size: 1.25rem;
+    font-style: normal;
+    margin-bottom: 2px;
+}
+
+.bottom-nav-link.active {
+    color: var(--primary-accent);
+}
+
+.bottom-nav-link:hover {
+    color: var(--primary);
+}
+
+/* Adjustments for mobile view */
+@media (max-width: 768px) {
+    .site-content {
+        padding-bottom: 72px; /* Space for bottom nav */
+    }
+
+    .main-footer {
+        padding-bottom: 80px; /* Space for bottom nav */
+    }
+
+    .hidden-desktop {
+        display: block !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .hidden-desktop {
+        display: none !important;
+    }
+}
+
+/* Optional: Simulate Mobile Frame on Desktop (for development/demo) */
+/* To enable, add 'mobile-frame' class to <body> */
+body.mobile-frame {
+    background-color: #f1f5f9; /* Slate 100 */
+}
+
+body.mobile-frame .site-wrapper {
+    max-width: var(--mobile-width);
+    margin: 0 auto;
+    background-color: var(--bg-color);
+    box-shadow: var(--shadow-lg);
+    min-height: 100vh;
+}
+
+body.mobile-frame .main-header, 
+body.mobile-frame .bottom-nav {
+    max-width: var(--mobile-width);
+    left: 50%;
+    transform: translateX(-50%);
+}

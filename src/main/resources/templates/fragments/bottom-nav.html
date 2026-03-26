@@ -1,0 +1,26 @@
+<nav th:fragment="bottom-nav" class="bottom-nav hidden-desktop" xmlns:th="http://www.thymeleaf.org">
+    <ul class="bottom-nav-list">
+        <li class="bottom-nav-item">
+            <a th:href="@{/}" class="bottom-nav-link">
+                <i>🏠</i>
+                <span>Inicio</span>
+            </a>
+        </li>
+        <li class="bottom-nav-item">
+            <a th:href="@{/dashboard}" class="bottom-nav-link">
+                <i>📊</i>
+                <span>Panel</span>
+            </a>
+        </li>
+        <li class="bottom-nav-item">
+            <a th:href="@{/login}" th:if="${#authentication.name == 'anonymousUser'}" class="bottom-nav-link">
+                <i>👤</i>
+                <span>Entrar</span>
+            </a>
+            <a th:href="@{/perfil}" th:unless="${#authentication.name == 'anonymousUser'}" class="bottom-nav-link">
+                <i>👤</i>
+                <span>Perfil</span>
+            </a>
+        </li>
+    </ul>
+</nav>

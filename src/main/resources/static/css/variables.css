@@ -55,6 +55,10 @@
     /* Transitions */
     --transition-fast: 0.15s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
+
+    /* Mobile-Specific Adaptations */
+    --mobile-width: 480px;
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Dark Mode optional */
