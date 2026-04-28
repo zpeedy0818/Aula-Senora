@@ -457,6 +457,84 @@ img {
     font-size: 2.25rem;
 }
 
+/* Premium UI Components */
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-accent));
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.stat-card h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-card .stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+}
+
+.btn-gradient {
+    background: linear-gradient(to right, var(--primary), var(--primary-accent));
+    color: white !important;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-gradient:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+/* Specific theme overrides for stat cards */
+body.theme-volunteer .stat-card {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+body.theme-admin .stat-card {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+body.theme-student .stat-card {
+    background: linear-gradient(135deg, #0891b2, #0e7490);
+}
+
 /* Main layout wrapper */
 .site-wrapper {
     display: flex;
@@ -717,4 +795,204 @@ button.nav-link {
 .modern-toast-info {
     background: linear-gradient(to right, #2193b0, #6dd5ed) !important;
     color: white !important;
+}
+
+/* -------------------------------------
+   Interactive Schedule Grid (Mockup Style)
+   ------------------------------------- */
+
+.schedule-grid-container {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: var(--space-md);
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(6, minmax(120px, 1fr));
+    gap: 8px;
+    min-width: 800px;
+}
+
+/* Headers */
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 4px;
+    color: white;
+    text-transform: capitalize;
+}
+
+.grid-header.col-tareas {
+    background-color: #bcbcbc; /* Gray from mockup */
+}
+
+.grid-header.col-day {
+    background-color: #7dd3fc; /* Cyan from mockup */
+}
+
+/* Row Labels (1, 2, 3...) */
+.grid-row-label {
+    background-color: #bcbcbc;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    min-height: 50px;
+}
+
+/* Empty Cells */
+.grid-cell {
+    background-color: #f3f4f6; /* Very light gray */
+    border-radius: 4px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.grid-cell:hover {
+    background-color: #e5e7eb;
+}
+
+/* Active Task Bar (Cyan horizontal bar) */
+.grid-task-bar {
+    background-color: #7dd3fc;
+    height: 16px;
+    border-radius: 8px;
+    width: 100%;
+    transition: transform 0.2s, filter 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+
+.grid-task-bar:hover {
+    filter: brightness(0.95);
+    transform: scaleY(1.1);
+}
+
+/* Tooltip for the task bar */
+.grid-task-bar::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    margin-bottom: 4px;
+}
+
+.grid-task-bar:hover::after {
+    opacity: 1;
+}
+
+/* Bottom Navigation Bar (Mobile Only) */
+.bottom-nav {
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    height: 64px;
+    z-index: 2000;
+    padding-bottom: var(--safe-area-inset-bottom);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-nav-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bottom-nav-item {
+    flex: 1;
+}
+
+.bottom-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.bottom-nav-link i {
+    font-size: 1.25rem;
+    font-style: normal;
+    margin-bottom: 2px;
+}
+
+.bottom-nav-link.active {
+    color: var(--primary-accent);
+}
+
+.bottom-nav-link:hover {
+    color: var(--primary);
+}
+
+/* Adjustments for mobile view */
+@media (max-width: 768px) {
+    .site-content {
+        padding-bottom: 72px; /* Space for bottom nav */
+    }
+
+    .main-footer {
+        padding-bottom: 80px; /* Space for bottom nav */
+    }
+
+    .hidden-desktop {
+        display: block !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .hidden-desktop {
+        display: none !important;
+    }
+}
+
+/* Optional: Simulate Mobile Frame on Desktop (for development/demo) */
+/* To enable, add 'mobile-frame' class to <body> */
+body.mobile-frame {
+    background-color: #f1f5f9; /* Slate 100 */
+}
+
+body.mobile-frame .site-wrapper {
+    max-width: var(--mobile-width);
+    margin: 0 auto;
+    background-color: var(--bg-color);
+    box-shadow: var(--shadow-lg);
+    min-height: 100vh;
+}
+
+body.mobile-frame .main-header, 
+body.mobile-frame .bottom-nav {
+    max-width: var(--mobile-width);
+    left: 50%;
+    transform: translateX(-50%);
 }

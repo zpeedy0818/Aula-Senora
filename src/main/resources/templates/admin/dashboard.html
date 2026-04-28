@@ -23,38 +23,36 @@
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-lg mb-2xl">
 
-            <div class="card bg-color-muted" style="border-top: 4px solid var(--primary);">
-                <h3 class="card-title text-secondary" style="font-size: 1rem;">Estudiantes Activos</h3>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <h3>Estudiantes Activos</h3>
                 <div class="flex items-end justify-between mt-sm">
-                    <span style="font-size: 2rem; font-weight: 700; line-height: 1;">1,248</span>
-                    <span class="badge badge-success">+12%</span>
+                    <span class="stat-value" th:text="${totalEstudiantes}">1,248</span>
+                    <span class="badge" style="background: rgba(255,255,255,0.2); color: white;">+12%</span>
                 </div>
             </div>
 
-            <div class="card bg-color-muted" style="border-top: 4px solid var(--secondary);">
-                <h3 class="card-title text-secondary" style="font-size: 1rem;">Voluntarios Activos</h3>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <h3>Voluntarios Activos</h3>
                 <div class="flex items-end justify-between mt-sm">
-                    <span style="font-size: 2rem; font-weight: 700; line-height: 1;">312</span>
-                    <span class="badge badge-success">+5%</span>
+                    <span class="stat-value" th:text="${totalVoluntarios}">312</span>
+                    <span class="badge" style="background: rgba(255,255,255,0.2); color: white;">+5%</span>
                 </div>
             </div>
 
-            <div class="card bg-color-muted" style="border-top: 4px solid var(--success);">
-                <h3 class="card-title text-secondary" style="font-size: 1rem;">Tutorías Realizadas</h3>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <h3>Tutorías Realizadas</h3>
                 <div class="flex items-end justify-between mt-sm">
-                    <span style="font-size: 2rem; font-weight: 700; line-height: 1;">8,504</span>
+                    <span class="stat-value" th:text="${totalTutorias}">8,504</span>
                 </div>
             </div>
 
-            <div class="card bg-color-muted" style="border-top: 4px solid var(--warning);">
-                <h3 class="card-title text-secondary" style="font-size: 1rem;">Reportes Pendientes</h3>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                <h3>Reportes Pendientes</h3>
                 <div class="flex items-end justify-between mt-sm">
-                    <span style="font-size: 2rem; font-weight: 700; line-height: 1; color: var(--warning);">3</span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warning)"
+                    <span class="stat-value" th:text="${reportesPendientes}" style="color: #fca5a5;">3</span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)"
                         stroke-width="2">
                         <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                        <path d="M12 9v4" />
-                        <path d="M12 17h.01" />
                     </svg>
                 </div>
             </div>
@@ -71,31 +69,31 @@
                     <a href="#" class="text-sm text-primary">Ver todos los usuarios</a>
                 </div>
 
-                <div class="card p-0 overflow-hidden overflow-x-auto">
+                <div class="glass-card p-0 overflow-hidden overflow-x-auto" data-aos="fade-up">
                     <table class="w-full text-left border-collapse" style="width: 100%; min-width: 600px;">
                         <thead>
-                            <tr class="bg-gray-50 border-b border-color-muted text-secondary text-sm">
-                                <th class="p-md font-medium">Nombre</th>
-                                <th class="p-md font-medium">Institución</th>
-                                <th class="p-md font-medium">Fecha de Registro</th>
-                                <th class="p-md font-medium">Estado</th>
-                                <th class="p-md font-medium text-right">Acciones</th>
+                            <tr class="bg-gray-50/50 border-b border-color-muted text-secondary text-sm">
+                                <th class="p-md font-semibold">Nombre</th>
+                                <th class="p-md font-semibold">Institución</th>
+                                <th class="p-md font-semibold">Registro</th>
+                                <th class="p-md font-semibold">Estado</th>
+                                <th class="p-md font-semibold text-right">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Pending Volunteer Item -->
-                            <tr class="border-b border-color-muted hover:bg-gray-50 transition-colors">
+                            <tr class="border-b border-color-muted hover:bg-primary/5 transition-colors">
                                 <td class="p-md">
-                                    <div class="font-bold">Laura Martínez</div>
+                                    <div class="font-bold text-primary">Laura Martínez</div>
                                     <div class="text-xs text-secondary">laura.m@univalle.edu.co</div>
                                 </td>
                                 <td class="p-md text-sm">Universidad del Valle</td>
                                 <td class="p-md text-sm text-secondary">Ayer, 14:30</td>
-                                <td class="p-md"><span class="badge badge-warning text-xs">Revisión Pendiente</span>
+                                <td class="p-md"><span class="badge badge-warning text-xs">Revisión</span>
                                 </td>
                                 <td class="p-md text-right flex justify-end gap-sm">
                                     <button class="btn btn-outline btn-sm text-success"
-                                        style="padding: 0.25rem 0.5rem; color: var(--success); border-color: var(--success);"
+                                        style="border-radius: var(--radius-sm); color: var(--success); border-color: var(--success);"
                                         aria-label="Aprobar voluntario">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">
@@ -103,37 +101,7 @@
                                         </svg>
                                     </button>
                                     <button class="btn btn-outline btn-sm text-error"
-                                        style="padding: 0.25rem 0.5rem; color: var(--error); border-color: var(--error);"
-                                        aria-label="Rechazar voluntario">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2">
-                                            <line x1="18" y1="6" x2="6" y2="18" />
-                                            <line x1="6" y1="6" x2="18" y2="18" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- Pending Volunteer Item -->
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="p-md">
-                                    <div class="font-bold">Andrés Gómez</div>
-                                    <div class="text-xs text-secondary">agomez@empresa.com</div>
-                                </td>
-                                <td class="p-md text-sm">Profesional Independiente</td>
-                                <td class="p-md text-sm text-secondary">Hace 2 días</td>
-                                <td class="p-md"><span class="badge badge-warning text-xs">Revisión Pendiente</span>
-                                </td>
-                                <td class="p-md text-right flex justify-end gap-sm">
-                                    <button class="btn btn-outline btn-sm text-success"
-                                        style="padding: 0.25rem 0.5rem; color: var(--success); border-color: var(--success);"
-                                        aria-label="Aprobar voluntario">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
-                                    </button>
-                                    <button class="btn btn-outline btn-sm text-error"
-                                        style="padding: 0.25rem 0.5rem; color: var(--error); border-color: var(--error);"
+                                        style="border-radius: var(--radius-sm); color: var(--error); border-color: var(--error);"
                                         aria-label="Rechazar voluntario">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">

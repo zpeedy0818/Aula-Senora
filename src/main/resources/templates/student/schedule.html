@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Horario de Tutorías</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">Horarios Disponibles 📅</h1>
+                <p class="text-secondary">Encuentra un espacio y solicita una tutoría.</p>
+            </div>
+            <a th:href="@{/student/dashboard}" class="btn btn-outline btn-md">
+                Volver al Panel
+            </a>
+        </div>
+
+        <!-- Available Schedules Section -->
+        <div class="mb-2xl">
+            <div th:if="${param.requestSent}" class="mb-sm p-sm text-sm text-success bg-green-50 rounded border border-success">
+                ¡Solicitud enviada correctamente!
+            </div>
+
+            <div class="schedule-grid-container mt-md">
+                <div class="schedule-grid bg-surface p-md rounded-md border border-color-muted">
+                    <!-- Headers -->
+                    <div class="grid-header col-tareas">Tareas</div>
+                    <div class="grid-header col-day">Lunes</div>
+                    <div class="grid-header col-day">Martes</div>
+                    <div class="grid-header col-day">Miercoles</div>
+                    <div class="grid-header col-day">Jueves</div>
+                    <div class="grid-header col-day">Viernes</div>
+                    <div class="grid-header col-day">Sabado</div>
+
+                    <!-- Rows 1 to 6 -->
+                    <th:block th:each="rowIdx : ${#numbers.sequence(0, 5)}">
+                        <!-- Row Label -->
+                        <div class="grid-row-label" th:text="${rowIdx + 1}">1</div>
+
+                        <!-- Day Cells for this row -->
+                        <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
+                            <th:block th:with="daySchedules=${horariosPorDia != null and horariosPorDia.containsKey(day) ? horariosPorDia.get(day) : null}">
+                                
+                                <!-- Si hay un horario en esta fila -->
+                                <th:block th:if="${daySchedules != null and daySchedules.size() > rowIdx}">
+                                    <div class="grid-cell" style="cursor:pointer;">
+                                        <div th:with="currentSchedule=${daySchedules[rowIdx]}"
+                                             class="grid-task-bar" 
+                                             th:attr="data-tooltip=${currentSchedule.materia + ' | Prof. ' + currentSchedule.voluntario.usuario.firstName + ' | ' + currentSchedule.horaInicio + '-' + currentSchedule.horaFin}"
+                                             th:onclick="'openRequestModal(' + ${currentSchedule.id} + ', \'' + ${currentSchedule.materia} + '\', \'' + ${day} + '\')'">
+                                        </div>
+                                    </div>
+                                </th:block>
+                                
+                                <!-- Si NO hay horario en esta fila (celda vacía) -->
+                                <th:block th:unless="${daySchedules != null and daySchedules.size() > rowIdx}">
+                                    <div class="grid-cell" style="cursor:default;">
+                                    </div>
+                                </th:block>
+                                
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+            <p class="text-xs text-secondary mt-sm text-center">Haz clic en una barra turquesa para solicitar un cupo en ese horario.</p>
+        </div>
+
+    </div>
+
+    <!-- Request Slot Modal -->
+    <th:block layout:fragment="page-js">
+        <div id="request-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="glass-card w-full max-w-md bg-surface relative p-xl" style="width: 100%; max-width: 500px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('request-modal').classList.add('hidden')" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg section-title" style="color:var(--primary);">Solicitar Tutoría</h2>
+                <p id="modal-subtitle" class="text-sm text-secondary mb-md"></p>
+
+                <form th:action="@{/student/request-slot}" method="post">
+                    <input type="hidden" id="horarioId" name="horarioId" value="">
+
+                    <div class="form-group mb-xl">
+                        <label for="mensaje" class="form-label text-sm font-semibold">Mensaje para el Voluntario</label>
+                        <textarea id="mensaje" name="mensaje" class="form-control" rows="4" required
+                            placeholder="Explica brevemente en qué tema necesitas ayuda (Ej: No entiendo las ecuaciones cuadráticas...)"
+                            style="border-radius: var(--radius-md);"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-md pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('request-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-gradient">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function openRequestModal(id, materia, dia) {
+                document.getElementById('horarioId').value = id;
+                document.getElementById('modal-subtitle').innerText = 'Vas a solicitar un cupo para ' + materia + ' el día ' + dia + '.';
+                document.getElementById('request-modal').classList.remove('hidden');
+            }
+
+            document.getElementById('request-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') document.getElementById('request-modal').classList.add('hidden');
+            });
+        </script>
+    </th:block>
+</body>
+
+</html>

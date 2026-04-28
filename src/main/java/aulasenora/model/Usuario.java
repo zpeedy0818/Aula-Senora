@@ -32,6 +32,9 @@ public class Usuario {
     @Column(nullable = false)
     private String rol = "USER"; // will be overridden during registration
 
+    @Column
+    private Boolean activo = true;
+
     // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -53,4 +56,7 @@ public class Usuario {
 
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
+
+    public Boolean isActivo() { return activo == null || activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
 }

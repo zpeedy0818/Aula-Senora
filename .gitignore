@@ -35,3 +35,8 @@ build/
 # Logs
 application.log
 maven_output.log
+run_log.txt
+run_env_log.txt
+TestDB.java
+TestDB.class
+*.class

@@ -22,7 +22,7 @@
     <th:block layout:fragment="page-css"></th:block>
 </head>
 
-<body class="site-wrapper">
+<body class="site-wrapper" th:classappend="${#authorization.expression('hasRole(''ROLE_ESTUDIANTE'')') ? 'theme-student' : (#authorization.expression('hasRole(''ROLE_VOLUNTARIO'')') ? 'theme-volunteer' : (#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 'theme-admin' : ''))}">
 
     <!-- Header Fragment -->
     <div th:replace="~{fragments/header :: header}"></div>
@@ -34,6 +34,9 @@
 
     <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <div th:replace="~{fragments/bottom-nav :: bottom-nav}"></div>
 
     <!-- Archivo JS Global -->
     <script th:src="@{/js/main.js}"></script>

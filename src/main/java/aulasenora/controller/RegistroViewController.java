@@ -45,15 +45,19 @@ public class RegistroViewController {
             return "register";
         }
 
-        if (recaptchaResponse == null || recaptchaResponse.isEmpty()) {
-            model.addAttribute("error", "Por favor, verifica que no eres un robot.");
-            return "register";
-        }
+        boolean isLocalhost = "127.0.0.1".equals(request.getRemoteAddr()) || "0:0:0:0:0:0:0:1".equals(request.getRemoteAddr());
 
-        boolean isValidCaptcha = recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse);
-        if (!isValidCaptcha) {
-            model.addAttribute("error", "Error en la validación reCAPTCHA. Inténtalo de nuevo.");
-            return "register";
+        if (!isLocalhost) {
+            if (recaptchaResponse == null || recaptchaResponse.isEmpty()) {
+                model.addAttribute("error", "Por favor, verifica que no eres un robot.");
+                return "register";
+            }
+
+            boolean isValidCaptcha = recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse);
+            if (!isValidCaptcha) {
+                model.addAttribute("error", "Error en la validación reCAPTCHA. Inténtalo de nuevo.");
+                return "register";
+            }
         }
         
         try {

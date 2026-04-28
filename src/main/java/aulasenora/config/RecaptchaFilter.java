@@ -24,18 +24,22 @@ public class RecaptchaFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         if ("POST".equalsIgnoreCase(request.getMethod()) && "/login".equals(request.getRequestURI())) {
-            String recaptchaResponse = request.getParameter("g-recaptcha-response");
-            
-            if (recaptchaResponse == null || recaptchaResponse.isEmpty()) {
-                response.sendRedirect("/login?error=true");
-                return;
-            }
+            boolean isLocalhost = "127.0.0.1".equals(request.getRemoteAddr()) || "0:0:0:0:0:0:0:1".equals(request.getRemoteAddr());
 
-            boolean isValid = recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse);
-            
-            if (!isValid) {
-                response.sendRedirect("/login?error=true");
-                return;
+            if (!isLocalhost) {
+                String recaptchaResponse = request.getParameter("g-recaptcha-response");
+                
+                if (recaptchaResponse == null || recaptchaResponse.isEmpty()) {
+                    response.sendRedirect("/login?error=true");
+                    return;
+                }
+
+                boolean isValid = recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse);
+                
+                if (!isValid) {
+                    response.sendRedirect("/login?error=true");
+                    return;
+                }
             }
         }
         

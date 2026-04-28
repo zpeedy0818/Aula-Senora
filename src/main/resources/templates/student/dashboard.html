@@ -15,14 +15,6 @@
                         th:text="${#authentication.name}">Estudiante</span> 👋</h1>
                 <p class="text-secondary">Aquí tienes un resumen de tus solicitudes y materias.</p>
             </div>
-            <button class="btn btn-primary btn-lg shadow-md"
-                onclick="document.getElementById('help-modal').classList.remove('hidden')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    class="mr-sm" style="margin-right:0.5rem;">
-                    <path d="M12 5v14M5 12h14" />
-                </svg>
-                Solicitar Ayuda
-            </button>
         </div>
 
         <!-- Dashboard Widgets -->
@@ -119,174 +111,30 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Sidebar / Resources -->
-            <div class="col-span-1">
-                <h2 class="section-title mb-md">Recursos Recomendados</h2>
-                <div class="card flex flex-col gap-md">
-                    <!-- Resource Item -->
-                    <a href="#" class="flex gap-md items-start group" style="text-decoration:none;">
-                        <div
-                            class="p-xs bg-primary-light text-primary-dark rounded-md group-hover:bg-primary group-hover:text-white transition-colors">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="16" y1="13" x2="8" y2="13" />
-                                <line x1="16" y1="17" x2="8" y2="17" />
-                                <polyline points="10 9 9 9 8 9" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-primary group-hover:underline text-sm mb-xs">Guía: Fracciones
-                                Básicas</h4>
-                            <p class="text-xs text-secondary">Documento PDF - 2MB</p>
-                        </div>
-                    </a>
-
-                    <!-- Resource Item -->
-                    <a href="#" class="flex gap-md items-start group" style="text-decoration:none;">
-                        <div
-                            class="p-xs bg-secondary-light text-secondary-dark rounded-md group-hover:bg-secondary group-hover:text-white transition-colors">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <polygon points="23 7 16 12 23 17 23 7" />
-                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-primary group-hover:underline text-sm mb-xs">Video: Leyes de
-                                Newton</h4>
-                            <p class="text-xs text-secondary">Video - 15 min</p>
-                        </div>
-                    </a>
-                </div>
+        <!-- Available Schedules Section (Summary) -->
+        <div class="mb-2xl mt-xl">
+            <h2 class="section-title mb-md">Horarios Disponibles</h2>
+            <div class="card p-xl text-center bg-surface border border-color-muted">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" class="mx-auto mb-md opacity-80">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <h3 class="font-bold text-lg mb-sm">Reserva una tutoría</h3>
+                <p class="text-secondary mb-lg max-w-md mx-auto">Explora los horarios disponibles de nuestros voluntarios y solicita ayuda en la materia que necesites.</p>
+                <a th:href="@{/student/schedule}" class="btn btn-primary btn-lg shadow-md">Ver Horarios Completos</a>
             </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
 
         </div>
 
     </div>
 
-    <!-- Request Help Modal -->
-    <th:block layout:fragment="page-js">
-        <div id="help-modal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
-            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-lg bg-surface relative"
-                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
-                <button type="button"
-                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
-                    onclick="document.getElementById('help-modal').classList.add('hidden')" aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-
-                <h2 class="mb-lg">Nueva Solicitud de Ayuda</h2>
-
-                <!-- Use actual endpoint based on backend config -->
-                <form id="help-form" th:action="@{/student/request-help}" method="post">
-
-                    <div class="form-group">
-                        <label for="subject" class="form-label">Materia / Área</label>
-                        <select id="subject" name="subject" class="form-control" required
-                            style="appearance: auto; cursor:pointer;">
-                            <option value="">Selecciona una materia...</option>
-                            <option value="matematicas">Matemáticas</option>
-                            <option value="lenguaje">Lenguaje / Español</option>
-                            <option value="ciencias">Ciencias Naturales</option>
-                            <option value="sociales">Ciencias Sociales</option>
-                            <option value="ingles">Inglés</option>
-                            <option value="tecnologia">Tecnología e Informática</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="title" class="form-label">Título de tu solicitud</label>
-                        <input type="text" id="title" name="title" class="form-control" required
-                            placeholder="Ej: Ayuda con división de dos cifras">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description" class="form-label">Describe tu duda en detalle</label>
-                        <textarea id="description" name="description" class="form-control" rows="4" required
-                            placeholder="Explica qué es lo que no entiendes o en qué ejercicio te quedaste atascado..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label mb-sm">¿Cómo prefieres recibir la ayuda?</label>
-                        <div class="flex gap-md flex-col sm:flex-row">
-                            <label
-                                class="flex items-center gap-xs cursor-pointer p-sm border border-color-muted rounded-md flex-1 hover:border-primary transition-colors">
-                                <input type="radio" name="format" value="text" checked
-                                    style="accent-color: var(--primary);">
-                                <span>Por Mensaje / Chat</span>
-                            </label>
-                            <label
-                                class="flex items-center gap-xs cursor-pointer p-sm border border-color-muted rounded-md flex-1 hover:border-primary transition-colors">
-                                <input type="radio" name="format" value="video" style="accent-color: var(--primary);">
-                                <span>Videollamada</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline"
-                            onclick="document.getElementById('help-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <script>
-            // Utility to close modal when clicking outside
-            document.getElementById('help-modal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
-                }
-            });
-            // Utility to close on escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && !document.getElementById('help-modal').classList.contains('hidden')) {
-                    document.getElementById('help-modal').classList.add('hidden');
-                }
-            });
-            // Intercept form submission for MVP demo
-            document.getElementById('help-form').addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent page reload
-
-                const subjectSelect = document.getElementById('subject');
-                const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
-                const title = document.getElementById('title').value;
-                const desc = document.getElementById('description').value;
-
-                const newRequestHTML = `
-                    <div class="p-lg border-b border-color-muted flex flex-col sm:flex-row justify-between gap-md transition-all hover:bg-gray-50" style="background-color: #f0fdf4; animation: fadeIn 0.5s;">
-                        <div>
-                            <div class="flex items-center gap-sm mb-xs">
-                                <span class="badge" style="background-color: var(--primary-light); color: var(--primary);">${subjectText}</span>
-                                <span class="text-sm text-secondary font-medium">Justo ahora</span>
-                            </div>
-                            <h4 class="font-bold text-lg mb-xs">${title}</h4>
-                            <p class="text-secondary text-sm line-clamp-2">${desc}</p>
-                        </div>
-                        <div class="flex flex-col justify-center items-start sm:items-end gap-sm min-w-[120px]">
-                            <span class="badge badge-warning">En espera</span>
-                        </div>
-                    </div>
-                `;
-
-                // Inject at the top of the list
-                document.getElementById('requests-list').insertAdjacentHTML('afterbegin', newRequestHTML);
-
-                // Close modal and reset form
-                document.getElementById('help-modal').classList.add('hidden');
-                this.reset();
-            });
-        </script>
-    </th:block>
 </body>
 
 </html>

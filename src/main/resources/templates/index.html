@@ -11,7 +11,7 @@
 
         <!-- Hero Section -->
         <section class="hero-section"
-            style="background: linear-gradient(135deg, var(--bg-color) 0%, var(--primary-light) 100%); padding: var(--space-2xl) 0; position: relative;">
+            style="background: linear-gradient(135deg, var(--bg-color) 0%, var(--primary-light) 100%); padding: var(--space-2xl) 0; position: relative; overflow: hidden;">
             
             <!-- Animated Background Blobs -->
             <div class="animate-float" style="position: absolute; top: -50px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; z-index: 0; pointer-events: none;"></div>
@@ -20,91 +20,116 @@
             <div class="container grid grid-cols-1 md:grid-cols-2 gap-xl items-center" style="position: relative; z-index: 1;">
                 <div class="hero-content" data-aos="fade-right">
                     <span class="badge badge-primary mb-md" data-aos="fade-down" data-aos-delay="100">Educación como derecho fundamental</span>
-                    <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: var(--space-md); font-weight: 800; letter-spacing: -1px; line-height: 1.1;">Acompañamiento
-                        <span style="background: linear-gradient(135deg, var(--primary), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Académico Solidario</span></h1>
+                    <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: var(--space-md); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;">
+                        Transformando el <span style="background: linear-gradient(135deg, var(--primary), var(--primary-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Futuro</span> juntos
+                    </h1>
                     <p class="hero-subtitle"
-                        style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--space-xl); max-width: 90%;">
-                        Conectamos a estudiantes del sistema educativo colombiano con voluntarios universitarios y
-                        profesionales para fortalecer su aprendizaje de forma gratuita y accesible.
+                        style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--space-xl); max-width: 90%; line-height: 1.6;">
+                        Aula Señora es el puente entre el talento universitario y los estudiantes que buscan superar sus límites académicos en Colombia.
                     </p>
-                    <div class="hero-actions flex gap-md" data-aos="fade-up" data-aos-delay="200">
-                        <a th:href="@{/register?role=student}" class="btn btn-primary btn-lg" style="padding: 1rem 2rem; font-size: 1.1rem;">Soy Estudiante</a>
-                        <a th:href="@{/register?role=volunteer}" class="btn btn-outline btn-lg bg-white" style="padding: 1rem 2rem; font-size: 1.1rem;">Quiero ser
-                            Voluntario</a>
+                    <div class="hero-actions flex flex-wrap gap-md" data-aos="fade-up" data-aos-delay="200">
+                        <a th:href="@{/register?role=student}" class="btn btn-primary btn-lg shadow-lg" style="padding: 1.25rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-full);">Empezar a Aprender</a>
+                        <a th:href="@{/register?role=volunteer}" class="btn btn-outline btn-lg bg-white shadow-md" style="padding: 1.25rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-full);">Ser Voluntario</a>
                     </div>
                 </div>
                 <div class="hero-image flex justify-center hidden-mobile" data-aos="fade-left" data-aos-delay="300" style="position: relative;">
-                    <div
-                        style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg), 0 20px 40px rgba(0,0,0,0.1); border: 8px solid white; transform: rotate(2deg); transition: transform 0.5s ease;" onmouseover="this.style.transform='rotate(0deg) scale(1.02)'" onmouseout="this.style.transform='rotate(2deg) scale(1)'">
-                        <img th:src="@{/img/hero-bg.png}" alt="Acompañamiento Académico"
-                            style="max-width: 100%; height: auto; display: block;">
-                    </div>
-                    <!-- Decoración visual extra -->
-                    <div class="animate-float"
-                        style="position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px; background: linear-gradient(135deg, var(--secondary), var(--warning)); opacity: 0.2; border-radius: 50%; z-index: -1;">
+                    <div class="glass-card p-2"
+                        style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-xl); transform: perspective(1000px) rotateY(-5deg) rotateX(5deg); transition: all 0.5s ease;" 
+                        onmouseover="this.style.transform='perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05)'" 
+                        onmouseout="this.style.transform='perspective(1000px) rotateY(-5deg) rotateX(5deg) scale(1)'">
+                        <img th:src="@{/img/mission.png}" alt="Acompañamiento Académico"
+                            style="max-width: 100%; height: auto; display: block; border-radius: var(--radius-md);">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Features / Value Proposition Section -->
-        <section class="features-section py-2xl"
-            style="padding: var(--space-2xl) 0; background-color: var(--surface-color);">
-            <div class="container text-center">
-                <h2 class="section-title mb-sm" data-aos="fade-up">¿Por qué usar Aula Señora?</h2>
-                <p class="section-subtitle max-w-2xl mx-auto mb-xl" data-aos="fade-up" data-aos-delay="100"
-                    style="margin-left: auto; margin-right: auto; max-width: 600px; color: var(--text-secondary); margin-bottom: var(--space-xl);">
-                    Nuestra plataforma está diseñada pensando en la inclusión y en superar los rezagos académicos con
-                    herramientas accesibles.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
-                    <!-- Feature 1 -->
-                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="100">
-                        <div class="icon-wrapper mb-md"
-                            style="background: linear-gradient(135deg, var(--primary-light), white); color: var(--primary-dark); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                            </svg>
-                        </div>
-                        <h3 class="card-title">Apoyo Personalizado</h3>
-                        <p>Recibe ayuda directa en áreas como matemáticas, lenguaje y ciencias con explicaciones claras
-                            y ejemplos prácticos.</p>
+        <!-- Stats Section -->
+        <section class="stats-section py-xl bg-surface">
+            <div class="container">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-lg text-center">
+                    <div data-aos="zoom-in" data-aos-delay="100">
+                        <div class="text-3xl font-extrabold text-primary" style="font-size: 2.5rem;">+500</div>
+                        <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Estudiantes</div>
                     </div>
-
-                    <!-- Feature 2 -->
-                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
-                        <div class="icon-wrapper mb-md"
-                            style="background: linear-gradient(135deg, var(--secondary-light), white); color: var(--secondary-dark); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="m12 16 4-4-4-4" />
-                                <path d="M8 12h8" />
-                            </svg>
-                        </div>
-                        <h3 class="card-title">Accesibilidad Total</h3>
-                        <p>Diseño optimizado para conexiones limitadas y soporte para opciones de accesibilidad visual y
-                            auditiva.</p>
+                    <div data-aos="zoom-in" data-aos-delay="200">
+                        <div class="text-3xl font-extrabold text-secondary" style="font-size: 2.5rem;">+120</div>
+                        <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Voluntarios</div>
                     </div>
+                    <div data-aos="zoom-in" data-aos-delay="300">
+                        <div class="text-3xl font-extrabold text-warning" style="font-size: 2.5rem;">1.2k</div>
+                        <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Horas de Clase</div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="400">
+                        <div class="text-3xl font-extrabold text-success" style="font-size: 2.5rem;">98%</div>
+                        <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Satisfacción</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Feature 3 -->
-                    <div class="card text-center flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
-                        <div class="icon-wrapper mb-md"
-                            style="background: linear-gradient(135deg, #dcfce7, white); color: var(--success); padding: 1.5rem; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
+        <!-- About Us / Mission Section -->
+        <section class="mission-section py-2xl">
+            <div class="container grid grid-cols-1 md:grid-cols-2 gap-2xl items-center">
+                <div class="order-2 md:order-1" data-aos="fade-right">
+                    <h2 class="section-title mb-md" style="text-align: left;">Nuestra Misión</h2>
+                    <p class="mb-lg text-lg text-secondary" style="line-height: 1.7;">
+                        Nacimos como una respuesta a la brecha educativa. Creemos que el código postal de un estudiante no debería definir su capacidad de alcanzar sus sueños académicos.
+                    </p>
+                    <div class="flex flex-col gap-md">
+                        <div class="flex gap-md items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary flex-shrink-0">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Equidad Educativa</h4>
+                                <p class="text-sm text-secondary">Acceso gratuito a educación de calidad para todos los rincones del país.</p>
+                            </div>
                         </div>
-                        <h3 class="card-title">Comunidad Solidaria</h3>
-                        <p>Voluntarios comprometidos con la equidad educativa dispuestos a compartir su conocimiento y
-                            tiempo.</p>
+                        <div class="flex gap-md items-start">
+                            <div class="w-10 h-10 rounded-full bg-secondary-light flex items-center justify-center text-secondary flex-shrink-0">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Entorno Seguro</h4>
+                                <p class="text-sm text-secondary">Validación de perfiles y monitoreo constante para garantizar un espacio de respeto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2" data-aos="fade-left">
+                    <img th:src="@{/img/mission.png}" alt="Equipo Aula Señora" class="rounded-lg shadow-xl" style="width: 100%; height: auto;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Did You Know? / Curious Facts Section -->
+        <section class="facts-section py-2xl bg-surface" style="background: linear-gradient(to bottom, #f8fafc, #eff6ff);">
+            <div class="container">
+                <div class="flex flex-col md:flex-row gap-2xl items-center">
+                    <div class="md:w-1/3" data-aos="zoom-in">
+                        <img th:src="@{/img/facts.png}" alt="Sabías que" class="animate-float" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
+                    </div>
+                    <div class="md:w-2/3">
+                        <h2 class="section-title" style="text-align: left; margin-bottom: var(--space-xl);">¿Sabías qué?</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-lg">
+                            <div class="card bg-white p-lg border-none shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                                <h4 class="text-primary font-bold mb-xs">Impacto Social</h4>
+                                <p class="text-sm text-secondary">El 40% de los estudiantes en zonas rurales de Colombia no tienen acceso a tutorías extraescolares. Aula Señora busca reducir esa cifra.</p>
+                            </div>
+                            <div class="card bg-white p-lg border-none shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                                <h4 class="text-secondary font-bold mb-xs">Crecimiento Cognitivo</h4>
+                                <p class="text-sm text-secondary">Estudios demuestran que el aprendizaje entre pares (peer-to-peer) aumenta la retención de conocimientos en un 60%.</p>
+                            </div>
+                            <div class="card bg-white p-lg border-none shadow-sm" data-aos="fade-up" data-aos-delay="300">
+                                <h4 class="text-warning font-bold mb-xs">Solidaridad Digital</h4>
+                                <p class="text-sm text-secondary">Nuestra plataforma está optimizada para consumir un 30% menos de datos que otras herramientas de videoconferencia.</p>
+                            </div>
+                            <div class="card bg-white p-lg border-none shadow-sm" data-aos="fade-up" data-aos-delay="400">
+                                <h4 class="text-success font-bold mb-xs">Futuro Profesional</h4>
+                                <p class="text-sm text-secondary">Los voluntarios universitarios desarrollan habilidades de liderazgo y empatía que son altamente valoradas por las empresas hoy en día.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
