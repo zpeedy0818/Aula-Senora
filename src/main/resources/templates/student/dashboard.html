@@ -111,55 +111,62 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Sidebar / Available Schedules -->
-            <div class="col-span-1">
-                <h2 class="section-title mb-md">Horarios de Voluntarios</h2>
-                
-                <div th:if="${param.requestSent}" class="mb-sm p-sm text-sm text-success bg-green-50 rounded border border-success">
-                    ¡Solicitud enviada correctamente!
-                </div>
+        <!-- Available Schedules Section (Full Width) -->
+        <div class="mb-2xl mt-xl">
+            <h2 class="section-title mb-md">Horarios de Voluntarios</h2>
+            
+            <div th:if="${param.requestSent}" class="mb-sm p-sm text-sm text-success bg-green-50 rounded border border-success">
+                ¡Solicitud enviada correctamente!
+            </div>
 
-                <div class="schedule-grid-container mt-md">
-                    <div class="schedule-grid bg-surface p-md rounded-md border border-color-muted">
-                        <!-- Headers -->
-                        <div class="grid-header col-tareas">Tareas</div>
-                        <div class="grid-header col-day">Lunes</div>
-                        <div class="grid-header col-day">Martes</div>
-                        <div class="grid-header col-day">Miercoles</div>
-                        <div class="grid-header col-day">Jueves</div>
-                        <div class="grid-header col-day">Viernes</div>
-                        <div class="grid-header col-day">Sabado</div>
+            <div class="schedule-grid-container mt-md">
+                <div class="schedule-grid bg-surface p-md rounded-md border border-color-muted">
+                    <!-- Headers -->
+                    <div class="grid-header col-tareas">Tareas</div>
+                    <div class="grid-header col-day">Lunes</div>
+                    <div class="grid-header col-day">Martes</div>
+                    <div class="grid-header col-day">Miercoles</div>
+                    <div class="grid-header col-day">Jueves</div>
+                    <div class="grid-header col-day">Viernes</div>
+                    <div class="grid-header col-day">Sabado</div>
 
-                        <!-- Rows 1 to 6 -->
-                        <th:block th:each="rowIdx : ${#numbers.sequence(0, 5)}">
-                            <!-- Row Label -->
-                            <div class="grid-row-label" th:text="${rowIdx + 1}">1</div>
+                    <!-- Rows 1 to 6 -->
+                    <th:block th:each="rowIdx : ${#numbers.sequence(0, 5)}">
+                        <!-- Row Label -->
+                        <div class="grid-row-label" th:text="${rowIdx + 1}">1</div>
 
-                            <!-- Day Cells for this row -->
-                            <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
-                                <th:block th:with="daySchedules=${horariosPorDia != null ? horariosPorDia.get(day) : null}">
-                                    
-                                    <!-- Si hay un horario en esta fila -->
-                                    <div class="grid-cell" th:if="${daySchedules != null and daySchedules.size() > rowIdx}" style="cursor:pointer;">
+                        <!-- Day Cells for this row -->
+                        <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
+                            <th:block th:with="daySchedules=${horariosPorDia != null and horariosPorDia.containsKey(day) ? horariosPorDia.get(day) : null}">
+                                
+                                <!-- Si hay un horario en esta fila -->
+                                <th:block th:if="${#lists.size(daySchedules) > rowIdx}">
+                                    <div class="grid-cell" style="cursor:pointer;">
                                         <div th:with="currentSchedule=${daySchedules[rowIdx]}"
                                              class="grid-task-bar" 
                                              th:attr="data-tooltip=${currentSchedule.materia + ' | Prof. ' + currentSchedule.voluntario.usuario.firstName + ' | ' + currentSchedule.horaInicio + '-' + currentSchedule.horaFin}"
                                              th:onclick="'openRequestModal(' + ${currentSchedule.id} + ', \'' + ${currentSchedule.materia} + '\', \'' + ${day} + '\')'">
                                         </div>
                                     </div>
-                                    
-                                    <!-- Si NO hay horario en esta fila (celda vacía) -->
-                                    <div class="grid-cell" th:unless="${daySchedules != null and daySchedules.size() > rowIdx}" style="cursor:default;">
-                                    </div>
-                                    
                                 </th:block>
+                                
+                                <!-- Si NO hay horario en esta fila (celda vacía) -->
+                                <th:block th:unless="${#lists.size(daySchedules) > rowIdx}">
+                                    <div class="grid-cell" style="cursor:default;">
+                                    </div>
+                                </th:block>
+                                
                             </th:block>
                         </th:block>
-                    </div>
+                    </th:block>
                 </div>
-                <p class="text-xs text-secondary mt-sm text-center">Haz clic en una barra turquesa para solicitar un cupo en ese horario.</p>
             </div>
+            <p class="text-xs text-secondary mt-sm text-center">Haz clic en una barra turquesa para solicitar un cupo en ese horario.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
 
         </div>
 
