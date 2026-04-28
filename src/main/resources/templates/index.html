@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="order-1 md:order-2" data-aos="fade-left">
-                    <img th:src="@{/img/mission.png}" alt="Equipo Aula Señora" class="rounded-lg shadow-xl" style="width: 100%; height: auto;">
+                    <img th:src="@{/img/campus.jpg}" alt="Campus Aula Señora" class="rounded-lg shadow-xl" style="width: 100%; height: auto;">
                 </div>
             </div>
         </section>
@@ -135,26 +135,40 @@
             </div>
         </section>
 
-        <!-- Call to Action -->
-        <section class="cta-section"
-            style="padding: var(--space-2xl) 0; background: linear-gradient(135deg, var(--primary), var(--primary-accent)); color: white; text-align: center; position: relative;">
-            
-            <!-- Deco circles -->
-            <div style="position: absolute; top: 10%; left: 5%; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
-            <div style="position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05);"></div>
-            
-            <div class="container" style="position: relative; z-index: 1;">
-                <h2 data-aos="fade-up" style="color: white; margin-bottom: var(--space-md); font-weight: 700;">¿Listo para empezar a aprender o enseñar?</h2>
-                <p data-aos="fade-up" data-aos-delay="100"
-                    style="color: rgba(255,255,255,0.9); margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">
-                    Únete a nuestra comunidad hoy mismo y forma parte del cambio en la educación colombiana.
+        <!-- Conócenos Section -->
+        <section class="conocenos-section py-xl bg-white">
+            <div class="container text-center">
+                <h2 class="section-title mb-md">Conócenos</h2>
+                <p class="text-secondary max-w-2xl mx-auto mb-xl" style="font-size: 1.1rem; line-height: 1.8;">
+                    Somos un equipo de estudiantes y profesionales apasionados por la educación. Trabajamos día a día para crear un puente de conocimiento entre las universidades y los estudiantes de colegio, buscando democratizar el aprendizaje en Colombia.
                 </p>
-                <div data-aos="zoom-in" data-aos-delay="200">
-                    <a th:href="@{/register}" class="btn bg-white"
-                        style="color: var(--primary); font-weight: bold; padding: 0.75rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-full); box-shadow: 0 10px 25px rgba(0,0,0,0.2);">Comenzar Ahora</a>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mt-lg">
+                    <div class="card border border-color-muted shadow-sm p-lg text-center" data-aos="fade-up" data-aos-delay="100">
+                        <div class="w-16 h-16 rounded-full bg-primary-light flex items-center justify-center mx-auto mb-sm text-primary">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h4 class="font-bold mb-xs">Comunidad Unida</h4>
+                        <p class="text-sm text-secondary">Fomentamos el apoyo mutuo y el crecimiento colectivo entre jóvenes.</p>
+                    </div>
+                    <div class="card border border-color-muted shadow-sm p-lg text-center" data-aos="fade-up" data-aos-delay="200">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-sm" style="background-color: #dcfce7; color: #15803d;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                        </div>
+                        <h4 class="font-bold mb-xs">Calidad Académica</h4>
+                        <p class="text-sm text-secondary">Aseguramos tutorías de alto nivel impartidas por voluntarios capacitados.</p>
+                    </div>
+                    <div class="card border border-color-muted shadow-sm p-lg text-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-sm" style="background-color: #fef3c7; color: #b45309;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <h4 class="font-bold mb-xs">Aprendizaje Continuo</h4>
+                        <p class="text-sm text-secondary">Promovemos un entorno donde enseñar y aprender van de la mano.</p>
+                    </div>
                 </div>
             </div>
         </section>
+
+
 
     </div>
 
