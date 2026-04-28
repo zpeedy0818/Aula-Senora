@@ -13,4 +13,5 @@ public interface SolicitudCupoRepository extends JpaRepository<SolicitudCupo, Lo
     List<SolicitudCupo> findByEstudiante(Usuario estudiante);
     List<SolicitudCupo> findByHorario(HorarioDisponible horario);
     List<SolicitudCupo> findByHorarioIn(List<HorarioDisponible> horarios);
+    List<SolicitudCupo> findByHorario_Voluntario(aulasenora.model.Voluntario voluntario);
 }

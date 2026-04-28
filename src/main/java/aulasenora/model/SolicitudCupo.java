@@ -25,6 +25,9 @@ public class SolicitudCupo {
     @Column(nullable = false)
     private LocalDateTime fechaSolicitud = LocalDateTime.now();
 
+    @Column(columnDefinition = "TEXT")
+    private String mensaje;
+
     public SolicitudCupo() {}
 
     public SolicitudCupo(Usuario estudiante, HorarioDisponible horario) {
@@ -72,5 +75,13 @@ public class SolicitudCupo {
 
     public void setFechaSolicitud(LocalDateTime fechaSolicitud) {
         this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
     }
 }

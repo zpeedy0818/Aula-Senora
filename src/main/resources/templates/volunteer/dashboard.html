@@ -79,17 +79,22 @@
                     <span class="badge badge-warning text-xs">Nuevas</span>
                 </h2>
 
-                <div class="card p-0 overflow-hidden flex flex-col gap-[1px] bg-color-muted">
+                <div class="glass-card p-0 overflow-hidden flex flex-col gap-[1px] bg-color-muted">
 
-                    <!-- Request Item -->
-                    <div class="p-lg bg-surface transition-all hover:bg-gray-50">
+                    <div th:if="${param.statusUpdated}" class="m-md p-sm text-sm text-success bg-green-50 rounded border border-success">
+                        Estado de la solicitud actualizado.
+                    </div>
+
+                    <div th:each="solicitud : ${solicitudes}" class="p-lg bg-surface transition-all hover:bg-gray-50">
                         <div class="flex items-center justify-between mb-sm">
-                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
-                            <span class="text-xs text-secondary font-medium">Hace 15 min</span>
+                            <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${solicitud.horario.materia}">Materia</span>
+                            <span th:class="${solicitud.estado == 'PENDIENTE' ? 'badge badge-warning' : (solicitud.estado == 'ACEPTADA' ? 'badge badge-success' : 'badge')} "
+                                  th:style="${solicitud.estado == 'RECHAZADA' ? 'background-color:#fee2e2; color:#ef4444;' : ''}"
+                                  th:text="${solicitud.estado}">Estado</span>
                         </div>
-                        <h4 class="font-bold text-lg mb-xs">Dudas con trigonometría</h4>
-                        <p class="text-secondary text-sm mb-md line-clamp-2">Hola, no entiendo bien cómo sacar el seno y
-                            coseno en un triángulo rectángulo cuando me falta la hipotenusa.</p>
+                        <h4 class="font-bold text-lg mb-xs" th:text="${'Día: ' + solicitud.horario.diaSemana + ' ' + solicitud.horario.horaInicio}">Día y Hora</h4>
+                        <p class="text-secondary text-sm mb-md line-clamp-2" th:text="${solicitud.mensaje}">Mensaje del estudiante...</p>
+                        
                         <div class="flex justify-between items-center text-sm">
                             <div class="flex items-center gap-xs text-secondary">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -97,34 +102,24 @@
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
-                                Estudiante: Carlos M.
+                                Estudiante: <span th:text="${solicitud.estudiante.firstName + ' ' + solicitud.estudiante.lastName}">Nombre</span>
                             </div>
-                            <button class="btn btn-primary btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar
-                                Tutoría</button>
+                            
+                            <div class="flex gap-sm" th:if="${solicitud.estado == 'PENDIENTE'}">
+                                <form th:action="@{/volunteer/request/{id}/status(id=${solicitud.id})}" method="post">
+                                    <input type="hidden" name="status" value="RECHAZADA">
+                                    <button type="submit" class="btn btn-outline btn-sm text-error" style="border-color:transparent; padding: 0.25rem 0.75rem;">Rechazar</button>
+                                </form>
+                                <form th:action="@{/volunteer/request/{id}/status(id=${solicitud.id})}" method="post">
+                                    <input type="hidden" name="status" value="ACEPTADA">
+                                    <button type="submit" class="btn btn-gradient btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar Tutoría</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Request Item -->
-                    <div class="p-lg bg-surface transition-all hover:bg-gray-50">
-                        <div class="flex items-center justify-between mb-sm">
-                            <span class="badge" style="background-color: #fef3c7; color: #b45309;">Física</span>
-                            <span class="text-xs text-secondary font-medium">Hace 2 horas</span>
-                        </div>
-                        <h4 class="font-bold text-lg mb-xs">Caída libre</h4>
-                        <p class="text-secondary text-sm mb-md line-clamp-2">Necesito ayuda para resolver un taller
-                            sobre ecuaciones de caída libre y gravedad.</p>
-                        <div class="flex justify-between items-center text-sm">
-                            <div class="flex items-center gap-xs text-secondary">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                Estudiante: Maria J.
-                            </div>
-                            <button class="btn btn-primary btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar
-                                Tutoría</button>
-                        </div>
+                    <div th:if="${solicitudes == null or solicitudes.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface">
+                        No tienes solicitudes de tutoría en este momento.
                     </div>
 
                 </div>

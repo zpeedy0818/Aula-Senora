@@ -5,7 +5,8 @@ import aulasenora.model.Usuario;
 import aulasenora.model.Voluntario;
 import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.UsuarioRepository;
-import aulasenora.repository.VoluntarioRepository;
+import aulasenora.model.SolicitudCupo;
+import aulasenora.repository.SolicitudCupoRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +22,13 @@ public class VolunteerController {
     private final UsuarioRepository usuarioRepository;
     private final VoluntarioRepository voluntarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
+    private final SolicitudCupoRepository solicitudCupoRepository;
 
-    public VolunteerController(UsuarioRepository usuarioRepository, VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository) {
+    public VolunteerController(UsuarioRepository usuarioRepository, VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
+        this.solicitudCupoRepository = solicitudCupoRepository;
     }
 
     @GetMapping("/dashboard")
@@ -37,6 +40,9 @@ public class VolunteerController {
             model.addAttribute("voluntario", voluntario);
             List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
             model.addAttribute("horarios", horarios);
+
+            List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
+            model.addAttribute("solicitudes", solicitudes);
         });
 
         return "volunteer/dashboard";
@@ -77,5 +83,22 @@ public class VolunteerController {
         });
 
         return "redirect:/volunteer/dashboard?scheduleDeleted=true";
+    }
+
+    @PostMapping("/request/{id}/status")
+    public String updateRequestStatus(@PathVariable Long id, @RequestParam String status, Principal principal) {
+        if (principal == null) return "redirect:/login";
+
+        solicitudCupoRepository.findById(id).ifPresent(solicitud -> {
+            // Check if current user is the volunteer for this request
+            if (solicitud.getHorario().getVoluntario().getUsuario().getUsername().equals(principal.getName())) {
+                if ("ACEPTADA".equals(status) || "RECHAZADA".equals(status)) {
+                    solicitud.setEstado(status);
+                    solicitudCupoRepository.save(solicitud);
+                }
+            }
+        });
+
+        return "redirect:/volunteer/dashboard?statusUpdated=true";
     }
 }
