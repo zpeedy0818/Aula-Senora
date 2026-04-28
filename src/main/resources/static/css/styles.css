@@ -996,3 +996,31 @@ body.mobile-frame .bottom-nav {
     left: 50%;
     transform: translateX(-50%);
 }
+
+/* Custom Dropdown Toggle Hover */
+.dropdown-toggle:hover {
+    background-color: var(--bg-color-muted) !important;
+}
+
+/* Thematic Backgrounds */
+body.theme-student {
+    background-color: #f8fafc;
+    background-image: 
+        linear-gradient(rgba(8, 145, 178, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(8, 145, 178, 0.07) 1px, transparent 1px),
+        linear-gradient(rgba(8, 145, 178, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(8, 145, 178, 0.03) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+
+body.theme-volunteer {
+    background-color: #fffbeb;
+    background-image: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 25%, transparent 25%, transparent 50%, rgba(245, 158, 11, 0.08) 50%, rgba(245, 158, 11, 0.08) 75%, transparent 75%, transparent);
+    background-size: 30px 30px;
+}
+
+body.theme-admin {
+    background-color: #f5f3ff;
+    background-image: repeating-radial-gradient(circle at 0 0, transparent 0, #f5f3ff 15px), repeating-linear-gradient(rgba(124, 58, 237, 0.08), rgba(124, 58, 237, 0.08));
+}

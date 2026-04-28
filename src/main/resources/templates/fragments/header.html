@@ -22,7 +22,6 @@
             <!-- Desktop Navigation -->
             <nav class="desktop-nav hidden-mobile">
                 <ul class="nav-links flex items-center gap-md" style="margin-bottom:0; list-style:none;">
-                    <li><a th:href="@{/}" class="nav-link">Inicio</a></li>
 
                     <!-- Unauthenticated Users -->
                     <li sec:authorize="!isAuthenticated()">
@@ -35,10 +34,9 @@
                     <!-- Authenticated Users -->
                     <li sec:authorize="isAuthenticated()" class="dropdown" style="list-style:none; position: relative;">
                         <button class="nav-link dropdown-toggle flex items-center gap-xs" aria-expanded="false"
-                            aria-haspopup="true" style="background:transparent; border:none; cursor:pointer; color:var(--text-primary);"
-                            onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                            aria-haspopup="true" style="background:transparent; border:none; cursor:pointer; color:var(--text-primary);">
                             <div class="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
-                                <span sec:authentication="name">U</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             </div>
                             <span class="hidden-mobile" sec:authentication="name">Usuario</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -85,7 +83,6 @@
         <!-- Mobile Navigation Drawer -->
         <nav id="mobile-menu" class="mobile-nav hidden">
             <ul class="mobile-nav-links flex flex-col">
-                <li><a th:href="@{/}" class="mobile-nav-link">Inicio</a></li>
                 <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="mobile-nav-link">Iniciar Sesión</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}"
