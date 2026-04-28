@@ -138,19 +138,22 @@
 
                             <!-- Day Cells for this row -->
                             <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
-                                <div class="grid-cell" 
-                                     th:with="daySchedules=${horariosPorDia != null ? horariosPorDia.get(day) : null},
-                                              hasSchedule=${daySchedules != null and daySchedules.size() > rowIdx},
-                                              currentSchedule=${hasSchedule ? daySchedules[rowIdx] : null}"
-                                     th:onclick="${hasSchedule} ? 'openRequestModal(' + ${currentSchedule.id} + ', \'' + ${currentSchedule.materia} + '\', \'' + ${day} + '\')' : ''"
-                                     th:style="${hasSchedule} ? 'cursor:pointer;' : 'cursor:default;'">
-                                     
-                                     <!-- Render active bar if schedule exists -->
-                                     <div th:if="${hasSchedule}" 
-                                          class="grid-task-bar" 
-                                          th:attr="data-tooltip=${currentSchedule.materia + ' | Prof. ' + currentSchedule.voluntario.usuario.firstName + ' | ' + currentSchedule.horaInicio + '-' + currentSchedule.horaFin}">
-                                     </div>
-                                </div>
+                                <th:block th:with="daySchedules=${horariosPorDia != null ? horariosPorDia.get(day) : null}">
+                                    
+                                    <!-- Si hay un horario en esta fila -->
+                                    <div class="grid-cell" th:if="${daySchedules != null and daySchedules.size() > rowIdx}" style="cursor:pointer;">
+                                        <div th:with="currentSchedule=${daySchedules[rowIdx]}"
+                                             class="grid-task-bar" 
+                                             th:attr="data-tooltip=${currentSchedule.materia + ' | Prof. ' + currentSchedule.voluntario.usuario.firstName + ' | ' + currentSchedule.horaInicio + '-' + currentSchedule.horaFin}"
+                                             th:onclick="'openRequestModal(' + ${currentSchedule.id} + ', \'' + ${currentSchedule.materia} + '\', \'' + ${day} + '\')'">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Si NO hay horario en esta fila (celda vacía) -->
+                                    <div class="grid-cell" th:unless="${daySchedules != null and daySchedules.size() > rowIdx}" style="cursor:default;">
+                                    </div>
+                                    
+                                </th:block>
                             </th:block>
                         </th:block>
                     </div>
