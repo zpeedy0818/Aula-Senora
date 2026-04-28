@@ -14,60 +14,71 @@
                 <h1 style="margin-bottom: var(--space-xs);">Mi Perfil 👤</h1>
                 <p class="text-secondary">Gestiona tu información personal y preferencias de estudio.</p>
             </div>
-            <a th:href="@{/student/dashboard}" class="btn btn-outline shadow-md">
+            <a th:href="@{/student/dashboard}" class="btn btn-gradient shadow-premium">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    class="mr-sm" style="margin-right:0.5rem;">
+                    style="margin-right:0.5rem;">
                     <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
                 Volver al Panel
             </a>
         </div>
+        
+        <!-- Success Alert -->
+        <div th:if="${param.success}" class="glass-card mb-lg p-sm" style="background: rgba(34, 197, 94, 0.1); border-color: var(--success); color: var(--success); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <span class="text-sm font-bold">¡Perfil actualizado correctamente!</span>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-xl">
             <!-- Profile Sidebar -->
             <div class="col-span-1">
-                <div class="card flex flex-col items-center text-center">
-                    <div class="w-32 h-32 rounded-full bg-primary-light flex items-center justify-center text-primary text-4xl font-bold mb-md"
-                        style="background-color: #e0f2fe; color: #0369a1;">
-                        <span th:text="${#strings.substring(#authentication.name, 0, 1)}">E</span>
+                <div class="glass-card flex flex-col items-center text-center p-xl">
+                    <div class="w-32 h-32 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-md shadow-premium"
+                        th:style="'background: linear-gradient(135deg, var(--primary), var(--primary-accent));'">
+                        <span th:text="${user != null ? #strings.substring(user.firstName, 0, 1) : 'U'}">E</span>
                     </div>
-                    <h2 class="font-bold text-xl mb-xs" th:text="${#authentication.name}">Estudiante</h2>
-                    <p class="text-secondary mb-md">Estudiante de Secundaria</p>
-                    <span class="badge badge-success mb-lg">Cuenta Activa</span>
+                    <h2 class="font-extrabold text-xl mb-xs text-primary" th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Cargando...'}">Estudiante</h2>
+                    <p class="text-secondary mb-md text-sm" th:text="${user != null ? user.rol : 'ROL'}">Estudiante de Secundaria</p>
+                    <span class="badge badge-success mb-lg" style="padding: 0.25rem 0.75rem; border-radius: 20px;">Cuenta Activa</span>
 
-                    <button class="btn btn-outline w-full mb-sm">Cambiar Foto</button>
-                    <button class="btn btn-outline w-full text-error"
-                        style="color: var(--error); border-color: var(--error-bg); background-color: var(--error-bg);">Eliminar
-                        Cuenta</button>
+                    <div class="flex flex-col gap-sm w-full">
+                        <button class="btn btn-outline w-full text-sm">Cambiar Foto</button>
+                        <button class="btn btn-outline w-full text-error text-xs opacity-70 hover:opacity-100"
+                            style="border-color: transparent;">Eliminar Cuenta</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Profile Form -->
             <div class="col-span-1 md:col-span-3">
-                <div class="card">
-                    <h3 class="section-title mb-lg">Información Personal</h3>
+                <div class="glass-card p-xl">
+                    <h3 class="section-title mb-lg" style="color: var(--primary);">Información Personal</h3>
 
                     <form th:action="@{/student/profile/update}" method="post">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-lg">
                             <div class="form-group">
-                                <label for="firstName" class="form-label">Nombre</label>
+                                <label for="firstName" class="form-label text-sm font-semibold">Nombre</label>
                                 <input type="text" id="firstName" name="firstName" class="form-control"
-                                    th:value="${#authentication.name}" required>
+                                    th:value="${user != null ? user.firstName : ''}" required
+                                    style="border-radius: var(--radius-md); border: 1px solid var(--color-muted);">
                             </div>
                             <div class="form-group">
-                                <label for="lastName" class="form-label">Apellidos</label>
-                                <input type="text" id="lastName" name="lastName" class="form-control" value="Pérez"
-                                    required>
+                                <label for="lastName" class="form-label text-sm font-semibold">Apellidos</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control" 
+                                    th:value="${user != null ? user.lastName : ''}" required
+                                    style="border-radius: var(--radius-md); border: 1px solid var(--color-muted);">
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="email" class="form-label">Correo Electrónico</label>
+                        <div class="form-group mt-md">
+                            <label for="email" class="form-label text-sm font-semibold">Correo Electrónico</label>
                             <input type="email" id="email" name="email" class="form-control"
-                                value="estudiante@correo.com" required readonly
-                                style="background-color: var(--bg-color); cursor: not-allowed;">
-                            <p class="text-xs text-secondary mt-xs">El correo no puede ser modificado una vez
-                                registrado.</p>
+                                th:value="${user != null ? user.email : ''}" required readonly
+                                style="background-color: #f8fafc; cursor: not-allowed; border-radius: var(--radius-md); border: 1px dashed var(--color-muted);">
+                            <p class="text-xs text-secondary mt-xs">El correo es tu identidad única y no puede ser modificado.</p>
                         </div>
 
                         <div class="form-group">
@@ -113,8 +124,9 @@
                             </label>
                         </div>
 
-                        <div class="flex justify-end gap-md pt-md border-t border-color-muted">
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <div class="flex justify-end gap-md pt-lg mt-xl border-t border-color-muted">
+                            <button type="reset" class="btn btn-outline">Descartar</button>
+                            <button type="submit" class="btn btn-gradient">Guardar Cambios</button>
                         </div>
                     </form>
                 </div>

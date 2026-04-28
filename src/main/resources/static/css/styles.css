@@ -457,6 +457,84 @@ img {
     font-size: 2.25rem;
 }
 
+/* Premium UI Components */
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-accent));
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.stat-card h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-card .stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+}
+
+.btn-gradient {
+    background: linear-gradient(to right, var(--primary), var(--primary-accent));
+    color: white !important;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-gradient:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+/* Specific theme overrides for stat cards */
+body.theme-volunteer .stat-card {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+body.theme-admin .stat-card {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+body.theme-student .stat-card {
+    background: linear-gradient(135deg, #0891b2, #0e7490);
+}
+
 /* Main layout wrapper */
 .site-wrapper {
     display: flex;
