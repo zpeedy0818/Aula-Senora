@@ -5,6 +5,8 @@ import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.VoluntarioRepository;
+import aulasenora.service.AulaService;
+import aulasenora.model.Aula;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +24,13 @@ public class VolunteerController {
     private final VoluntarioRepository voluntarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
+    private final AulaService aulaService;
 
-    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository) {
+    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, AulaService aulaService) {
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
+        this.aulaService = aulaService;
     }
 
     @GetMapping("/dashboard")
@@ -38,6 +42,10 @@ public class VolunteerController {
             model.addAttribute("voluntario", voluntario);
             List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
             model.addAttribute("solicitudes", solicitudes);
+            
+            // Aulas creadas por el voluntario
+            List<Aula> misAulas = aulaService.getAulasByVoluntario(username);
+            model.addAttribute("misAulas", misAulas);
         });
 
         return "volunteer/dashboard";

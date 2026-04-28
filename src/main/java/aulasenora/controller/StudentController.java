@@ -5,6 +5,9 @@ import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.UsuarioRepository;
+import aulasenora.service.AulaService;
+import aulasenora.model.Aula;
+import aulasenora.model.MiembroAula;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +24,13 @@ public class StudentController {
     private final UsuarioRepository usuarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
+    private final AulaService aulaService;
 
-    public StudentController(UsuarioRepository usuarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository) {
+    public StudentController(UsuarioRepository usuarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, AulaService aulaService) {
         this.usuarioRepository = usuarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
+        this.aulaService = aulaService;
     }
 
     @GetMapping("/dashboard")
@@ -35,6 +40,13 @@ public class StudentController {
         // Aquí pasaremos solo información de resumen para el panel principal en el futuro
         // Por ahora, el dashboard cargará rápido sin la pesada lógica de horarios.
         
+        String username = principal.getName();
+        List<MiembroAula> misAulas = aulaService.getAulasByEstudiante(username);
+        model.addAttribute("misAulas", misAulas);
+
+        List<Aula> aulasDisponibles = aulaService.getAllAulas();
+        model.addAttribute("aulasDisponibles", aulasDisponibles);
+
         return "student/dashboard";
     }
 
