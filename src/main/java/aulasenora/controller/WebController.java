@@ -36,11 +36,6 @@ public class WebController {
         return "student/history";
     }
 
-    @GetMapping("/volunteer/dashboard")
-    public String volunteerDashboard() {
-        return "volunteer/dashboard";
-    }
-
     @GetMapping("/admin/dashboard")
     public String adminDashboard(org.springframework.ui.Model model) {
         model.addAttribute("totalEstudiantes", 1248);

@@ -130,6 +130,56 @@
                 </div>
             </div>
 
+            <!-- Manage Schedule Section -->
+            <div class="col-span-1">
+                <h2 class="section-title mb-md flex items-center justify-between">
+                    Mis Horarios de Disponibilidad
+                    <button class="btn btn-gradient btn-sm" onclick="document.getElementById('schedule-modal').classList.remove('hidden')">
+                        + Nuevo Horario
+                    </button>
+                </h2>
+
+                <!-- Alerts -->
+                <div th:if="${param.scheduleAdded}" class="mb-sm p-sm text-sm text-success bg-green-50 rounded border border-success">
+                    ¡Horario añadido correctamente!
+                </div>
+                <div th:if="${param.scheduleDeleted}" class="mb-sm p-sm text-sm text-error bg-red-50 rounded border border-error">
+                    Horario eliminado.
+                </div>
+
+                <div class="glass-card p-0 overflow-hidden">
+                    <ul class="list-none m-0">
+                        <li th:each="horario : ${horarios}" class="p-md border-b border-color-muted flex justify-between items-center hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center gap-md">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-primary" style="background-color: var(--primary-light);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold capitalize" th:text="${horario.diaSemana}">Lunes</h4>
+                                    <p class="text-xs text-secondary mt-xs" th:text="${horario.horaInicio + ' - ' + horario.horaFin + ' | ' + horario.materia}">14:00 - 16:00 | Matemáticas</p>
+                                </div>
+                            </div>
+                            <form th:action="@{/volunteer/schedule/delete/{id}(id=${horario.id})}" method="post">
+                                <button type="submit" class="btn btn-outline btn-sm text-error" style="border-color:transparent;" onclick="return confirm('¿Eliminar este horario?')">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </li>
+                        <li th:if="${horarios == null or horarios.isEmpty()}" class="p-lg text-center text-secondary text-sm">
+                            No has registrado horarios aún.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- Active Sessions & Shared Resources -->
             <div class="col-span-1 flex flex-col gap-xl">
 
@@ -222,8 +272,66 @@
 
     </div>
 
-    <!-- Upload Resource Modal -->
+    <!-- Add Schedule Modal -->
     <th:block layout:fragment="page-js">
+        <div id="schedule-modal" class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="glass-card w-full max-w-md bg-surface relative p-xl" style="width: 100%; max-width: 500px;">
+                <button type="button" class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('schedule-modal').classList.add('hidden')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg section-title" style="color:var(--primary);">Añadir Horario Libre</h2>
+
+                <form th:action="@{/volunteer/schedule/add}" method="post">
+                    <div class="form-group">
+                        <label class="form-label text-sm font-semibold">Día de la semana</label>
+                        <select name="diaSemana" class="form-control" required style="border-radius:var(--radius-md);">
+                            <option value="lunes">Lunes</option>
+                            <option value="martes">Martes</option>
+                            <option value="miercoles">Miércoles</option>
+                            <option value="jueves">Jueves</option>
+                            <option value="viernes">Viernes</option>
+                            <option value="sabado">Sábado</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-md">
+                        <div class="form-group">
+                            <label class="form-label text-sm font-semibold">Hora Inicio</label>
+                            <input type="time" name="horaInicio" class="form-control" required style="border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label text-sm font-semibold">Hora Fin</label>
+                            <input type="time" name="horaFin" class="form-control" required style="border-radius:var(--radius-md);">
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-xl">
+                        <label class="form-label text-sm font-semibold">Materia que impartirás</label>
+                        <select name="materia" class="form-control" required style="border-radius:var(--radius-md);">
+                            <option value="Matemáticas">Matemáticas</option>
+                            <option value="Física">Física</option>
+                            <option value="Química">Química</option>
+                            <option value="Biología">Biología</option>
+                            <option value="Lenguaje">Lenguaje</option>
+                            <option value="Inglés">Inglés</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-md pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('schedule-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-gradient">Guardar Horario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    <!-- Upload Resource Modal (Existing) -->
         <div id="resource-modal"
             class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
             style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
@@ -310,15 +418,17 @@
         </div>
 
         <script>
-            // Utility to close modal
+            // Utilities to close modals
             document.getElementById('resource-modal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
-                }
+                if (e.target === this) this.classList.add('hidden');
+            });
+            document.getElementById('schedule-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
             });
             document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && !document.getElementById('resource-modal').classList.contains('hidden')) {
+                if (e.key === 'Escape') {
                     document.getElementById('resource-modal').classList.add('hidden');
+                    document.getElementById('schedule-modal').classList.add('hidden');
                 }
             });
 
