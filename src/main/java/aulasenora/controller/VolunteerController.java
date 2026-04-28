@@ -7,6 +7,7 @@ import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.UsuarioRepository;
 import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.SolicitudCupoRepository;
+import aulasenora.repository.VoluntarioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/volunteer")
@@ -40,6 +43,11 @@ public class VolunteerController {
             model.addAttribute("voluntario", voluntario);
             List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
             model.addAttribute("horarios", horarios);
+
+            // Group by diaSemana for the grid
+            Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
+                    .collect(Collectors.groupingBy(h -> h.getDiaSemana().toLowerCase()));
+            model.addAttribute("horariosPorDia", horariosPorDia);
 
             List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
             model.addAttribute("solicitudes", solicitudes);

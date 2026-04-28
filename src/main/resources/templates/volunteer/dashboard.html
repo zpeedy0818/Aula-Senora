@@ -142,37 +142,41 @@
                     Horario eliminado.
                 </div>
 
-                <div class="glass-card p-0 overflow-hidden">
-                    <ul class="list-none m-0">
-                        <li th:each="horario : ${horarios}" class="p-md border-b border-color-muted flex justify-between items-center hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-md">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-primary" style="background-color: var(--primary-light);">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                        <line x1="16" y1="2" x2="16" y2="6" />
-                                        <line x1="8" y1="2" x2="8" y2="6" />
-                                        <line x1="3" y1="10" x2="21" y2="10" />
-                                    </svg>
+                <div class="schedule-grid-container mt-md">
+                    <div class="schedule-grid bg-surface p-md rounded-md border border-color-muted">
+                        <!-- Headers -->
+                        <div class="grid-header col-tareas">Tareas</div>
+                        <div class="grid-header col-day">Lunes</div>
+                        <div class="grid-header col-day">Martes</div>
+                        <div class="grid-header col-day">Miercoles</div>
+                        <div class="grid-header col-day">Jueves</div>
+                        <div class="grid-header col-day">Viernes</div>
+                        <div class="grid-header col-day">Sabado</div>
+
+                        <!-- Rows 1 to 6 -->
+                        <th:block th:each="rowIdx : ${#numbers.sequence(0, 5)}">
+                            <!-- Row Label -->
+                            <div class="grid-row-label" th:text="${rowIdx + 1}">1</div>
+
+                            <!-- Day Cells for this row -->
+                            <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
+                                <div class="grid-cell" 
+                                     th:with="daySchedules=${horariosPorDia != null ? horariosPorDia.get(day) : null},
+                                              hasSchedule=${daySchedules != null and daySchedules.size() > rowIdx},
+                                              currentSchedule=${hasSchedule ? daySchedules[rowIdx] : null}"
+                                     th:onclick="${hasSchedule} ? 'deleteSchedule(' + ${currentSchedule.id} + ')' : 'openAddScheduleModal(\'' + ${day} + '\')'">
+                                     
+                                     <!-- Render active bar if schedule exists -->
+                                     <div th:if="${hasSchedule}" 
+                                          class="grid-task-bar" 
+                                          th:attr="data-tooltip=${currentSchedule.materia + ' | ' + currentSchedule.horaInicio + ' - ' + currentSchedule.horaFin}">
+                                     </div>
                                 </div>
-                                <div>
-                                    <h4 class="text-sm font-bold capitalize" th:text="${horario.diaSemana}">Lunes</h4>
-                                    <p class="text-xs text-secondary mt-xs" th:text="${horario.horaInicio + ' - ' + horario.horaFin + ' | ' + horario.materia}">14:00 - 16:00 | Matemáticas</p>
-                                </div>
-                            </div>
-                            <form th:action="@{/volunteer/schedule/delete/{id}(id=${horario.id})}" method="post">
-                                <button type="submit" class="btn btn-outline btn-sm text-error" style="border-color:transparent;" onclick="return confirm('¿Eliminar este horario?')">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6" />
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                    </svg>
-                                </button>
-                            </form>
-                        </li>
-                        <li th:if="${horarios == null or horarios.isEmpty()}" class="p-lg text-center text-secondary text-sm">
-                            No has registrado horarios aún.
-                        </li>
-                    </ul>
+                            </th:block>
+                        </th:block>
+                    </div>
                 </div>
+                <p class="text-xs text-secondary mt-sm text-center">Haz clic en un recuadro vacío para añadir un horario. Haz clic en una barra para eliminarla.</p>
             </div>
 
             <!-- Active Sessions & Shared Resources -->
@@ -285,14 +289,7 @@
                 <form th:action="@{/volunteer/schedule/add}" method="post">
                     <div class="form-group">
                         <label class="form-label text-sm font-semibold">Día de la semana</label>
-                        <select name="diaSemana" class="form-control" required style="border-radius:var(--radius-md);">
-                            <option value="lunes">Lunes</option>
-                            <option value="martes">Martes</option>
-                            <option value="miercoles">Miércoles</option>
-                            <option value="jueves">Jueves</option>
-                            <option value="viernes">Viernes</option>
-                            <option value="sabado">Sábado</option>
-                        </select>
+                        <input type="text" id="modal-diaSemana" name="diaSemana" class="form-control" readonly style="background-color: #f3f4f6; text-transform: capitalize;">
                     </div>
 
                     <div class="grid grid-cols-2 gap-md">
@@ -414,6 +411,22 @@
 
         <script>
             // Utilities to close modals
+            function openAddScheduleModal(dia) {
+                document.getElementById('modal-diaSemana').value = dia;
+                document.getElementById('schedule-modal').classList.remove('hidden');
+            }
+
+            function deleteSchedule(id) {
+                if (confirm('¿Deseas eliminar este horario?')) {
+                    // Create a form dynamically and submit it
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/volunteer/schedule/delete/' + id;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+
             document.getElementById('resource-modal').addEventListener('click', function (e) {
                 if (e.target === this) this.classList.add('hidden');
             });

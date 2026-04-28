@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/student")
@@ -33,7 +35,10 @@ public class StudentController {
 
         // Obtener todos los horarios disponibles
         List<HorarioDisponible> horarios = horarioDisponibleRepository.findAll();
-        model.addAttribute("horarios", horarios);
+        
+        Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
+                .collect(Collectors.groupingBy(h -> h.getDiaSemana().toLowerCase()));
+        model.addAttribute("horariosPorDia", horariosPorDia);
 
         return "student/dashboard";
     }
@@ -46,7 +51,7 @@ public class StudentController {
             horarioDisponibleRepository.findById(horarioId).ifPresent(horario -> {
                 SolicitudCupo solicitud = new SolicitudCupo();
                 solicitud.setEstudiante(estudiante);
-                solicitud.setHorarioDisponible(horario);
+                solicitud.setHorario(horario);
                 solicitud.setMensaje(mensaje);
                 solicitud.setEstado("PENDIENTE");
                 solicitudCupoRepository.save(solicitud);

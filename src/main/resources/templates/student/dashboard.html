@@ -120,27 +120,42 @@
                     ¡Solicitud enviada correctamente!
                 </div>
 
-                <div class="glass-card flex flex-col gap-md p-md" style="max-height: 500px; overflow-y: auto;">
-                    
-                    <div th:each="horario : ${horarios}" class="flex flex-col gap-sm p-sm border border-color-muted rounded-md hover:border-primary transition-colors bg-surface">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="badge mb-xs" style="background-color: var(--primary-light); color: var(--primary);" th:text="${horario.materia}">Materia</span>
-                                <h4 class="font-bold text-sm capitalize" th:text="${horario.diaSemana + ' ' + horario.horaInicio + ' - ' + horario.horaFin}">Día Hora</h4>
-                                <p class="text-xs text-secondary mt-xs" th:text="'Prof: ' + ${horario.voluntario.usuario.firstName + ' ' + horario.voluntario.usuario.lastName}">Profesor</p>
-                            </div>
-                            <button class="btn btn-outline btn-sm text-xs" 
-                                    th:onclick="'openRequestModal(' + ${horario.id} + ', \'' + ${horario.materia} + '\', \'' + ${horario.diaSemana} + '\')'">
-                                Solicitar
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div th:if="${horarios == null or horarios.isEmpty()}" class="p-md text-center text-secondary text-sm">
-                        No hay horarios disponibles en este momento.
-                    </div>
+                <div class="schedule-grid-container mt-md">
+                    <div class="schedule-grid bg-surface p-md rounded-md border border-color-muted">
+                        <!-- Headers -->
+                        <div class="grid-header col-tareas">Tareas</div>
+                        <div class="grid-header col-day">Lunes</div>
+                        <div class="grid-header col-day">Martes</div>
+                        <div class="grid-header col-day">Miercoles</div>
+                        <div class="grid-header col-day">Jueves</div>
+                        <div class="grid-header col-day">Viernes</div>
+                        <div class="grid-header col-day">Sabado</div>
 
+                        <!-- Rows 1 to 6 -->
+                        <th:block th:each="rowIdx : ${#numbers.sequence(0, 5)}">
+                            <!-- Row Label -->
+                            <div class="grid-row-label" th:text="${rowIdx + 1}">1</div>
+
+                            <!-- Day Cells for this row -->
+                            <th:block th:each="day : ${ {'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'} }">
+                                <div class="grid-cell" 
+                                     th:with="daySchedules=${horariosPorDia != null ? horariosPorDia.get(day) : null},
+                                              hasSchedule=${daySchedules != null and daySchedules.size() > rowIdx},
+                                              currentSchedule=${hasSchedule ? daySchedules[rowIdx] : null}"
+                                     th:onclick="${hasSchedule} ? 'openRequestModal(' + ${currentSchedule.id} + ', \'' + ${currentSchedule.materia} + '\', \'' + ${day} + '\')' : ''"
+                                     th:style="${hasSchedule} ? 'cursor:pointer;' : 'cursor:default;'">
+                                     
+                                     <!-- Render active bar if schedule exists -->
+                                     <div th:if="${hasSchedule}" 
+                                          class="grid-task-bar" 
+                                          th:attr="data-tooltip=${currentSchedule.materia + ' | Prof. ' + currentSchedule.voluntario.usuario.firstName + ' | ' + currentSchedule.horaInicio + '-' + currentSchedule.horaFin}">
+                                     </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
                 </div>
+                <p class="text-xs text-secondary mt-sm text-center">Haz clic en una barra turquesa para solicitar un cupo en ese horario.</p>
             </div>
 
         </div>

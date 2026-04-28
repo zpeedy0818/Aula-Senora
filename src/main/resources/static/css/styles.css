@@ -797,6 +797,110 @@ button.nav-link {
     color: white !important;
 }
 
+/* -------------------------------------
+   Interactive Schedule Grid (Mockup Style)
+   ------------------------------------- */
+
+.schedule-grid-container {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: var(--space-md);
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(6, minmax(120px, 1fr));
+    gap: 8px;
+    min-width: 800px;
+}
+
+/* Headers */
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 4px;
+    color: white;
+    text-transform: capitalize;
+}
+
+.grid-header.col-tareas {
+    background-color: #bcbcbc; /* Gray from mockup */
+}
+
+.grid-header.col-day {
+    background-color: #7dd3fc; /* Cyan from mockup */
+}
+
+/* Row Labels (1, 2, 3...) */
+.grid-row-label {
+    background-color: #bcbcbc;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    min-height: 50px;
+}
+
+/* Empty Cells */
+.grid-cell {
+    background-color: #f3f4f6; /* Very light gray */
+    border-radius: 4px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.grid-cell:hover {
+    background-color: #e5e7eb;
+}
+
+/* Active Task Bar (Cyan horizontal bar) */
+.grid-task-bar {
+    background-color: #7dd3fc;
+    height: 16px;
+    border-radius: 8px;
+    width: 100%;
+    transition: transform 0.2s, filter 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+
+.grid-task-bar:hover {
+    filter: brightness(0.95);
+    transform: scaleY(1.1);
+}
+
+/* Tooltip for the task bar */
+.grid-task-bar::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    margin-bottom: 4px;
+}
+
+.grid-task-bar:hover::after {
+    opacity: 1;
+}
+
 /* Bottom Navigation Bar (Mobile Only) */
 .bottom-nav {
     position: fixed;
