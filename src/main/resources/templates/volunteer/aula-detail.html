@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Detalles del Aula</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Header Section -->
+        <div class="mb-xl flex items-center justify-between">
+            <div>
+                <a th:href="@{/volunteer/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
+                <h1 class="text-3xl font-bold text-primary mb-xs" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                <p class="text-secondary" th:text="${aula.descripcion}">Descripción del aula...</p>
+            </div>
+            <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
+        </div>
+
+        <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+
+            <!-- Estudiantes Inscritos -->
+            <div class="col-span-1 lg:col-span-2">
+                <h2 class="section-title mb-md">Estudiantes Inscritos</h2>
+                
+                <div class="card p-0 overflow-hidden">
+                    <ul class="list-none m-0">
+                        <li th:each="miembro : ${miembros}" th:if="${miembro.rol == 'ESTUDIANTE'}" class="p-md border-b border-color-muted flex justify-between items-center hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center gap-md">
+                                <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold" th:text="${#strings.substring(miembro.usuario.firstName,0,1) + #strings.substring(miembro.usuario.lastName,0,1)}">
+                                    XX
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-md" th:text="${miembro.usuario.firstName + ' ' + miembro.usuario.lastName}">Nombre Apellido</h4>
+                                    <p class="text-xs text-secondary mt-xs" th:text="${miembro.usuario.email}">email@ejemplo.com</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-secondary" th:text="${'Unido el ' + #temporals.format(miembro.fechaUnion, 'dd/MM/yyyy')}">Fecha</span>
+                        </li>
+                    </ul>
+                    
+                    <div th:if="${miembros.size() <= 1}" class="p-xl text-center text-secondary text-sm bg-surface">
+                        Aún no hay estudiantes inscritos en esta aula.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solicitudes Pendientes -->
+            <div class="col-span-1">
+                <h2 class="section-title mb-md">Solicitudes Pendientes</h2>
+                
+                <div class="flex flex-col gap-md">
+                    <div th:each="solicitud : ${solicitudesPendientes}" class="card p-md shadow-sm border border-warning">
+                        <h4 class="font-bold text-md mb-xs" th:text="${solicitud.estudiante.firstName + ' ' + solicitud.estudiante.lastName}">Nombre</h4>
+                        <p class="text-xs text-secondary mb-md" th:text="${'Solicitó el ' + #temporals.format(solicitud.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</p>
+                        
+                        <div class="flex gap-sm w-full">
+                            <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/reject'}" method="post" class="flex-1">
+                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                <button type="submit" class="btn btn-outline btn-sm w-full text-error" style="border-color: #fca5a5;">Rechazar</button>
+                            </form>
+                            <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/approve'}" method="post" class="flex-1">
+                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                <button type="submit" class="btn btn-secondary btn-sm w-full text-white" style="background-color: var(--success); border-color: var(--success);">Aprobar</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${solicitudesPendientes == null or solicitudesPendientes.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                        No hay solicitudes pendientes.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

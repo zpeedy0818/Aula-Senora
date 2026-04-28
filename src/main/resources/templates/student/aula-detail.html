@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Detalles del Aula</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl">
+
+        <!-- Header Section -->
+        <div class="mb-xl flex items-center justify-between">
+            <div>
+                <a th:href="@{/student/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
+                <h1 class="text-3xl font-bold text-primary mb-xs" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                <div class="flex items-center gap-sm">
+                    <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
+                    <span class="text-secondary text-sm" th:text="${'Voluntario: ' + aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Voluntario</span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
+
+        <div class="grid grid-cols-1 gap-xl">
+
+            <div class="col-span-1">
+                <h2 class="section-title mb-md">Descripción e Información</h2>
+                
+                <div class="card p-xl bg-surface">
+                    <p class="text-secondary leading-relaxed" th:text="${aula.descripcion}">Descripción del aula...</p>
+                </div>
+            </div>
+
+            <div class="col-span-1">
+                <h2 class="section-title mb-md">Contenido del Aula</h2>
+                <div class="card p-xl text-center border-dashed border-2 border-color-muted bg-gray-50">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" class="mx-auto mb-md opacity-50">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <h3 class="font-bold text-lg mb-sm text-secondary">El contenido estará disponible pronto</h3>
+                    <p class="text-secondary mb-0">El voluntario publicará recursos, guías y enlaces de interés en este espacio.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

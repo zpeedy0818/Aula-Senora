@@ -144,6 +144,40 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
 
+            <!-- Mis Aulas Section -->
+            <div class="col-span-1 lg:col-span-2 mb-xl">
+                <div class="flex justify-between items-center mb-md">
+                    <h2 class="section-title m-0">Mis Aulas</h2>
+                    <button class="btn btn-secondary btn-sm shadow-md"
+                        onclick="document.getElementById('aula-modal').classList.remove('hidden')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-xs" style="margin-right:0.25rem;">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Crear Aula
+                    </button>
+                </div>
+                
+                <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                    <div th:each="aula : ${misAulas}" class="card bg-surface hover:shadow-lg transition-all flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg mb-sm text-primary" th:text="${aula.nombreAula}">Nombre Aula</h3>
+                            <p class="text-secondary text-sm mb-md line-clamp-3" th:text="${aula.descripcion}">Descripción del aula...</p>
+                        </div>
+                        <div class="mt-md pt-md border-t border-color-muted flex justify-between items-center">
+                            <span class="text-xs text-secondary" th:text="${#temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
+                            <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.75rem;">Gestionar Aula</a>
+                        </div>
+                    </div>
+                    <div th:if="${misAulas == null or misAulas.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                        Aún no has creado ninguna aula. ¡Crea una para invitar a los estudiantes!
+                    </div>
+                </div>
+            </div>
+
             <!-- Active Sessions & Shared Resources -->
             <div class="col-span-1 flex flex-col gap-xl">
 
@@ -229,14 +263,12 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div><!-- fin My Resources -->
 
-            </div>
-        </div>
+            </div><!-- fin col-span-1 Active Sessions & Resources -->
+        </div><!-- fin grid Tutorías/Recursos -->
 
-    </div>
-
-    <!-- Upload Resource Modal (Existing) -->
+        <!-- Upload Resource Modal (Existing) -->
         <div id="resource-modal"
             class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
             style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
@@ -322,14 +354,58 @@
             </div>
         </div>
 
+        <!-- Create Aula Modal -->
+        <div id="aula-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-lg bg-surface relative"
+                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('aula-modal').classList.add('hidden')"
+                    aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg">Crear Nueva Aula</h2>
+
+                <form th:action="@{/volunteer/aulas/create}" method="post">
+                    <div class="form-group mb-md">
+                        <label for="aula-title" class="form-label">Nombre del Aula</label>
+                        <input type="text" id="aula-title" name="nombreAula" class="form-control" required
+                            placeholder="Ej: Grupo de Estudio de Matemáticas">
+                    </div>
+
+                    <div class="form-group mb-md">
+                        <label for="aula-desc" class="form-label">Descripción</label>
+                        <textarea id="aula-desc" name="descripcion" class="form-control" required rows="4"
+                            placeholder="Describe el propósito del aula, los temas que se tratarán, etc."></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('aula-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-secondary">Crear Aula</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
             // Utilities to close modals
             document.getElementById('resource-modal').addEventListener('click', function (e) {
                 if (e.target === this) this.classList.add('hidden');
             });
+            document.getElementById('aula-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     document.getElementById('resource-modal').classList.add('hidden');
+                    document.getElementById('aula-modal').classList.add('hidden');
                 }
             });
 
@@ -342,7 +418,8 @@
                 }
             });
         </script>
-    </th:block>
+
+    </div><!-- fin layout:fragment="content" -->
 </body>
 
 </html>

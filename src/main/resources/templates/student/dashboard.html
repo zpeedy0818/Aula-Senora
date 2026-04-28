@@ -58,6 +58,63 @@
 
         </div>
 
+        <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
+
+        <!-- Mis Aulas Section -->
+        <div class="mb-2xl mt-xl">
+            <h2 class="section-title mb-md">Mis Aulas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                <div th:each="miembro : ${misAulas}" th:if="${miembro.rol == 'ESTUDIANTE'}" class="card bg-surface hover:shadow-lg transition-all flex flex-col justify-between" style="border-left: 4px solid var(--primary);">
+                    <div>
+                        <h3 class="font-bold text-lg mb-sm text-primary" th:text="${miembro.aula.nombreAula}">Nombre Aula</h3>
+                        <p class="text-secondary text-sm mb-md line-clamp-2" th:text="${miembro.aula.descripcion}">Descripción del aula...</p>
+                        <div class="flex items-center gap-xs text-xs text-secondary mt-xs">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            Voluntario: <span th:text="${miembro.aula.voluntario.usuario.firstName + ' ' + miembro.aula.voluntario.usuario.lastName}">Nombre</span>
+                        </div>
+                    </div>
+                    <div class="mt-md pt-md border-t border-color-muted text-right">
+                        <a th:href="@{'/student/aulas/' + ${miembro.aula.id}}" class="btn btn-primary btn-sm">Entrar al Aula</a>
+                    </div>
+                </div>
+                
+                <div th:if="${misAulas == null or misAulas.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                    Aún no estás inscrito en ninguna aula. ¡Explora las opciones abajo!
+                </div>
+            </div>
+        </div>
+
+        <!-- Explorar Aulas Section -->
+        <div class="mb-2xl mt-xl">
+            <h2 class="section-title mb-md">Explorar Aulas Disponibles</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                <div th:each="aula : ${aulasDisponibles}" class="card bg-surface hover:border-primary transition-all border border-transparent flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-sm">
+                            <h3 class="font-bold text-lg text-primary" th:text="${aula.nombreAula}">Nombre Aula</h3>
+                            <!-- We don't check status here easily without a complex query or model method, so we just show request button -->
+                        </div>
+                        <p class="text-secondary text-sm mb-md line-clamp-2" th:text="${aula.descripcion}">Descripción del aula...</p>
+                        <div class="flex items-center gap-xs text-xs text-secondary mt-xs">
+                            Voluntario: <span th:text="${aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Nombre</span>
+                        </div>
+                    </div>
+                    <div class="mt-md pt-md border-t border-color-muted flex justify-end">
+                        <form th:action="@{'/student/aulas/' + ${aula.id} + '/request'}" method="post">
+                            <button type="submit" class="btn btn-outline btn-sm">Solicitar Acceso</button>
+                        </form>
+                    </div>
+                </div>
+                <div th:if="${aulasDisponibles == null or aulasDisponibles.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                    No hay aulas disponibles en este momento.
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content Area: Requests -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
 
