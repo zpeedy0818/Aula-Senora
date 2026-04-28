@@ -17,11 +17,6 @@ public class WebController {
     // Removing "/", "/login", "/register" because they are handled by
     // LoginViewController / RegistroController
 
-    @GetMapping("/student/dashboard")
-    public String studentDashboard() {
-        return "student/dashboard";
-    }
-
     @GetMapping("/student/profile")
     public String studentProfile(java.security.Principal principal, org.springframework.ui.Model model) {
         if (principal != null) {
@@ -43,6 +38,8 @@ public class WebController {
         model.addAttribute("totalTutorias", 8504);
         model.addAttribute("reportesPendientes", 3);
         return "admin/dashboard";
+    }
+
     @PostMapping("/student/profile/update")
     public String updateProfile(@ModelAttribute aulasenora.model.Usuario updatedUser, java.security.Principal principal) {
         if (principal != null) {
