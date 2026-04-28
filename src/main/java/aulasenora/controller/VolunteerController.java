@@ -1,10 +1,7 @@
 package aulasenora.controller;
 
 import aulasenora.model.HorarioDisponible;
-import aulasenora.model.Usuario;
-import aulasenora.model.Voluntario;
 import aulasenora.repository.HorarioDisponibleRepository;
-import aulasenora.repository.UsuarioRepository;
 import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.VoluntarioRepository;
@@ -22,13 +19,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/volunteer")
 public class VolunteerController {
 
-    private final UsuarioRepository usuarioRepository;
     private final VoluntarioRepository voluntarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
 
-    public VolunteerController(UsuarioRepository usuarioRepository, VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository) {
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
@@ -41,19 +36,31 @@ public class VolunteerController {
         String username = principal.getName();
         voluntarioRepository.findByUsuario_Username(username).ifPresent(voluntario -> {
             model.addAttribute("voluntario", voluntario);
-            List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
-            model.addAttribute("horarios", horarios);
-
-            // Group by diaSemana for the grid
-            Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
-                    .collect(Collectors.groupingBy(h -> h.getDiaSemana().toLowerCase()));
-            model.addAttribute("horariosPorDia", horariosPorDia);
-
             List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
             model.addAttribute("solicitudes", solicitudes);
         });
 
         return "volunteer/dashboard";
+    }
+
+    @GetMapping("/schedule")
+    public String volunteerSchedule(Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+
+        String username = principal.getName();
+        voluntarioRepository.findByUsuario_Username(username).ifPresent(voluntario -> {
+            model.addAttribute("voluntario", voluntario);
+            List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
+            model.addAttribute("horarios", horarios);
+
+            // Group by diaSemana for the grid, avoiding nulls
+            Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
+                    .filter(h -> h.getDiaSemana() != null)
+                    .collect(Collectors.groupingBy(h -> h.getDiaSemana().trim().toLowerCase()));
+            model.addAttribute("horariosPorDia", horariosPorDia);
+        });
+
+        return "volunteer/schedule";
     }
 
     @PostMapping("/schedule/add")
@@ -76,11 +83,11 @@ public class VolunteerController {
             horarioDisponibleRepository.save(horario);
         });
 
-        return "redirect:/volunteer/dashboard?scheduleAdded=true";
+        return "redirect:/volunteer/schedule?scheduleAdded=true";
     }
 
     @PostMapping("/schedule/delete/{id}")
-    public String deleteSchedule(@PathVariable Long id, Principal principal) {
+    public String deleteSchedule(@PathVariable long id, Principal principal) {
         if (principal == null) return "redirect:/login";
 
         horarioDisponibleRepository.findById(id).ifPresent(horario -> {
@@ -90,11 +97,11 @@ public class VolunteerController {
             }
         });
 
-        return "redirect:/volunteer/dashboard?scheduleDeleted=true";
+        return "redirect:/volunteer/schedule?scheduleDeleted=true";
     }
 
     @PostMapping("/request/{id}/status")
-    public String updateRequestStatus(@PathVariable Long id, @RequestParam String status, Principal principal) {
+    public String updateRequestStatus(@PathVariable long id, @RequestParam String status, Principal principal) {
         if (principal == null) return "redirect:/login";
 
         solicitudCupoRepository.findById(id).ifPresent(solicitud -> {

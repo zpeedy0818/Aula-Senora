@@ -2,7 +2,6 @@ package aulasenora.controller;
 
 import aulasenora.model.HorarioDisponible;
 import aulasenora.model.SolicitudCupo;
-import aulasenora.model.Usuario;
 import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.UsuarioRepository;
@@ -33,18 +32,31 @@ public class StudentController {
     public String studentDashboard(Principal principal, Model model) {
         if (principal == null) return "redirect:/login";
 
-        // Obtener todos los horarios disponibles
-        List<HorarioDisponible> horarios = horarioDisponibleRepository.findAll();
+        // Aquí pasaremos solo información de resumen para el panel principal en el futuro
+        // Por ahora, el dashboard cargará rápido sin la pesada lógica de horarios.
         
-        Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
-                .collect(Collectors.groupingBy(h -> h.getDiaSemana().toLowerCase()));
-        model.addAttribute("horariosPorDia", horariosPorDia);
-
         return "student/dashboard";
     }
 
+    @GetMapping("/schedule")
+    public String studentSchedule(Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+
+        // Obtener todos los horarios disponibles
+        List<HorarioDisponible> horarios = horarioDisponibleRepository.findAll();
+        
+        // Agrupar por día, ignorando nulos y convirtiendo a minúsculas
+        Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
+                .filter(h -> h.getDiaSemana() != null)
+                .collect(Collectors.groupingBy(h -> h.getDiaSemana().trim().toLowerCase()));
+                
+        model.addAttribute("horariosPorDia", horariosPorDia);
+
+        return "student/schedule";
+    }
+
     @PostMapping("/request-slot")
-    public String requestSlot(@RequestParam Long horarioId, @RequestParam String mensaje, Principal principal) {
+    public String requestSlot(@RequestParam long horarioId, @RequestParam String mensaje, Principal principal) {
         if (principal == null) return "redirect:/login";
 
         usuarioRepository.findByUsernameOrEmail(principal.getName(), principal.getName()).ifPresent(estudiante -> {
@@ -58,6 +70,6 @@ public class StudentController {
             });
         });
 
-        return "redirect:/student/dashboard?requestSent=true";
+        return "redirect:/student/schedule?requestSent=true";
     }
 }

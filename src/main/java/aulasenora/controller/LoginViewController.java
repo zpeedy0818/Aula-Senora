@@ -28,27 +28,27 @@ public class LoginViewController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        // obtener rol principal sin prefijo ROLE_
-        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication();
+    public String dashboard(org.springframework.security.core.Authentication auth) {
         String rol = auth.getAuthorities().stream()
                 .map(gr -> gr.getAuthority())
                 .filter(r -> r.startsWith("ROLE_"))
                 .map(r -> r.substring(5))
                 .findFirst()
                 .orElse("ESTUDIANTE");
-        model.addAttribute("rol", rol);
 
         return switch (rol) {
-            case "ADMIN" -> "admin/dashboard";
-            case "VOLUNTARIO" -> "volunteer/dashboard";
-            default -> "student/dashboard";
+            case "ADMIN" -> "redirect:/admin/dashboard";
+            case "VOLUNTARIO" -> "redirect:/volunteer/dashboard";
+            default -> "redirect:/student/dashboard";
         };
     }
 
     @GetMapping("/")
-    public String rootRedirect() {
+    public String rootRedirect(org.springframework.security.core.Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated() && 
+            !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
+            return "redirect:/dashboard";
+        }
         return "index";
     }
 }
