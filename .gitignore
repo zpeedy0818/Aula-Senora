@@ -40,3 +40,4 @@ run_env_log.txt
 TestDB.java
 TestDB.class
 *.class
+.agents/
