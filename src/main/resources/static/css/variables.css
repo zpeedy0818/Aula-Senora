@@ -94,3 +94,30 @@
         --error-bg: hsl(0, 84%, 18%);
     }
 }
+
+/* Theme: Student (Cyan/Teal) - Based on Figma Mockup */
+body.theme-student {
+    --primary: hsl(185, 80%, 35%);
+    --primary-accent: hsl(185, 80%, 45%);
+    --primary-light: hsl(185, 80%, 94%);
+    --secondary: hsl(195, 70%, 45%);
+    --secondary-dark: hsl(195, 70%, 35%);
+}
+
+/* Theme: Volunteer (Orange/Amber) - Based on Figma Mockup */
+body.theme-volunteer {
+    --primary: hsl(30, 90%, 45%);
+    --primary-accent: hsl(35, 95%, 55%);
+    --primary-light: hsl(35, 90%, 95%);
+    --secondary: hsl(45, 90%, 50%);
+    --secondary-dark: hsl(45, 90%, 40%);
+}
+
+/* Theme: Admin (Purple/Violet) - Based on Figma Mockup */
+body.theme-admin {
+    --primary: hsl(270, 70%, 40%);
+    --primary-accent: hsl(275, 75%, 55%);
+    --primary-light: hsl(270, 70%, 95%);
+    --secondary: hsl(285, 70%, 50%);
+    --secondary-dark: hsl(285, 70%, 40%);
+}
