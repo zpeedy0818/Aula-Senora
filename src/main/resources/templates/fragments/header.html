@@ -33,9 +33,10 @@
                     </li>
 
                     <!-- Authenticated Users -->
-                    <li sec:authorize="isAuthenticated()" class="dropdown" style="list-style:none;">
+                    <li sec:authorize="isAuthenticated()" class="dropdown" style="list-style:none; position: relative;">
                         <button class="nav-link dropdown-toggle flex items-center gap-xs" aria-expanded="false"
-                            aria-haspopup="true" style="background:transparent; border:none; cursor:pointer; color:var(--text-primary);">
+                            aria-haspopup="true" style="background:transparent; border:none; cursor:pointer; color:var(--text-primary);"
+                            onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
                             <div class="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
                                 <span sec:authentication="name">U</span>
                             </div>

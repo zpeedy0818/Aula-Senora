@@ -164,7 +164,7 @@
                             <th:block th:with="daySchedules=${horariosPorDia != null and horariosPorDia.containsKey(day) ? horariosPorDia.get(day) : null}">
                                 
                                 <!-- Si hay un horario en esta fila -->
-                                <th:block th:if="${#lists.size(daySchedules) > rowIdx}">
+                                <th:block th:if="${daySchedules != null ? #lists.size(daySchedules) > rowIdx : false}">
                                     <div class="grid-cell">
                                         <div th:with="currentSchedule=${daySchedules[rowIdx]}"
                                              class="grid-task-bar" 
@@ -175,7 +175,7 @@
                                 </th:block>
                                 
                                 <!-- Si NO hay horario en esta fila (celda vacía) -->
-                                <th:block th:unless="${#lists.size(daySchedules) > rowIdx}">
+                                <th:block th:unless="${daySchedules != null ? #lists.size(daySchedules) > rowIdx : false}">
                                     <div class="grid-cell" th:onclick="'openAddScheduleModal(\'' + ${day} + '\')'">
                                     </div>
                                 </th:block>
