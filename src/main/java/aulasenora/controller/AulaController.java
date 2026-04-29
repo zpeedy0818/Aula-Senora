@@ -68,6 +68,28 @@ public class AulaController {
         return "redirect:/volunteer/aulas/" + aulaId;
     }
 
+    @PostMapping("/volunteer/aulas/{id}/delete")
+    public String deleteAula(@PathVariable Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            aulaService.eliminarAula(id, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Aula eliminada exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el aula: " + e.getMessage());
+        }
+        return "redirect:/volunteer/dashboard";
+    }
+
+    @PostMapping("/volunteer/aulas/{id}/estudiantes/{estudianteId}/delete")
+    public String removeEstudiante(@PathVariable Long id, @PathVariable Long estudianteId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            aulaService.eliminarEstudianteDeAula(id, estudianteId, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Estudiante eliminado del aula exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar al estudiante: " + e.getMessage());
+        }
+        return "redirect:/volunteer/aulas/" + id;
+    }
+
     // --- STUDENT ENDPOINTS ---
 
     @GetMapping("/student/aulas/explore")

@@ -122,4 +122,34 @@ public class AulaService {
     public List<MiembroAula> getMiembrosByAula(Long aulaId) {
         return miembroAulaRepository.findByAulaId(aulaId);
     }
+
+    @Transactional
+    public void eliminarAula(Long aulaId, String username) {
+        Aula aula = getAulaById(aulaId);
+        Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        if (!aula.getVoluntario().getId().equals(usuario.getId())) {
+            throw new RuntimeException("No tienes permisos para eliminar esta aula");
+        }
+
+        solicitudAulaRepository.deleteByAulaId(aulaId);
+        miembroAulaRepository.deleteByAulaId(aulaId);
+        aulaRepository.delete(aula);
+    }
+
+    @Transactional
+    public void eliminarEstudianteDeAula(Long aulaId, Long estudianteId, String username) {
+        Aula aula = getAulaById(aulaId);
+        Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!aula.getVoluntario().getId().equals(usuario.getId())) {
+            throw new RuntimeException("No tienes permisos para eliminar estudiantes de esta aula");
+        }
+
+        if (usuario.getId().equals(estudianteId)) {
+            throw new RuntimeException("No puedes eliminarte a ti mismo del aula");
+        }
+
+        miembroAulaRepository.deleteByAulaIdAndUsuarioId(aulaId, estudianteId);
+    }
 }

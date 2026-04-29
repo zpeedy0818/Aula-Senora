@@ -12,7 +12,12 @@
         <div class="mb-xl flex items-center justify-between">
             <div>
                 <a th:href="@{/volunteer/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
-                <h1 class="text-3xl font-bold text-primary mb-xs" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                <div class="flex items-center gap-md mb-xs">
+                    <h1 class="text-3xl font-bold text-primary m-0" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                    <button type="button" class="btn btn-outline btn-sm text-error delete-aula-btn" style="border-color:transparent;" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                    </button>
+                </div>
                 <p class="text-secondary" th:text="${aula.descripcion}">Descripción del aula...</p>
             </div>
             <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
@@ -39,7 +44,12 @@
                                     <p class="text-xs text-secondary mt-xs" th:text="${miembro.usuario.email}">email@ejemplo.com</p>
                                 </div>
                             </div>
-                            <span class="text-xs text-secondary" th:text="${'Unido el ' + #temporals.format(miembro.fechaUnion, 'dd/MM/yyyy')}">Fecha</span>
+                            <div class="flex items-center gap-md">
+                                <span class="text-xs text-secondary" th:text="${'Unido el ' + #temporals.format(miembro.fechaUnion, 'dd/MM/yyyy')}">Fecha</span>
+                                <button type="button" class="btn btn-outline btn-sm text-error delete-estudiante-btn" style="padding: 0.25rem 0.5rem; border-color:transparent;" th:data-aula-id="${aula.id}" th:data-estudiante-id="${miembro.usuario.id}" th:data-estudiante-nombre="${miembro.usuario.firstName + ' ' + miembro.usuario.lastName}" title="Eliminar Estudiante">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                                </button>
+                            </div>
                         </li>
                     </ul>
                     
@@ -77,6 +87,104 @@
             </div>
 
         </div>
+
+        <!-- Delete Aula Modal -->
+        <div id="delete-aula-modal" class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-md bg-surface relative" style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
+                <button type="button" class="absolute top-md right-md text-secondary hover:text-primary transition-colors" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
+                <div class="text-center mb-md">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900" id="delete-aula-title">¿Eliminar aula?</h3>
+                    <div class="mt-2 text-sm text-secondary">
+                        <p>Esta acción no se puede deshacer. Todos los estudiantes serán removidos y se borrarán las solicitudes pendientes.</p>
+                    </div>
+                </div>
+                <form id="delete-aula-form" method="post" action="">
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn text-white" style="background-color: var(--error); border-color: var(--error);">Sí, eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Estudiante Modal -->
+        <div id="delete-estudiante-modal" class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-md bg-surface relative" style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
+                <button type="button" class="absolute top-md right-md text-secondary hover:text-primary transition-colors" onclick="document.getElementById('delete-estudiante-modal').classList.add('hidden')" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
+                <div class="text-center mb-md">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900" id="delete-estudiante-title">¿Eliminar estudiante?</h3>
+                    <div class="mt-2 text-sm text-secondary">
+                        <p>El estudiante será removido del aula y ya no tendrá acceso.</p>
+                    </div>
+                </div>
+                <form id="delete-estudiante-form" method="post" action="">
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('delete-estudiante-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn text-white" style="background-color: var(--error); border-color: var(--error);">Sí, eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Utilities to close modals
+            document.getElementById('delete-aula-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
+            document.getElementById('delete-estudiante-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    document.getElementById('delete-aula-modal').classList.add('hidden');
+                    document.getElementById('delete-estudiante-modal').classList.add('hidden');
+                }
+            });
+
+            function openDeleteAulaModal(aulaId, aulaNombre) {
+                const modal = document.getElementById('delete-aula-modal');
+                const form = document.getElementById('delete-aula-form');
+                const title = document.getElementById('delete-aula-title');
+                
+                title.textContent = '¿Eliminar aula "' + aulaNombre + '"?';
+                form.action = '/volunteer/aulas/' + aulaId + '/delete';
+                modal.classList.remove('hidden');
+            }
+
+            function openDeleteEstudianteModal(aulaId, estudianteId, estudianteNombre) {
+                const modal = document.getElementById('delete-estudiante-modal');
+                const form = document.getElementById('delete-estudiante-form');
+                const title = document.getElementById('delete-estudiante-title');
+                
+                title.textContent = '¿Eliminar a ' + estudianteNombre + '?';
+                form.action = '/volunteer/aulas/' + aulaId + '/estudiantes/' + estudianteId + '/delete';
+                modal.classList.remove('hidden');
+            }
+
+            // Bind delete aula button
+            document.querySelectorAll('.delete-aula-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openDeleteAulaModal(this.dataset.aulaId, this.dataset.aulaNombre);
+                });
+            });
+
+            // Bind delete estudiante buttons
+            document.querySelectorAll('.delete-estudiante-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openDeleteEstudianteModal(this.dataset.aulaId, this.dataset.estudianteId, this.dataset.estudianteNombre);
+                });
+            });
+        </script>
 
     </div>
 </body>

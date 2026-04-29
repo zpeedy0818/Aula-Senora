@@ -13,4 +13,5 @@ public interface SolicitudAulaRepository extends JpaRepository<SolicitudAula, Lo
     List<SolicitudAula> findByAulaIdAndEstado(Long aulaId, String estado);
     List<SolicitudAula> findByEstudianteId(Long estudianteId);
     Optional<SolicitudAula> findByAulaIdAndEstudianteId(Long aulaId, Long estudianteId);
+    void deleteByAulaId(Long aulaId);
 }

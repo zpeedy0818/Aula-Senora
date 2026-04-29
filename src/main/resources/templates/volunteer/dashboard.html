@@ -70,60 +70,7 @@
         </div>
 
         <!-- Main Content Area: Requests & Sessions -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
-
-            <!-- Pending Requests Feed -->
-            <div class="col-span-1">
-                <h2 class="section-title mb-md flex items-center justify-between">
-                    Solicitudes Pendientes
-                    <span class="badge badge-warning text-xs">Nuevas</span>
-                </h2>
-
-                <div class="glass-card p-0 overflow-hidden flex flex-col gap-[1px] bg-color-muted">
-
-                    <div th:if="${param.statusUpdated}" class="m-md p-sm text-sm text-success bg-green-50 rounded border border-success">
-                        Estado de la solicitud actualizado.
-                    </div>
-
-                    <div th:each="solicitud : ${solicitudes}" class="p-lg bg-surface transition-all hover:bg-gray-50">
-                        <div class="flex items-center justify-between mb-sm">
-                            <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${solicitud.horario.materia}">Materia</span>
-                            <span th:class="${solicitud.estado == 'PENDIENTE' ? 'badge badge-warning' : (solicitud.estado == 'ACEPTADA' ? 'badge badge-success' : 'badge')} "
-                                  th:style="${solicitud.estado == 'RECHAZADA' ? 'background-color:#fee2e2; color:#ef4444;' : ''}"
-                                  th:text="${solicitud.estado}">Estado</span>
-                        </div>
-                        <h4 class="font-bold text-lg mb-xs" th:text="${'Día: ' + solicitud.horario.diaSemana + ' ' + solicitud.horario.horaInicio}">Día y Hora</h4>
-                        <p class="text-secondary text-sm mb-md line-clamp-2" th:text="${solicitud.mensaje}">Mensaje del estudiante...</p>
-                        
-                        <div class="flex justify-between items-center text-sm">
-                            <div class="flex items-center gap-xs text-secondary">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                Estudiante: <span th:text="${solicitud.estudiante.firstName + ' ' + solicitud.estudiante.lastName}">Nombre</span>
-                            </div>
-                            
-                            <div class="flex gap-sm" th:if="${solicitud.estado == 'PENDIENTE'}">
-                                <form th:action="@{/volunteer/request/{id}/status(id=${solicitud.id})}" method="post">
-                                    <input type="hidden" name="status" value="RECHAZADA">
-                                    <button type="submit" class="btn btn-outline btn-sm text-error" style="border-color:transparent; padding: 0.25rem 0.75rem;">Rechazar</button>
-                                </form>
-                                <form th:action="@{/volunteer/request/{id}/status(id=${solicitud.id})}" method="post">
-                                    <input type="hidden" name="status" value="ACEPTADA">
-                                    <button type="submit" class="btn btn-gradient btn-sm" style="padding: 0.25rem 0.75rem;">Aceptar Tutoría</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div th:if="${solicitudes == null or solicitudes.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface">
-                        No tienes solicitudes de tutoría en este momento.
-                    </div>
-
-                </div>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl" style="display:none;">
         </div>
 
         <!-- Manage Schedule Section (Summary) -->
@@ -169,7 +116,12 @@
                         </div>
                         <div class="mt-md pt-md border-t border-color-muted flex justify-between items-center">
                             <span class="text-xs text-secondary" th:text="${#temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
-                            <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.75rem;">Gestionar Aula</a>
+                            <div class="flex gap-sm">
+                                <button type="button" class="btn btn-outline btn-sm text-error delete-aula-btn" style="padding: 0.25rem 0.5rem; border-color:transparent;" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                                </button>
+                                <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.75rem;">Gestionar Aula</a>
+                            </div>
                         </div>
                     </div>
                     <div th:if="${misAulas == null or misAulas.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
@@ -394,6 +346,46 @@
             </div>
         </div>
 
+        <!-- Delete Aula Modal -->
+        <div id="delete-aula-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-md bg-surface relative"
+                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('delete-aula-modal').classList.add('hidden')"
+                    aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <div class="text-center mb-md">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900" id="delete-modal-title">¿Eliminar aula?</h3>
+                    <div class="mt-2 text-sm text-secondary">
+                        <p>Esta acción no se puede deshacer. Todos los estudiantes serán removidos y se borrarán las solicitudes pendientes.</p>
+                    </div>
+                </div>
+
+                <form id="delete-aula-form" method="post" action="">
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('delete-aula-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn text-white" style="background-color: var(--error); border-color: var(--error);">Sí, eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
             // Utilities to close modals
             document.getElementById('resource-modal').addEventListener('click', function (e) {
@@ -402,11 +394,32 @@
             document.getElementById('aula-modal').addEventListener('click', function (e) {
                 if (e.target === this) this.classList.add('hidden');
             });
+            document.getElementById('delete-aula-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     document.getElementById('resource-modal').classList.add('hidden');
                     document.getElementById('aula-modal').classList.add('hidden');
+                    document.getElementById('delete-aula-modal').classList.add('hidden');
                 }
+            });
+
+            function openDeleteModal(aulaId, aulaNombre) {
+                const modal = document.getElementById('delete-aula-modal');
+                const form = document.getElementById('delete-aula-form');
+                const title = document.getElementById('delete-modal-title');
+                
+                title.textContent = '¿Eliminar aula "' + aulaNombre + '"?';
+                form.action = '/volunteer/aulas/' + aulaId + '/delete';
+                modal.classList.remove('hidden');
+            }
+
+            // Bind delete buttons using data attributes
+            document.querySelectorAll('.delete-aula-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openDeleteModal(this.dataset.aulaId, this.dataset.aulaNombre);
+                });
             });
 
             // File input preview

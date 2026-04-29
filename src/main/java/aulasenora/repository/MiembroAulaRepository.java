@@ -12,4 +12,6 @@ public interface MiembroAulaRepository extends JpaRepository<MiembroAula, Long> 
     List<MiembroAula> findByAulaId(Long aulaId);
     List<MiembroAula> findByUsuarioId(Long usuarioId);
     Optional<MiembroAula> findByAulaIdAndUsuarioId(Long aulaId, Long usuarioId);
+    void deleteByAulaId(Long aulaId);
+    void deleteByAulaIdAndUsuarioId(Long aulaId, Long usuarioId);
 }
