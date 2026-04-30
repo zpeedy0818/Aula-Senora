@@ -3,7 +3,11 @@ package aulasenora.controller;
 import aulasenora.model.Aula;
 import aulasenora.model.MiembroAula;
 import aulasenora.model.SolicitudAula;
+import aulasenora.model.HorarioAula;
+import aulasenora.model.SolicitudHorarioAula;
 import aulasenora.service.AulaService;
+import aulasenora.service.HorarioAulaService;
+import java.time.LocalTime;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +20,11 @@ import java.util.List;
 public class AulaController {
 
     private final AulaService aulaService;
+    private final HorarioAulaService horarioAulaService;
 
-    public AulaController(AulaService aulaService) {
+    public AulaController(AulaService aulaService, HorarioAulaService horarioAulaService) {
         this.aulaService = aulaService;
+        this.horarioAulaService = horarioAulaService;
     }
 
     // --- VOLUNTEER ENDPOINTS ---
@@ -39,10 +45,14 @@ public class AulaController {
         Aula aula = aulaService.getAulaById(id);
         List<SolicitudAula> solicitudesPendientes = aulaService.getSolicitudesPendientesByAula(id);
         List<MiembroAula> miembros = aulaService.getMiembrosByAula(id);
+        List<HorarioAula> horarios = horarioAulaService.getHorariosByAula(id);
+        List<SolicitudHorarioAula> solicitudesHorarios = horarioAulaService.getSolicitudesByAula(id);
 
         model.addAttribute("aula", aula);
         model.addAttribute("solicitudesPendientes", solicitudesPendientes);
         model.addAttribute("miembros", miembros);
+        model.addAttribute("horarios", horarios);
+        model.addAttribute("solicitudesHorarios", solicitudesHorarios);
         return "volunteer/aula-detail";
     }
 
@@ -90,6 +100,52 @@ public class AulaController {
         return "redirect:/volunteer/aulas/" + id;
     }
 
+    // --- HORARIOS VOLUNTEER ENDPOINTS ---
+
+    @PostMapping("/volunteer/aulas/{id}/horarios/create")
+    public String createHorario(@PathVariable Long id, @RequestParam String diaSemana, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            horarioAulaService.crearHorario(id, diaSemana, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Horario creado exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al crear horario: " + e.getMessage());
+        }
+        return "redirect:/volunteer/aulas/" + id;
+    }
+
+    @PostMapping("/volunteer/aulas/{id}/horarios/{horarioId}/delete")
+    public String deleteHorario(@PathVariable Long id, @PathVariable Long horarioId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            horarioAulaService.eliminarHorario(horarioId, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Horario eliminado.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar horario: " + e.getMessage());
+        }
+        return "redirect:/volunteer/aulas/" + id;
+    }
+
+    @PostMapping("/volunteer/aulas/horarios/requests/{solicitudId}/approve")
+    public String approveHorarioRequest(@PathVariable Long solicitudId, @RequestParam Long aulaId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            horarioAulaService.aprobarSolicitud(solicitudId, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud de horario aprobada.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/volunteer/aulas/" + aulaId;
+    }
+
+    @PostMapping("/volunteer/aulas/horarios/requests/{solicitudId}/reject")
+    public String rejectHorarioRequest(@PathVariable Long solicitudId, @RequestParam Long aulaId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            horarioAulaService.rechazarSolicitud(solicitudId, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud de horario rechazada.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/volunteer/aulas/" + aulaId;
+    }
+
     // --- STUDENT ENDPOINTS ---
 
     @GetMapping("/student/aulas/explore")
@@ -122,7 +178,23 @@ public class AulaController {
             return "redirect:/student/dashboard";
         }
         
+        List<HorarioAula> horarios = horarioAulaService.getHorariosByAula(id);
+        
         model.addAttribute("aula", aula);
+        model.addAttribute("horarios", horarios);
         return "student/aula-detail";
+    }
+
+    // --- HORARIOS STUDENT ENDPOINTS ---
+
+    @PostMapping("/student/aulas/horarios/{horarioId}/request")
+    public String requestHorarioAula(@PathVariable Long horarioId, @RequestParam Long aulaId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            horarioAulaService.solicitarHorario(horarioId, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Horario solicitado correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/student/aulas/" + aulaId;
     }
 }
