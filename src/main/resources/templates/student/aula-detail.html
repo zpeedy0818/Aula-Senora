@@ -34,6 +34,38 @@
             </div>
 
             <div class="col-span-1">
+                <h2 class="section-title mb-md">Horarios Disponibles</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-md mb-xl">
+                    <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-sm">
+                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;" th:text="${horario.diaSemana}">Día</span>
+                        </div>
+                        <h4 class="font-bold mb-xs text-primary" th:text="${horario.materia}">Materia</h4>
+                        <p class="text-sm text-secondary mb-md font-medium" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</p>
+                        
+                        <div class="mt-auto pt-md border-t border-color-muted">
+                            <div th:if="${horario.estado == 'DISPONIBLE'}">
+                                <form th:action="@{'/student/aulas/horarios/' + ${horario.id} + '/request'}" method="post">
+                                    <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                    <button type="submit" class="btn btn-secondary w-full text-sm py-xs">Solicitar Cupo</button>
+                                </form>
+                            </div>
+                            <div th:if="${horario.estado == 'PENDIENTE'}" class="text-center p-xs rounded bg-yellow-50 text-yellow-800 text-xs font-bold border border-yellow-200">
+                                Solicitud Pendiente
+                            </div>
+                            <div th:if="${horario.estado == 'OCUPADO'}" class="text-center p-xs rounded bg-red-50 text-red-800 text-xs font-bold border border-red-200">
+                                Horario Ocupado
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                        El voluntario aún no ha publicado horarios para esta aula.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-1">
                 <h2 class="section-title mb-md">Contenido del Aula</h2>
                 <div class="card p-xl text-center border-dashed border-2 border-color-muted bg-gray-50">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" class="mx-auto mb-md opacity-50">

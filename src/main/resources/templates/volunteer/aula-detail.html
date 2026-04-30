@@ -28,6 +28,45 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
 
+            <!-- Horarios del Aula Section -->
+            <div class="col-span-1 lg:col-span-3 mb-md">
+                <div class="flex justify-between items-center mb-md">
+                    <h2 class="section-title m-0">Horarios del Aula</h2>
+                    <button class="btn btn-secondary btn-sm shadow-md"
+                        onclick="document.getElementById('horario-modal').classList.remove('hidden')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-xs" style="margin-right:0.25rem;">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Añadir Horario
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+                    <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md">
+                        <div class="flex justify-between items-start mb-sm">
+                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;" th:text="${horario.diaSemana}">Día</span>
+                            <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/' + ${horario.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar este horario?');">
+                                <button type="submit" class="text-error hover:opacity-80 p-xs" title="Eliminar Horario">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                        <h4 class="font-bold mb-xs" th:text="${horario.materia}">Materia</h4>
+                        <p class="text-sm text-secondary mb-sm" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</p>
+                        
+                        <div class="mt-xs pt-xs border-t border-color-muted">
+                            <span th:if="${horario.estado == 'DISPONIBLE'}" class="badge" style="background-color: #dcfce7; color: #166534;">Disponible</span>
+                            <span th:if="${horario.estado == 'PENDIENTE'}" class="badge" style="background-color: #fef08a; color: #854d0e;">Pendiente</span>
+                            <span th:if="${horario.estado == 'OCUPADO'}" class="badge" style="background-color: #fee2e2; color: #991b1b;">Ocupado</span>
+                        </div>
+                    </div>
+                    <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                        No hay horarios configurados para esta aula.
+                    </div>
+                </div>
+            </div>
+
             <!-- Estudiantes Inscritos -->
             <div class="col-span-1 lg:col-span-2">
                 <h2 class="section-title mb-md">Estudiantes Inscritos</h2>
@@ -84,6 +123,31 @@
                         No hay solicitudes pendientes.
                     </div>
                 </div>
+
+                <h2 class="section-title mb-md mt-xl">Solicitudes de Horarios</h2>
+                
+                <div class="flex flex-col gap-md">
+                    <div th:each="solicitudH : ${solicitudesHorarios}" th:if="${solicitudH.estado == 'PENDIENTE'}" class="card p-md shadow-sm border border-warning">
+                        <h4 class="font-bold text-md mb-xs" th:text="${solicitudH.estudiante.firstName + ' ' + solicitudH.estudiante.lastName}">Nombre</h4>
+                        <p class="text-xs text-secondary mb-xs" th:text="${solicitudH.horarioAula.diaSemana + ' ' + solicitudH.horarioAula.horaInicio + '-' + solicitudH.horarioAula.horaFin}">Horario</p>
+                        <p class="text-xs text-secondary mb-md" th:text="${'Solicitó el ' + #temporals.format(solicitudH.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</p>
+                        
+                        <div class="flex gap-sm w-full">
+                            <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/reject'}" method="post" class="flex-1">
+                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                <button type="submit" class="btn btn-outline btn-sm w-full text-error" style="border-color: #fca5a5;">Rechazar</button>
+                            </form>
+                            <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/approve'}" method="post" class="flex-1">
+                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                <button type="submit" class="btn btn-secondary btn-sm w-full text-white" style="background-color: var(--success); border-color: var(--success);">Aprobar</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${solicitudesHorarios == null or solicitudesHorarios.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                        No hay solicitudes de horario pendientes.
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -136,6 +200,63 @@
             </div>
         </div>
 
+        <!-- Create Horario Modal -->
+        <div id="horario-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
+            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+            <div class="card w-full max-w-md bg-surface relative"
+                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
+                <button type="button"
+                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
+                    onclick="document.getElementById('horario-modal').classList.add('hidden')"
+                    aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <h2 class="mb-lg">Añadir Horario Semanal</h2>
+
+                <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/create'}" method="post">
+                    <div class="form-group mb-md">
+                        <label for="diaSemana" class="form-label">Día de la Semana</label>
+                        <select id="diaSemana" name="diaSemana" class="form-control" required style="appearance: auto;">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-md mb-md">
+                        <div class="form-group">
+                            <label for="horaInicio" class="form-label">Hora Inicio</label>
+                            <input type="time" id="horaInicio" name="horaInicio" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="horaFin" class="form-label">Hora Fin</label>
+                            <input type="time" id="horaFin" name="horaFin" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-lg">
+                        <label for="materia" class="form-label">Materia / Tema</label>
+                        <input type="text" id="materia" name="materia" class="form-control" placeholder="Ej: Matemáticas" required>
+                    </div>
+
+                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('horario-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="btn btn-secondary">Guardar Horario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
             // Utilities to close modals
             document.getElementById('delete-aula-modal').addEventListener('click', function (e) {
@@ -144,10 +265,14 @@
             document.getElementById('delete-estudiante-modal').addEventListener('click', function (e) {
                 if (e.target === this) this.classList.add('hidden');
             });
+            document.getElementById('horario-modal').addEventListener('click', function (e) {
+                if (e.target === this) this.classList.add('hidden');
+            });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     document.getElementById('delete-aula-modal').classList.add('hidden');
                     document.getElementById('delete-estudiante-modal').classList.add('hidden');
+                    document.getElementById('horario-modal').classList.add('hidden');
                 }
             });
 
