@@ -11,6 +11,7 @@ import aulasenora.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class HorarioAulaService {
     }
 
     public List<HorarioAula> getHorariosByAula(Long aulaId) {
-        return horarioAulaRepository.findByAula_Id(aulaId);
+        return horarioAulaRepository.findByAula_IdOrderByFechaAscHoraInicioAsc(aulaId);
     }
 
     public List<SolicitudHorarioAula> getSolicitudesByAula(Long aulaId) {
@@ -41,7 +42,7 @@ public class HorarioAulaService {
     }
 
     @Transactional
-    public HorarioAula crearHorario(Long aulaId, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia, String username, Boolean esGrupal) {
+    public HorarioAula crearHorario(Long aulaId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia, String username, Boolean esGrupal) {
         Aula aula = aulaRepository.findById(aulaId)
                 .orElseThrow(() -> new IllegalArgumentException("Aula no encontrada"));
 
@@ -50,7 +51,7 @@ public class HorarioAulaService {
             throw new SecurityException("No tienes permiso para agregar horarios a esta aula");
         }
 
-        HorarioAula horario = new HorarioAula(aula, diaSemana, horaInicio, horaFin, materia, esGrupal);
+        HorarioAula horario = new HorarioAula(aula, fecha, horaInicio, horaFin, materia, esGrupal);
         return horarioAulaRepository.save(horario);
     }
 

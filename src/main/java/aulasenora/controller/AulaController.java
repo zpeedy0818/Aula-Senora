@@ -7,7 +7,9 @@ import aulasenora.model.HorarioAula;
 import aulasenora.model.SolicitudHorarioAula;
 import aulasenora.service.AulaService;
 import aulasenora.service.HorarioAulaService;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,9 +105,9 @@ public class AulaController {
     // --- HORARIOS VOLUNTEER ENDPOINTS ---
 
     @PostMapping("/volunteer/aulas/{id}/horarios/create")
-    public String createHorario(@PathVariable Long id, @RequestParam String diaSemana, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, @RequestParam(defaultValue = "false") boolean esGrupal, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String createHorario(@PathVariable Long id, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, @RequestParam(defaultValue = "false") boolean esGrupal, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
-            horarioAulaService.crearHorario(id, diaSemana, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName(), esGrupal);
+            horarioAulaService.crearHorario(id, fecha, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName(), esGrupal);
             redirectAttributes.addFlashAttribute("successMessage", "Horario creado exitosamente.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al crear horario: " + e.getMessage());

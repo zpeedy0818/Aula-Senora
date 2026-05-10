@@ -68,7 +68,7 @@ public class MigrationService {
             // Create new HorarioAula
             HorarioAula newHorario = new HorarioAula(
                     targetAula,
-                    oldHorario.getDiaSemana(),
+                    java.time.LocalDate.now(),
                     oldHorario.getHoraInicio(),
                     oldHorario.getHoraFin(),
                     oldHorario.getMateria(),

@@ -1,6 +1,7 @@
 package aulasenora.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -15,8 +16,11 @@ public class HorarioAula {
     @JoinColumn(name = "aula_id", nullable = false)
     private Aula aula;
 
-    @Column(nullable = false, name = "dia_semana")
-    private String diaSemana;
+    @Column(name = "dia_semana", nullable = true)
+    private String diaSemana; // Deprecated, kept only to allow Hibernate to drop the NOT NULL constraint in DB
+
+    @Column(nullable = false, columnDefinition = "date default CURRENT_DATE")
+    private LocalDate fecha;
 
     @Column(nullable = false, name = "hora_inicio")
     private LocalTime horaInicio;
@@ -38,14 +42,15 @@ public class HorarioAula {
 
     public HorarioAula() {}
 
-    public HorarioAula(Aula aula, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia, Boolean esGrupal) {
+    public HorarioAula(Aula aula, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia, Boolean esGrupal) {
         this.aula = aula;
-        this.diaSemana = diaSemana;
+        this.fecha = fecha;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.materia = materia;
         this.estado = "DISPONIBLE";
         this.esGrupal = esGrupal != null ? esGrupal : false;
+        this.diaSemana = "N/A"; // Valor por defecto para la base de datos
     }
 
     public Long getId() {
@@ -64,12 +69,12 @@ public class HorarioAula {
         this.aula = aula;
     }
 
-    public String getDiaSemana() {
-        return diaSemana;
+    public LocalDate getFecha() {
+        return fecha;
     }
 
-    public void setDiaSemana(String diaSemana) {
-        this.diaSemana = diaSemana;
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
     }
 
     public LocalTime getHoraInicio() {

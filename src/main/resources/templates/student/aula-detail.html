@@ -39,7 +39,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-md mb-xl">
                     <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md hover:shadow-md transition-shadow">
                         <div class="flex justify-between items-start mb-sm">
-                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;" th:text="${horario.diaSemana}">Día</span>
+                            <span class="badge capitalize" style="background-color: #e0f2fe; color: #0369a1;" th:text="${#temporals.format(horario.fecha, 'EEEE, d ''de'' MMMM')}">Fecha</span>
                         </div>
                         <h4 class="font-bold mb-xs text-primary" th:text="${horario.materia}">Materia</h4>
                         <div class="flex items-center gap-sm mb-md">

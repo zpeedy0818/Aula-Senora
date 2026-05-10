@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface HorarioAulaRepository extends JpaRepository<HorarioAula, Long> {
-    List<HorarioAula> findByAula_Id(Long aulaId);
+    List<HorarioAula> findByAula_IdOrderByFechaAscHoraInicioAsc(Long aulaId);
 }

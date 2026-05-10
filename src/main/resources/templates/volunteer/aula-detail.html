@@ -45,7 +45,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
                     <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md">
                         <div class="flex justify-between items-start mb-sm">
-                            <span class="badge" style="background-color: #e0f2fe; color: #0369a1;" th:text="${horario.diaSemana}">Día</span>
+                            <span class="badge capitalize" style="background-color: #e0f2fe; color: #0369a1;" th:text="${#temporals.format(horario.fecha, 'EEEE, d ''de'' MMMM')}">Fecha</span>
                             <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/' + ${horario.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar este horario?');">
                                 <button type="submit" class="text-error hover:opacity-80 p-xs" title="Eliminar Horario">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
@@ -252,16 +252,8 @@
 
                 <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/create'}" method="post">
                     <div class="form-group mb-md">
-                        <label for="diaSemana" class="form-label">Día de la Semana</label>
-                        <select id="diaSemana" name="diaSemana" class="form-control" required style="appearance: auto;">
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                            <option value="Domingo">Domingo</option>
-                        </select>
+                        <label for="fecha" class="form-label">Fecha de la Sesión</label>
+                        <input type="date" id="fecha" name="fecha" class="form-control" required>
                     </div>
 
                     <div class="grid grid-cols-2 gap-md mb-md">
