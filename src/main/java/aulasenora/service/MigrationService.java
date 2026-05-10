@@ -71,7 +71,8 @@ public class MigrationService {
                     oldHorario.getDiaSemana(),
                     oldHorario.getHoraInicio(),
                     oldHorario.getHoraFin(),
-                    oldHorario.getMateria()
+                    oldHorario.getMateria(),
+                    false
             );
             newHorario = newHorarioRepository.save(newHorario);
 
