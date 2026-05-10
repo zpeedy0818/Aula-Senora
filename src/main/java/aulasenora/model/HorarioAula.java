@@ -30,18 +30,22 @@ public class HorarioAula {
     @Column(nullable = false)
     private String estado = "DISPONIBLE"; // DISPONIBLE, PENDIENTE, OCUPADO
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean esGrupal = false;
+
     @Version
     private Long version;
 
     public HorarioAula() {}
 
-    public HorarioAula(Aula aula, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia) {
+    public HorarioAula(Aula aula, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia, Boolean esGrupal) {
         this.aula = aula;
         this.diaSemana = diaSemana;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.materia = materia;
         this.estado = "DISPONIBLE";
+        this.esGrupal = esGrupal != null ? esGrupal : false;
     }
 
     public Long getId() {
@@ -106,5 +110,13 @@ public class HorarioAula {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public Boolean getEsGrupal() {
+        return esGrupal;
+    }
+
+    public void setEsGrupal(Boolean esGrupal) {
+        this.esGrupal = esGrupal;
     }
 }

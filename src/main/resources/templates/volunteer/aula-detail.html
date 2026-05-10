@@ -53,7 +53,17 @@
                             </form>
                         </div>
                         <h4 class="font-bold mb-xs" th:text="${horario.materia}">Materia</h4>
-                        <p class="text-sm text-secondary mb-sm" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</p>
+                        <div class="flex items-center gap-sm mb-sm">
+                            <span class="text-sm text-secondary" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</span>
+                            <span th:if="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200 flex items-center gap-1" style="background-color: #eef2ff; color: #4338ca; border-color: #c7d2fe;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                Grupal
+                            </span>
+                            <span th:unless="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded-md border border-gray-200 flex items-center gap-1">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                Individual
+                            </span>
+                        </div>
                         
                         <div class="mt-xs pt-xs border-t border-color-muted">
                             <span th:if="${horario.estado == 'DISPONIBLE'}" class="badge" style="background-color: #dcfce7; color: #166534;">Disponible</span>
@@ -243,9 +253,29 @@
                         </div>
                     </div>
 
-                    <div class="form-group mb-lg">
+                    <div class="form-group mb-md">
                         <label for="materia" class="form-label">Materia / Tema</label>
                         <input type="text" id="materia" name="materia" class="form-control" placeholder="Ej: Matemáticas" required>
+                    </div>
+
+                    <div class="form-group mb-lg">
+                        <label class="form-label">Tipo de Sesión</label>
+                        <div class="flex flex-col gap-sm p-sm border border-color-muted rounded-md bg-surface">
+                            <label class="flex items-center gap-sm cursor-pointer hover:bg-gray-50 p-xs rounded transition-colors">
+                                <input type="radio" name="esGrupal" value="false" checked style="accent-color: var(--primary); width: 1.2rem; height: 1.2rem;">
+                                <div>
+                                    <span class="block font-bold text-sm text-gray-800">Individual</span>
+                                    <span class="block text-xs text-secondary">Para un solo estudiante. Se marcará como ocupado una vez reservado.</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-sm cursor-pointer hover:bg-gray-50 p-xs rounded transition-colors">
+                                <input type="radio" name="esGrupal" value="true" style="accent-color: var(--primary); width: 1.2rem; height: 1.2rem;">
+                                <div>
+                                    <span class="block font-bold text-sm text-gray-800">Grupal</span>
+                                    <span class="block text-xs text-secondary">Para varios estudiantes. Permite múltiples inscripciones.</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">

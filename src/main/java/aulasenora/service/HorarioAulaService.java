@@ -41,7 +41,7 @@ public class HorarioAulaService {
     }
 
     @Transactional
-    public HorarioAula crearHorario(Long aulaId, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia, String username) {
+    public HorarioAula crearHorario(Long aulaId, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia, String username, Boolean esGrupal) {
         Aula aula = aulaRepository.findById(aulaId)
                 .orElseThrow(() -> new IllegalArgumentException("Aula no encontrada"));
 
@@ -50,7 +50,7 @@ public class HorarioAulaService {
             throw new SecurityException("No tienes permiso para agregar horarios a esta aula");
         }
 
-        HorarioAula horario = new HorarioAula(aula, diaSemana, horaInicio, horaFin, materia);
+        HorarioAula horario = new HorarioAula(aula, diaSemana, horaInicio, horaFin, materia, esGrupal);
         return horarioAulaRepository.save(horario);
     }
 
@@ -89,8 +89,11 @@ public class HorarioAulaService {
 
         SolicitudHorarioAula solicitud = new SolicitudHorarioAula(estudiante, horario);
         
-        horario.setEstado("PENDIENTE");
-        horarioAulaRepository.save(horario);
+        // Si es grupal, mantenemos el estado como DISPONIBLE para que otros puedan solicitar
+        if (Boolean.FALSE.equals(horario.getEsGrupal())) {
+            horario.setEstado("PENDIENTE");
+            horarioAulaRepository.save(horario);
+        }
 
         return solicitudHorarioAulaRepository.save(solicitud);
     }
@@ -113,15 +116,17 @@ public class HorarioAulaService {
         solicitud.setEstado("ACEPTADA");
         solicitudHorarioAulaRepository.save(solicitud);
 
-        horario.setEstado("OCUPADO");
-        horarioAulaRepository.save(horario);
+        if (Boolean.FALSE.equals(horario.getEsGrupal())) {
+            horario.setEstado("OCUPADO");
+            horarioAulaRepository.save(horario);
 
-        // Reject all other pending requests for this schedule
-        List<SolicitudHorarioAula> otrasSolicitudes = solicitudHorarioAulaRepository.findByHorarioAula_Id(horario.getId());
-        for (SolicitudHorarioAula otra : otrasSolicitudes) {
-            if (!otra.getId().equals(solicitud.getId()) && "PENDIENTE".equals(otra.getEstado())) {
-                otra.setEstado("RECHAZADA");
-                solicitudHorarioAulaRepository.save(otra);
+            // Reject all other pending requests for this schedule
+            List<SolicitudHorarioAula> otrasSolicitudes = solicitudHorarioAulaRepository.findByHorarioAula_Id(horario.getId());
+            for (SolicitudHorarioAula otra : otrasSolicitudes) {
+                if (!otra.getId().equals(solicitud.getId()) && "PENDIENTE".equals(otra.getEstado())) {
+                    otra.setEstado("RECHAZADA");
+                    solicitudHorarioAulaRepository.save(otra);
+                }
             }
         }
     }
@@ -141,13 +146,15 @@ public class HorarioAulaService {
         solicitudHorarioAulaRepository.save(solicitud);
 
         // If no more pending requests, change schedule back to DISPONIBLE
-        List<SolicitudHorarioAula> pendingRequests = solicitudHorarioAulaRepository.findByHorarioAula_Id(horario.getId()).stream()
-                .filter(s -> "PENDIENTE".equals(s.getEstado()))
-                .toList();
+        if (Boolean.FALSE.equals(horario.getEsGrupal())) {
+            List<SolicitudHorarioAula> pendingRequests = solicitudHorarioAulaRepository.findByHorarioAula_Id(horario.getId()).stream()
+                    .filter(s -> "PENDIENTE".equals(s.getEstado()))
+                    .toList();
 
-        if (pendingRequests.isEmpty() && !"OCUPADO".equals(horario.getEstado())) {
-            horario.setEstado("DISPONIBLE");
-            horarioAulaRepository.save(horario);
+            if (pendingRequests.isEmpty() && !"OCUPADO".equals(horario.getEstado())) {
+                horario.setEstado("DISPONIBLE");
+                horarioAulaRepository.save(horario);
+            }
         }
     }
 }

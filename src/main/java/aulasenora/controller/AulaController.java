@@ -103,9 +103,9 @@ public class AulaController {
     // --- HORARIOS VOLUNTEER ENDPOINTS ---
 
     @PostMapping("/volunteer/aulas/{id}/horarios/create")
-    public String createHorario(@PathVariable Long id, @RequestParam String diaSemana, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String createHorario(@PathVariable Long id, @RequestParam String diaSemana, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, @RequestParam(defaultValue = "false") boolean esGrupal, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
-            horarioAulaService.crearHorario(id, diaSemana, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName());
+            horarioAulaService.crearHorario(id, diaSemana, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName(), esGrupal);
             redirectAttributes.addFlashAttribute("successMessage", "Horario creado exitosamente.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al crear horario: " + e.getMessage());

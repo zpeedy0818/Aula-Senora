@@ -42,7 +42,17 @@
                             <span class="badge" style="background-color: #e0f2fe; color: #0369a1;" th:text="${horario.diaSemana}">Día</span>
                         </div>
                         <h4 class="font-bold mb-xs text-primary" th:text="${horario.materia}">Materia</h4>
-                        <p class="text-sm text-secondary mb-md font-medium" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</p>
+                        <div class="flex items-center gap-sm mb-md">
+                            <span class="text-sm text-secondary font-medium" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</span>
+                            <span th:if="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200 flex items-center gap-1" style="background-color: #eef2ff; color: #4338ca; border-color: #c7d2fe;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                Grupal
+                            </span>
+                            <span th:unless="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded-md border border-gray-200 flex items-center gap-1">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                Individual
+                            </span>
+                        </div>
                         
                         <div class="mt-auto pt-md border-t border-color-muted">
                             <div th:if="${horario.estado == 'DISPONIBLE'}">
