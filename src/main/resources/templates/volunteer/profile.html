@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Mi Perfil - Voluntario</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-xl" style="max-width: 800px;">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-xl pb-md border-b border-color-muted">
+            <div class="flex items-center gap-md">
+                <a th:href="@{/volunteer/dashboard}" class="btn btn-outline btn-sm shadow-sm" style="padding: 0.25rem 0.5rem;" title="Volver al Dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </a>
+                <h1 class="m-0 text-2xl font-bold">Mi Perfil</h1>
+            </div>
+            <div class="badge badge-secondary" style="font-size: 0.85rem;">Voluntario</div>
+        </div>
+
+        <div th:if="${param.success}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md text-center">
+            ¡Perfil actualizado correctamente!
+        </div>
+
+        <div th:if="${error}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md text-center" th:text="${error}">
+        </div>
+
+        <!-- Profile Card -->
+        <div class="card p-xl bg-surface shadow-md border-t-4" style="border-top-color: var(--secondary);">
+            
+            <div class="flex items-center gap-lg mb-xl pb-lg border-b border-color-muted">
+                <div class="w-20 h-20 bg-secondary-light text-secondary rounded-full flex items-center justify-center text-3xl font-bold flex-shrink-0">
+                    <span th:text="${#strings.substring(perfilDTO.firstName, 0, 1)} + ${#strings.substring(perfilDTO.lastName, 0, 1)}">AB</span>
+                </div>
+                <div>
+                    <h2 class="m-0 text-xl font-bold" th:text="${perfilDTO.firstName} + ' ' + ${perfilDTO.lastName}">Nombre</h2>
+                    <p class="text-secondary m-0 mt-xs" th:text="${'@' + username}">@usuario</p>
+                </div>
+            </div>
+
+            <form th:action="@{/volunteer/profile}" th:object="${perfilDTO}" method="post">
+                
+                <h3 class="text-lg font-bold mb-md text-gray-800 border-l-4 pl-sm" style="border-left-color: var(--primary);">Información Personal</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
+                    <div class="form-group mb-0">
+                        <label for="firstName" class="form-label">Nombres</label>
+                        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
+                        <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-error text-xs mt-xs"></p>
+                    </div>
+                    
+                    <div class="form-group mb-0">
+                        <label for="lastName" class="form-label">Apellidos</label>
+                        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
+                        <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-error text-xs mt-xs"></p>
+                    </div>
+
+                    <div class="form-group mb-0 md:col-span-2">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-xs mt-xs"></p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold mb-md text-gray-800 border-l-4 pl-sm mt-xl" style="border-left-color: var(--secondary);">Información de Voluntario</h3>
+                
+                <div class="grid grid-cols-1 gap-md">
+                    <div class="form-group mb-0">
+                        <label for="institution" class="form-label">Universidad / Institución</label>
+                        <input type="text" id="institution" th:field="*{institution}" class="form-control">
+                    </div>
+
+                    <div class="form-group mb-0">
+                        <label for="materiaEspecializada" class="form-label flex justify-between items-center">
+                            <span>Materia Especializada Principal</span>
+                            <span class="text-primary text-sm cursor-pointer hover-underline" onclick="document.getElementById('infoMaterias').classList.toggle('hidden')">¿Ver detalle?</span>
+                        </label>
+                        <select id="materiaEspecializada" th:field="*{materiaEspecializada}" class="form-control">
+                            <option value="NO ESPECIFICADO">Sin Especificar</option>
+                            <option value="Matemáticas">Matemáticas</option>
+                            <option value="Ciencias Naturales">Ciencias Naturales</option>
+                            <option value="Lengua y Comunicación">Lengua y Comunicación</option>
+                            <option value="Ciencias Sociales">Ciencias Sociales</option>
+                            <option value="Filosofía y Pensamiento">Filosofía y Pensamiento</option>
+                        </select>
+                        
+                        <div id="infoMaterias" class="hidden mt-sm p-sm bg-gray-50 rounded text-xs text-secondary border border-gray-200">
+                            <strong>Matemáticas:</strong> Álgebra, Geometría, Cálculo, Estadística...<br>
+                            <strong>Ciencias Naturales:</strong> Física, Química, Biología...<br>
+                            <strong>Lengua:</strong> Español, Inglés, Gramática, Literatura...<br>
+                            <strong>Ciencias Sociales:</strong> Historia, Geografía, Sociología...<br>
+                            <strong>Filosofía:</strong> Filosofía, Ética, Lógica...
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-0">
+                        <label for="skills" class="form-label">Otras Áreas / Habilidades</label>
+                        <input type="text" id="skills" th:field="*{skills}" class="form-control" placeholder="Ej: Programación, Ajedrez, Inglés B2...">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-md mt-2xl pt-md border-t border-color-muted">
+                    <a th:href="@{/volunteer/dashboard}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-secondary shadow-md">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

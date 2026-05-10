@@ -81,4 +81,30 @@ public class UsuarioService {
 
         return savedUsuario;
     }
+
+    public void actualizarPerfilVoluntario(String username, aulasenora.dto.PerfilVoluntarioDTO dto) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                
+        // Verificar si el email cambió y si ya está en uso
+        if (!usuario.getEmail().equalsIgnoreCase(dto.getEmail()) && usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("El email ya está en uso por otra cuenta");
+        }
+
+        usuario.setFirstName(dto.getFirstName().trim().toUpperCase());
+        usuario.setLastName(dto.getLastName().trim().toUpperCase());
+        usuario.setEmail(dto.getEmail());
+        usuarioRepository.save(usuario);
+
+        if ("VOLUNTARIO".equalsIgnoreCase(usuario.getRol())) {
+            Voluntario voluntario = voluntarioRepository.findByUsuario_Username(username)
+                    .orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
+
+            voluntario.setInstitution(dto.getInstitution() != null && !dto.getInstitution().isBlank() ? dto.getInstitution().trim().toUpperCase() : "NO ESPECIFICADO");
+            voluntario.setSkills(dto.getSkills() != null && !dto.getSkills().isBlank() ? dto.getSkills().trim().toUpperCase() : "NO ESPECIFICADO");
+            voluntario.setMateriaEspecializada(dto.getMateriaEspecializada() != null && !dto.getMateriaEspecializada().isBlank() ? dto.getMateriaEspecializada().trim() : "NO ESPECIFICADO");
+            
+            voluntarioRepository.save(voluntario);
+        }
+    }
 }

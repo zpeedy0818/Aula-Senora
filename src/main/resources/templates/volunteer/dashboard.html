@@ -15,16 +15,26 @@
                         th:text="${#authentication.name}">Voluntario</span> 🎓</h1>
                 <p class="text-secondary">Gracias por donar tu tiempo. Aquí puedes gestionar tutorías y recursos.</p>
             </div>
-            <button class="btn btn-secondary btn-lg shadow-md"
-                onclick="document.getElementById('resource-modal').classList.remove('hidden')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    class="mr-sm" style="margin-right:0.5rem;">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-                Subir Recurso
-            </button>
+            <div class="flex gap-md">
+                <a th:href="@{/volunteer/profile}" class="btn btn-outline btn-lg bg-white shadow-sm flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        class="mr-sm" style="margin-right:0.5rem;">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Mi Perfil
+                </a>
+                <button class="btn btn-secondary btn-lg shadow-md"
+                    onclick="document.getElementById('resource-modal').classList.remove('hidden')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        class="mr-sm" style="margin-right:0.5rem;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    Subir Recurso
+                </button>
+            </div>
         </div>
 
         <!-- Dashboard Widgets -->

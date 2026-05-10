@@ -6,10 +6,13 @@ import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.VoluntarioRepository;
 import aulasenora.service.AulaService;
+import aulasenora.service.UsuarioService;
 import aulasenora.model.Aula;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import aulasenora.dto.PerfilVoluntarioDTO;
 
 import java.security.Principal;
 import java.time.LocalTime;
@@ -25,12 +28,14 @@ public class VolunteerController {
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
     private final AulaService aulaService;
+    private final UsuarioService usuarioService;
 
-    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, AulaService aulaService) {
+    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, AulaService aulaService, UsuarioService usuarioService) {
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
         this.aulaService = aulaService;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping("/dashboard")
@@ -49,6 +54,48 @@ public class VolunteerController {
         });
 
         return "volunteer/dashboard";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+
+        voluntarioRepository.findByUsuario_Username(principal.getName()).ifPresent(voluntario -> {
+            PerfilVoluntarioDTO dto = new PerfilVoluntarioDTO();
+            dto.setFirstName(voluntario.getUsuario().getFirstName());
+            dto.setLastName(voluntario.getUsuario().getLastName());
+            dto.setEmail(voluntario.getUsuario().getEmail());
+            dto.setInstitution(voluntario.getInstitution());
+            dto.setSkills(voluntario.getSkills());
+            dto.setMateriaEspecializada(voluntario.getMateriaEspecializada());
+            
+            model.addAttribute("perfilDTO", dto);
+            model.addAttribute("username", voluntario.getUsuario().getUsername());
+        });
+
+        return "volunteer/profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(@Valid @ModelAttribute("perfilDTO") PerfilVoluntarioDTO perfilDTO,
+                                org.springframework.validation.BindingResult bindingResult,
+                                Principal principal,
+                                Model model) {
+        if (principal == null) return "redirect:/login";
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("username", principal.getName());
+            return "volunteer/profile";
+        }
+
+        try {
+            usuarioService.actualizarPerfilVoluntario(principal.getName(), perfilDTO);
+            return "redirect:/volunteer/profile?success=true";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("username", principal.getName());
+            return "volunteer/profile";
+        }
     }
 
     @GetMapping("/schedule")
