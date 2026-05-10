@@ -20,6 +20,9 @@ public class Voluntario {
     @Column(nullable = false)
     private String skills;
 
+    @Column
+    private String materiaEspecializada;
+
     // Constructores
     public Voluntario() {}
 
@@ -60,5 +63,13 @@ public class Voluntario {
 
     public void setSkills(String skills) {
         this.skills = skills;
+    }
+
+    public String getMateriaEspecializada() {
+        return materiaEspecializada;
+    }
+
+    public void setMateriaEspecializada(String materiaEspecializada) {
+        this.materiaEspecializada = materiaEspecializada;
     }
 }

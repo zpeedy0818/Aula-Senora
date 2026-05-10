@@ -5,8 +5,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import aulasenora.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Controller
 public class LoginViewController {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping("/login")
     public String mostrarLogin(
@@ -44,11 +50,20 @@ public class LoginViewController {
     }
 
     @GetMapping("/")
-    public String rootRedirect(org.springframework.security.core.Authentication authentication) {
+    public String rootRedirect(org.springframework.security.core.Authentication authentication, Model model) {
         if (authentication != null && authentication.isAuthenticated() && 
             !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
             return "redirect:/dashboard";
         }
+        
+        long countEstudiantes = usuarioRepository.countByRol("ESTUDIANTE");
+        long countVoluntarios = usuarioRepository.countByRol("VOLUNTARIO");
+        
+        model.addAttribute("countEstudiantes", countEstudiantes);
+        model.addAttribute("countVoluntarios", countVoluntarios);
+        model.addAttribute("countHoras", 0);
+        model.addAttribute("countSatisfaccion", 0);
+        
         return "index";
     }
 }

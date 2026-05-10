@@ -49,19 +49,19 @@
             <div class="container">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-lg text-center">
                     <div data-aos="zoom-in" data-aos-delay="100">
-                        <div class="text-3xl font-extrabold text-primary" style="font-size: 2.5rem;">+500</div>
+                        <div class="text-3xl font-extrabold text-primary" style="font-size: 2.5rem;" th:text="${countEstudiantes}">+500</div>
                         <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Estudiantes</div>
                     </div>
                     <div data-aos="zoom-in" data-aos-delay="200">
-                        <div class="text-3xl font-extrabold text-secondary" style="font-size: 2.5rem;">+120</div>
+                        <div class="text-3xl font-extrabold text-secondary" style="font-size: 2.5rem;" th:text="${countVoluntarios}">+120</div>
                         <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Voluntarios</div>
                     </div>
                     <div data-aos="zoom-in" data-aos-delay="300">
-                        <div class="text-3xl font-extrabold text-warning" style="font-size: 2.5rem;">1.2k</div>
+                        <div class="text-3xl font-extrabold text-warning" style="font-size: 2.5rem;" th:text="${countHoras}">1.2k</div>
                         <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Horas de Clase</div>
                     </div>
                     <div data-aos="zoom-in" data-aos-delay="400">
-                        <div class="text-3xl font-extrabold text-success" style="font-size: 2.5rem;">98%</div>
+                        <div class="text-3xl font-extrabold text-success" style="font-size: 2.5rem;" th:text="${countSatisfaccion} + '%'">98%</div>
                         <div class="text-secondary text-sm font-semibold uppercase tracking-wider">Satisfacción</div>
                     </div>
                 </div>

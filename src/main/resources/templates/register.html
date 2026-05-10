@@ -137,10 +137,50 @@
                         <input type="text" id="institution" th:field="*{institution}" class="form-control"
                             placeholder="Ej: Universidad del Valle">
                     </div>
+                    <div class="form-group">
+                        <label for="materiaEspecializada" class="form-label flex justify-between items-center" style="display: flex; justify-content: space-between;">
+                            <span>Materia Especializada</span>
+                            <span class="text-primary text-sm cursor-pointer" style="text-decoration: underline; cursor: pointer;" onclick="toggleInfoMaterias()">¿Qué incluyen?</span>
+                        </label>
+                        <select id="materiaEspecializada" th:field="*{materiaEspecializada}" class="form-control" onfocus="showInfoMaterias()">
+                            <option value="" disabled selected>Selecciona una materia...</option>
+                            <option value="Matemáticas">Matemáticas</option>
+                            <option value="Ciencias Naturales">Ciencias Naturales</option>
+                            <option value="Lengua y Comunicación">Lengua y Comunicación</option>
+                            <option value="Ciencias Sociales">Ciencias Sociales</option>
+                            <option value="Filosofía y Pensamiento">Filosofía y Pensamiento</option>
+                        </select>
+                        
+                        <div id="infoMaterias" class="mt-sm p-sm bg-white rounded-md shadow-sm border border-color-muted" style="font-size: 0.85rem; display: none; margin-top: 0.5rem; padding: 1rem; border-radius: 0.5rem;">
+                            <h5 class="text-primary mb-sm" style="font-size: 0.95rem; margin-bottom: 0.75rem;">Áreas de estudio por materia:</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm text-secondary" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                <div>
+                                    <strong class="block mb-1" style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Matemáticas</strong>
+                                    Álgebra, Geometría, Cálculo, Estadística, Trigonometría, Matemática discreta, Lógica matemática
+                                </div>
+                                <div>
+                                    <strong class="block mb-1" style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Ciencias Naturales</strong>
+                                    Física, Química, Biología, Astronomía, Geología, Ecología
+                                </div>
+                                <div>
+                                    <strong class="block mb-1" style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Lengua y Comunicación</strong>
+                                    Español, Inglés, Francés, Lingüística, Gramática, Literatura, Escritura, Comunicación oral
+                                </div>
+                                <div>
+                                    <strong class="block mb-1" style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Ciencias Sociales</strong>
+                                    Historia, Geografía, Sociología, Economía, Política, Antropología
+                                </div>
+                                <div style="grid-column: 1 / -1;">
+                                    <strong class="block mb-1" style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Filosofía y Pensamiento</strong>
+                                    Filosofía, Ética, Lógica, Metafísica, Epistemología
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group mb-0">
-                        <label for="skills" class="form-label">Áreas de Especialidad</label>
+                        <label for="skills" class="form-label">Otras Áreas (Opcional)</label>
                         <input type="text" id="skills" th:field="*{skills}" class="form-control"
-                            placeholder="Ej: Matemáticas, Física, Programación">
+                            placeholder="Ej: Programación en Java, Ajedrez, etc.">
                     </div>
                 </div>
 
@@ -196,6 +236,20 @@
                 const container = document.getElementById('forms-container');
                 container.style.display = 'none';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function showInfoMaterias() {
+                const info = document.getElementById('infoMaterias');
+                if (info && info.style.display === 'none') {
+                    info.style.display = 'block';
+                }
+            }
+
+            function toggleInfoMaterias() {
+                const info = document.getElementById('infoMaterias');
+                if (info) {
+                    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+                }
             }
 
             // Auto-select if URL param is present or if returning from server with a role

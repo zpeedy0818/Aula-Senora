@@ -33,6 +33,7 @@ public class RegistroDTO {
     // Datos Adicionales (Voluntario)
     private String institution;
     private String skills;
+    private String materiaEspecializada;
 
     // Getters y Setters
     public String getUsername() { return username; }
@@ -58,4 +59,7 @@ public class RegistroDTO {
 
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
+
+    public String getMateriaEspecializada() { return materiaEspecializada; }
+    public void setMateriaEspecializada(String materiaEspecializada) { this.materiaEspecializada = materiaEspecializada; }
 }

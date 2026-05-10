@@ -70,9 +70,12 @@ public class UsuarioService {
                                  ? dto.getInstitution().trim().toUpperCase() : "NO ESPECIFICADO";
             String skills = dto.getSkills() != null && !dto.getSkills().isBlank() 
                             ? dto.getSkills().trim().toUpperCase() : "NO ESPECIFICADO";
+            String materiaEspecializada = dto.getMateriaEspecializada() != null && !dto.getMateriaEspecializada().isBlank()
+                                          ? dto.getMateriaEspecializada().trim() : "NO ESPECIFICADO";
                             
             voluntario.setInstitution(institution);
             voluntario.setSkills(skills);
+            voluntario.setMateriaEspecializada(materiaEspecializada);
             voluntarioRepository.save(voluntario);
         }
 
