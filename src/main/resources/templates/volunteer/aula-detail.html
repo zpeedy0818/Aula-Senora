@@ -65,11 +65,33 @@
                             </span>
                         </div>
                         
-                        <div class="mt-xs pt-xs border-t border-color-muted">
-                            <span th:if="${horario.estado == 'DISPONIBLE'}" class="badge" style="background-color: #dcfce7; color: #166534;">Disponible</span>
-                            <span th:if="${horario.estado == 'PENDIENTE'}" class="badge" style="background-color: #fef08a; color: #854d0e;">Pendiente</span>
-                            <span th:if="${horario.estado == 'OCUPADO'}" class="badge" style="background-color: #fee2e2; color: #991b1b;">Ocupado</span>
+                        <div class="flex justify-between items-center mt-xs pt-xs border-t border-color-muted">
+                            <div>
+                                <span th:if="${horario.estado == 'DISPONIBLE'}" class="badge" style="background-color: #dcfce7; color: #166534;">Disponible</span>
+                                <span th:if="${horario.estado == 'PENDIENTE'}" class="badge" style="background-color: #fef08a; color: #854d0e;">Pendiente</span>
+                                <span th:if="${horario.estado == 'OCUPADO'}" class="badge" style="background-color: #fee2e2; color: #991b1b;">Ocupado</span>
+                            </div>
                         </div>
+
+                        <!-- Estudiantes Inscritos Panel -->
+                        <details class="mt-sm bg-gray-50 rounded border border-gray-200">
+                            <summary class="text-xs text-primary font-bold cursor-pointer select-none p-2 hover:bg-gray-100 transition-colors">
+                                Ver estudiantes inscritos
+                            </summary>
+                            <div class="p-2 border-t border-gray-200 max-h-32 overflow-y-auto">
+                                <div class="flex flex-col gap-1">
+                                    <div th:each="sol : ${solicitudesHorarios}" 
+                                         th:if="${sol.horarioAula.id == horario.id and sol.estado == 'ACEPTADA'}" 
+                                         class="flex items-center gap-2 bg-white p-1 rounded shadow-sm border border-gray-100">
+                                        <div class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center font-bold" style="font-size: 0.6rem;" th:text="${#strings.substring(sol.estudiante.firstName,0,1) + #strings.substring(sol.estudiante.lastName,0,1)}">XX</div>
+                                        <span class="text-xs text-gray-700 truncate" th:text="${sol.estudiante.firstName + ' ' + sol.estudiante.lastName}">Nombre</span>
+                                    </div>
+                                    <div th:unless="${#lists.size(solicitudesHorarios.?[horarioAula.id == __${horario.id}__ and estado == 'ACEPTADA']) > 0}" class="text-xs text-secondary text-center italic py-1">
+                                        Ningún estudiante inscrito.
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
                     </div>
                     <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
                         No hay horarios configurados para esta aula.
