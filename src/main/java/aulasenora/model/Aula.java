@@ -24,6 +24,9 @@ public class Aula {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
+    @Column(name = "submateria")
+    private String submateria;
+
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
@@ -68,5 +71,13 @@ public class Aula {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getSubmateria() {
+        return submateria;
+    }
+
+    public void setSubmateria(String submateria) {
+        this.submateria = submateria;
     }
 }

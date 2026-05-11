@@ -107,7 +107,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                     <div th:each="aula : ${misAulas}" class="card bg-surface hover:shadow-lg transition-all flex flex-col justify-between">
                         <div>
-                            <h3 class="font-bold text-lg mb-sm text-primary" th:text="${aula.nombreAula}">Nombre Aula</h3>
+                            <h3 class="font-bold text-lg mb-xs text-primary" th:text="${aula.nombreAula}">Nombre Aula</h3>
+                            <span th:if="${aula.submateria != null}" class="badge mb-sm inline-block" style="background-color: #e0f2fe; color: #0369a1; padding: 0.15rem 0.5rem; font-size: 0.75rem;" th:text="${aula.submateria}">Submateria</span>
                             <p class="text-secondary text-sm mb-md line-clamp-3" th:text="${aula.descripcion}">Descripción del aula...</p>
                         </div>
                         <div class="mt-md pt-md border-t border-color-muted flex justify-between items-center">
@@ -333,6 +334,16 @@
                             placeholder="Describe el propósito del aula, los temas que se tratarán, etc."></textarea>
                     </div>
 
+                    <div class="form-group mb-md">
+                        <label for="aula-submateria-select" class="form-label">Materia Específica (Submateria)</label>
+                        <select id="aula-submateria-select" class="form-control" required style="appearance: auto; cursor:pointer;" onchange="handleSubmateriaChange()">
+                            <!-- Las opciones se generarán dinámicamente -->
+                        </select>
+                        <input type="text" id="aula-submateria-otro" class="form-control mt-sm" style="display: none;" placeholder="Especifica la materia...">
+                        <!-- Este campo oculto es el que realmente se envía al servidor -->
+                        <input type="hidden" name="submateria" id="hidden-submateria">
+                    </div>
+
                     <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
                         <button type="button" class="btn btn-outline"
                             onclick="document.getElementById('aula-modal').classList.add('hidden')">Cancelar</button>
@@ -426,6 +437,73 @@
                     textP.classList.add('text-primary');
                 }
             });
+            // Submaterias dinámicas
+            const dicMaterias = {
+                "Matemáticas": [
+                    "Álgebra", "Geometría", "Cálculo", "Estadística", "Trigonometría", "Matemática discreta", "Lógica matemática"
+                ],
+                "Ciencias Naturales": [
+                    "Física", "Química", "Biología", "Astronomía", "Geología", "Ecología"
+                ],
+                "Lengua y Comunicación": [
+                    "Español", "Inglés", "Francés", "Lingüística", "Gramática", "Literatura", "Escritura", "Comunicación oral"
+                ],
+                "Ciencias Sociales": [
+                    "Historia", "Geografía", "Sociología", "Economía", "Política", "Antropología"
+                ],
+                "Filosofía y Pensamiento": [
+                    "Filosofía", "Ética", "Lógica", "Metafísica", "Epistemología"
+                ]
+            };
+
+            const materiaEspecializada = "[[${voluntario.materiaEspecializada}]]";
+
+            function fillSubmaterias() {
+                const select = document.getElementById('aula-submateria-select');
+                if (!select) return;
+                
+                select.innerHTML = '<option value="" disabled selected>Selecciona una submateria...</option>';
+                
+                const opciones = dicMaterias[materiaEspecializada] || [];
+                
+                opciones.forEach(op => {
+                    const opt = document.createElement('option');
+                    opt.value = op;
+                    opt.textContent = op;
+                    select.appendChild(opt);
+                });
+                
+                // Siempre añadir la opción "Otro"
+                const optOtro = document.createElement('option');
+                optOtro.value = "Otro";
+                optOtro.textContent = "Otro (Especificar)";
+                select.appendChild(optOtro);
+            }
+
+            function handleSubmateriaChange() {
+                const select = document.getElementById('aula-submateria-select');
+                const inputOtro = document.getElementById('aula-submateria-otro');
+                const hiddenInput = document.getElementById('hidden-submateria');
+                
+                if (select.value === 'Otro') {
+                    inputOtro.style.display = 'block';
+                    inputOtro.required = true;
+                    hiddenInput.value = inputOtro.value;
+                } else {
+                    inputOtro.style.display = 'none';
+                    inputOtro.required = false;
+                    hiddenInput.value = select.value;
+                }
+            }
+
+            // Bind input change to update hidden field
+            document.getElementById('aula-submateria-otro').addEventListener('input', function() {
+                document.getElementById('hidden-submateria').value = this.value;
+            });
+
+            // Llenar al cargar
+            document.addEventListener('DOMContentLoaded', fillSubmaterias);
+
         </script>
 
     </div><!-- fin layout:fragment="content" -->
