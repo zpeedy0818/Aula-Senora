@@ -13,7 +13,8 @@
             <div>
                 <a th:href="@{/student/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
                 <h1 class="text-3xl font-bold text-primary mb-xs" th:text="${aula.nombreAula}">Nombre del Aula</h1>
-                <div class="flex items-center gap-sm">
+                <span th:if="${aula.submateria != null}" class="badge mb-sm inline-block" style="background-color: #e0f2fe; color: #0369a1; padding: 0.15rem 0.5rem; font-size: 0.75rem;" th:text="${aula.submateria}">Submateria</span>
+                <div class="flex items-center gap-sm mt-xs">
                     <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
                     <span class="text-secondary text-sm" th:text="${'Voluntario: ' + aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Voluntario</span>
                 </div>
@@ -23,9 +24,11 @@
         <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
 
-        <div class="grid grid-cols-1 gap-xl">
-
-            <div class="col-span-1">
+        <div class="flex flex-col lg:flex-row gap-xl items-start">
+            
+            <!-- Main Content (Left) -->
+            <div class="flex-1 w-full flex flex-col gap-xl">
+                <div>
                 <h2 class="section-title mb-md">Descripción e Información</h2>
                 
                 <div class="card p-xl bg-surface">
@@ -98,8 +101,14 @@
                     <h3 class="font-bold text-lg mb-sm text-secondary">El contenido estará disponible pronto</h3>
                     <p class="text-secondary mb-0">El voluntario publicará recursos, guías y enlaces de interés en este espacio.</p>
                 </div>
+                </div>
             </div>
 
+        </div> <!-- End of Main Content -->
+
+        <!-- Chat Section (Floating Widget) -->
+        <div style="position: fixed; top: 80px; right: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end;">
+            <div th:replace="~{fragments/chat :: aula-chat}"></div>
         </div>
 
     </div>

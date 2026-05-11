@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="aula-chat" id="aula-chat-wrapper" class="flex flex-col items-end">
+    
+    <!-- Floating Action Button (Discrete Minimized State) -->
+    <button id="chat-fab" onclick="toggleChat()" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9999px; background-color: var(--primary, #0369a1); color: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); border: none; cursor: pointer; transition: transform 0.2s; margin-bottom: 10px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <!-- Chat Window (Expanded State) -->
+    <div id="chat-window" class="flex flex-col transition-all duration-300" style="display: none; width: 350px; height: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.5rem; background-color: #ffffff; border: 1px solid #e5e7eb; overflow: hidden;">
+        
+        <div class="border-b border-color-muted p-sm flex justify-between items-center" style="background-color: #f8fafc;">
+            <h3 class="font-bold text-lg text-primary flex items-center gap-xs m-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Foro
+            </h3>
+            <div class="flex items-center gap-sm">
+                <span id="chat-status" class="text-[0.65rem] text-secondary flex items-center gap-1 uppercase font-bold">
+                    <span class="w-2 h-2 rounded-full bg-success inline-block"></span> Conectado
+                </span>
+                <button type="button" class="text-secondary hover:text-error transition-colors focus:outline-none ml-2" title="Cerrar" onclick="toggleChat()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-sm flex flex-col gap-sm" style="flex: 1; overflow-y: auto;">
+            <!-- Dynamic messages will be appended here -->
+            <div class="text-center text-xs text-secondary italic py-md">Cargando mensajes...</div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="border-t border-color-muted p-sm" style="background-color: #f8fafc;">
+            <form id="chat-form" class="flex gap-sm m-0" onsubmit="enviarMensaje(event)">
+                <input type="text" id="chat-input" class="form-control flex-1" placeholder="Escribe un mensaje..." autocomplete="off" required>
+                <button type="submit" id="chat-send-btn" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const AULA_ID = /*[[${aula.id}]]*/ 0;
+        // We rely on CURRENT_USERNAME to know if the message is from the current user
+        const CURRENT_USERNAME = /*[[${#authentication.name}]]*/ '';
+        /*]]>*/
+
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatForm = document.getElementById('chat-form');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        let lastMessageId = 0;
+        let isAtBottom = true;
+
+        // Auto-scroll logic
+        chatMessages.addEventListener('scroll', () => {
+            isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 10;
+        });
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            isAtBottom = true;
+        }
+
+        function toggleChat() {
+            const fab = document.getElementById('chat-fab');
+            const window = document.getElementById('chat-window');
+            
+            if (window.style.display === 'none') {
+                window.style.display = 'flex';
+                fab.style.display = 'none';
+                scrollToBottom();
+            } else {
+                window.style.display = 'none';
+                fab.style.display = 'flex';
+            }
+        }
+
+        function renderMessage(msg, isMe) {
+            const bubbleClass = isMe ? 'bg-primary-light text-primary-dark ml-auto border border-primary border-opacity-20' 
+                                     : 'bg-gray-100 text-gray-800 mr-auto border border-gray-200';
+            
+            const alignClass = isMe ? 'items-end' : 'items-start';
+            const roleBadge = msg.remitenteRol === 'VOLUNTARIO' 
+                ? '<span class="text-[0.6rem] bg-indigo-100 text-indigo-700 px-1 rounded ml-1">VOLUNTARIO</span>' 
+                : '';
+
+            const date = new Date(msg.fechaEnvio);
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const div = document.createElement('div');
+            div.className = `flex flex-col max-w-[85%] ${alignClass} mb-2`;
+            div.innerHTML = `
+                <span class="text-[0.7rem] text-secondary mb-1 flex items-center">
+                    ${isMe ? 'Tú' : msg.remitenteNombre} ${roleBadge}
+                </span>
+                <div class="px-3 py-2 rounded-xl text-sm ${bubbleClass}" style="word-break: break-word;">
+                    ${msg.contenido.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+                </div>
+                <span class="text-[0.6rem] text-secondary mt-1">${timeStr}</span>
+            `;
+            return div;
+        }
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch(`/api/aulas/${AULA_ID}/chat`);
+                if (!response.ok) throw new Error('Network error');
+                const mensajes = await response.json();
+                
+                if (mensajes.length === 0 && lastMessageId === 0) {
+                    chatMessages.innerHTML = '<div class="text-center text-xs text-secondary italic py-md">No hay mensajes aún. ¡Escribe el primero!</div>';
+                    return;
+                }
+
+                // If it's first load, clear loading text
+                if (lastMessageId === 0 && mensajes.length > 0) {
+                    chatMessages.innerHTML = '';
+                }
+
+                let newMessagesAdded = false;
+
+                mensajes.forEach(msg => {
+                    if (msg.id > lastMessageId) {
+                        // In real app we might match by ID or username
+                        // Let's match by comparing if we are the sender
+                        // Since we don't have user ID in js easily, we fetch the first message we send and check
+                        // For now we can't perfectly know unless we pass the current user ID. 
+                        // But wait! We can pass the principal username to the DTO? No, the model has Usuario remitente, we can check msg.remitenteNombre? No, name can duplicate.
+                        // Let's pass 'isMe' flag from backend? No, let's just fetch CURRENT_USERNAME from thymeleaf. Wait, DTO doesn't have username.
+                        // I will add remitenteId to DTO. But how do we know our own ID?
+                        // I'll just check if msg.remitenteNombre contains our name? No.
+                        // I will add a simple endpoint to get current user ID? Or inject it in the model in AulaController?
+                        // Since I don't want to change too much, I'll rely on a small trick:
+                        // I'll assume if it's the current user, we can inject `username` in DTO, or I'll just update DTO later to include username!
+                        // For now, I'll update DTO to have remitenteUsername and check against CURRENT_USERNAME.
+                        
+                        lastMessageId = msg.id;
+                        // Temp logic: just show them all
+                        const isMe = msg.remitenteUsername === CURRENT_USERNAME; 
+                        chatMessages.appendChild(renderMessage(msg, isMe));
+                        newMessagesAdded = true;
+                    }
+                });
+
+                if (newMessagesAdded && isAtBottom) {
+                    scrollToBottom();
+                }
+
+            } catch (err) {
+                console.error("Error fetching messages:", err);
+                document.getElementById('chat-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-error inline-block"></span> Error';
+            }
+        }
+
+        async function enviarMensaje(e) {
+            e.preventDefault();
+            const contenido = chatInput.value.trim();
+            if (!contenido) return;
+
+            chatInput.value = '';
+            chatSendBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/aulas/${AULA_ID}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ contenido: contenido })
+                });
+
+                if (response.ok) {
+                    await fetchMessages();
+                    scrollToBottom();
+                } else {
+                    alert('Error al enviar el mensaje');
+                }
+            } catch (err) {
+                alert('Error de red al enviar el mensaje');
+            } finally {
+                chatSendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // Start polling
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchMessages();
+            setInterval(fetchMessages, 3000); // Poll every 3 seconds
+        });
+    </script>
+</div>
+</body>
+</html>
