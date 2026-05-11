@@ -182,8 +182,12 @@ public class AulaController {
         
         List<HorarioAula> horarios = horarioAulaService.getHorariosByAula(id);
         
+        // Build a map of horarioId -> student's request status for this student
+        java.util.Map<Long, String> misSolicitudes = horarioAulaService.getEstadoSolicitudesPorEstudiante(id, authentication.getName());
+        
         model.addAttribute("aula", aula);
         model.addAttribute("horarios", horarios);
+        model.addAttribute("misSolicitudes", misSolicitudes);
         return "student/aula-detail";
     }
 

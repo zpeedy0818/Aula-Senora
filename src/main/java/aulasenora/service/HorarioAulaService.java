@@ -158,4 +158,19 @@ public class HorarioAulaService {
             }
         }
     }
+
+    /**
+     * Returns a map of horarioId -> solicitud estado for a specific student in an aula.
+     * This allows the UI to show the correct status per horario regardless of whether
+     * the schedule is individual or group.
+     */
+    public java.util.Map<Long, String> getEstadoSolicitudesPorEstudiante(Long aulaId, String username) {
+        java.util.Map<Long, String> resultado = new java.util.HashMap<>();
+        List<HorarioAula> horarios = horarioAulaRepository.findByAula_IdOrderByFechaAscHoraInicioAsc(aulaId);
+        for (HorarioAula horario : horarios) {
+            solicitudHorarioAulaRepository.findByHorarioAula_IdAndEstudiante_Username(horario.getId(), username)
+                    .ifPresent(solicitud -> resultado.put(horario.getId(), solicitud.getEstado()));
+        }
+        return resultado;
+    }
 }
