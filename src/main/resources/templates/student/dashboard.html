@@ -103,10 +103,19 @@
                             Voluntario: <span th:text="${aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Nombre</span>
                         </div>
                     </div>
-                    <div class="mt-md pt-md border-t border-color-muted flex justify-end">
-                        <form th:action="@{'/student/aulas/' + ${aula.id} + '/request'}" method="post">
-                            <button type="submit" class="btn btn-outline btn-sm">Solicitar Acceso</button>
-                        </form>
+                    <div class="mt-md pt-md border-t border-color-muted flex justify-end"
+                         th:with="estadoSolicitud=${misSolicitudesAula != null and misSolicitudesAula.containsKey(aula.id) ? misSolicitudesAula.get(aula.id) : 'NONE'}">
+                        <div th:switch="${estadoSolicitud}">
+                            <div th:case="'PENDIENTE'" class="text-center p-xs rounded bg-yellow-50 text-yellow-800 text-xs font-bold border border-yellow-200 w-full">
+                                ⏳ Solicitud Pendiente
+                            </div>
+                            <div th:case="'RECHAZADA'" class="text-center p-xs rounded text-xs font-bold border w-full" style="background-color: #fef2f2; color: #991b1b; border-color: #fecaca;">
+                                Solicitud Rechazada
+                            </div>
+                            <form th:case="*" th:action="@{'/student/aulas/' + ${aula.id} + '/request'}" method="post">
+                                <button type="submit" class="btn btn-outline btn-sm">Solicitar Acceso</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div th:if="${aulasDisponibles == null or aulasDisponibles.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">

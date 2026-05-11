@@ -44,8 +44,18 @@ public class StudentController {
         List<MiembroAula> misAulas = aulaService.getAulasByEstudiante(username);
         model.addAttribute("misAulas", misAulas);
 
-        List<Aula> aulasDisponibles = aulaService.getAllAulas();
+        // Filter out aulas the student is already a member of
+        java.util.Set<Long> misAulaIds = misAulas.stream()
+                .map(m -> m.getAula().getId())
+                .collect(Collectors.toSet());
+        List<Aula> aulasDisponibles = aulaService.getAllAulas().stream()
+                .filter(a -> !misAulaIds.contains(a.getId()))
+                .collect(Collectors.toList());
         model.addAttribute("aulasDisponibles", aulasDisponibles);
+
+        // Map of aulaId -> solicitud estado for this student
+        java.util.Map<Long, String> misSolicitudesAula = aulaService.getSolicitudesAulaPorEstudiante(username);
+        model.addAttribute("misSolicitudesAula", misSolicitudesAula);
 
         return "student/dashboard";
     }

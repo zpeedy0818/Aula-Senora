@@ -152,4 +152,16 @@ public class AulaService {
 
         miembroAulaRepository.deleteByAulaIdAndUsuarioId(aulaId, estudianteId);
     }
+
+    /**
+     * Returns a map of aulaId -> solicitud estado for a specific student.
+     */
+    public java.util.Map<Long, String> getSolicitudesAulaPorEstudiante(String username) {
+        java.util.Map<Long, String> resultado = new java.util.HashMap<>();
+        List<SolicitudAula> solicitudes = solicitudAulaRepository.findByEstudiante_Username(username);
+        for (SolicitudAula s : solicitudes) {
+            resultado.put(s.getAula().getId(), s.getEstado());
+        }
+        return resultado;
+    }
 }
