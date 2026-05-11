@@ -107,4 +107,18 @@ public class UsuarioService {
             voluntarioRepository.save(voluntario);
         }
     }
+
+    public void addTiempoAcumulado(String username, Long seconds) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Long current = usuario.getTiempoAcumulado() != null ? usuario.getTiempoAcumulado() : 0L;
+        usuario.setTiempoAcumulado(current + seconds);
+        usuarioRepository.save(usuario);
+    }
+
+    public Long getTiempoAcumulado(String username) {
+        return usuarioRepository.findByUsername(username)
+                .map(Usuario::getTiempoAcumulado)
+                .orElse(0L);
+    }
 }

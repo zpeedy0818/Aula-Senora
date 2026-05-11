@@ -41,6 +41,8 @@ public class StudentController {
         // Por ahora, el dashboard cargará rápido sin la pesada lógica de horarios.
         
         String username = principal.getName();
+        usuarioRepository.findByUsername(username).ifPresent(usuario -> model.addAttribute("usuario", usuario));
+        
         List<MiembroAula> misAulas = aulaService.getAulasByEstudiante(username);
         model.addAttribute("misAulas", misAulas);
 

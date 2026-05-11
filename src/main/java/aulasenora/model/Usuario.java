@@ -35,6 +35,9 @@ public class Usuario {
     @Column
     private Boolean activo = true;
 
+    @Column(name = "tiempo_acumulado", columnDefinition = "bigint default 0")
+    private Long tiempoAcumulado = 0L;
+
     // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -59,4 +62,7 @@ public class Usuario {
 
     public Boolean isActivo() { return activo == null || activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
+
+    public Long getTiempoAcumulado() { return tiempoAcumulado; }
+    public void setTiempoAcumulado(Long tiempoAcumulado) { this.tiempoAcumulado = tiempoAcumulado; }
 }

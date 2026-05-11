@@ -59,8 +59,10 @@
             <div class="card">
                 <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Horas Donadas</h3>
                 <div class="flex items-end justify-between mt-md">
-                    <span
-                        style="font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--text-primary);">38</span>
+                    <div class="flex items-baseline gap-xs">
+                        <span style="font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--text-primary);" th:text="${T(java.lang.Math).floor(voluntario.usuario.tiempoAcumulado / 3600.0).intValue()}">0</span>
+                        <span class="text-sm text-secondary">hrs</span>
+                    </div>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)"
                         stroke-width="2">
                         <circle cx="12" cy="12" r="10" />
