@@ -161,7 +161,8 @@
                 <div class="flex flex-col gap-md">
                     <div th:each="solicitudH : ${solicitudesHorarios}" th:if="${solicitudH.estado == 'PENDIENTE'}" class="card p-md shadow-sm border border-warning">
                         <h4 class="font-bold text-md mb-xs" th:text="${solicitudH.estudiante.firstName + ' ' + solicitudH.estudiante.lastName}">Nombre</h4>
-                        <p class="text-xs text-secondary mb-xs" th:text="${solicitudH.horarioAula.diaSemana + ' ' + solicitudH.horarioAula.horaInicio + '-' + solicitudH.horarioAula.horaFin}">Horario</p>
+                        <p class="text-xs text-secondary mb-xs" th:text="${#temporals.format(solicitudH.horarioAula.fecha, 'EEEE, d ''de'' MMMM') + ' ' + solicitudH.horarioAula.horaInicio + '-' + solicitudH.horarioAula.horaFin}">Horario</p>
+                        <p class="text-xs text-secondary mb-xs" th:text="${solicitudH.horarioAula.materia}">Materia</p>
                         <p class="text-xs text-secondary mb-md" th:text="${'Solicitó el ' + #temporals.format(solicitudH.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</p>
                         
                         <div class="flex gap-sm w-full">
@@ -176,7 +177,7 @@
                         </div>
                     </div>
                     
-                    <div th:if="${solicitudesHorarios == null or solicitudesHorarios.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
+                    <div th:if="${solicitudesHorarios == null or #lists.size(solicitudesHorarios.?[estado == 'PENDIENTE']) == 0}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
                         No hay solicitudes de horario pendientes.
                     </div>
                 </div>
