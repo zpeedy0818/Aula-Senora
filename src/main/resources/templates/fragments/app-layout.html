@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Aula Señora</title>
+
+    <meta name="description" content="Plataforma de acompañamiento académico solidario - Aula Señora">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var isVolunteer = /*[[${#authorization.expression('hasRole(''ROLE_VOLUNTARIO'')')}]]*/ false;
+        var isAdmin = /*[[${#authorization.expression('hasRole(''ROLE_ADMIN'')')}]]*/ false;
+        
+        var brandColors = {
+            'ESTUDIANTE': { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', DEFAULT: '#0d9488' },
+            'VOLUNTARIO': { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309', 800: '#92400e', 900: '#78350f', DEFAULT: '#d97706' },
+            'ADMIN':      { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95', DEFAULT: '#7c3aed' }
+        };
+        
+        var selectedBrand = brandColors['ESTUDIANTE'];
+        if (isVolunteer) selectedBrand = brandColors['VOLUNTARIO'];
+        if (isAdmin) selectedBrand = brandColors['ADMIN'];
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: selectedBrand
+                    }
+                }
+            }
+        }
+        /*]]>*/
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.5s ease-out forwards;
+            }
+            .animate-fade-in {
+                animation: fadeInUp 0.3s ease-out forwards;
+            }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <!-- Original Styles (for components not yet migrated) -->
+    <link rel="stylesheet" th:href="@{/css/variables.css(v=2)}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css(v=10)}" />
+    <link rel="stylesheet" th:href="@{/css/components.css(v=2)}" />
+
+    <!-- AOS (Animaciones) & Toastify (Notificaciones) CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Custom Page CSS -->
+    <th:block layout:fragment="page-css"></th:block>
+</head>
+
+<body class="bg-slate-50 min-h-screen text-slate-800 antialiased selection:bg-brand-200 selection:text-brand-900 overflow-x-hidden">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation (Desktop) -->
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <!-- Main Content Area -->
+        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden focus:outline-none">
+            
+            <!-- Mobile Header (Visible only on small screens) -->
+            <div class="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+                <a th:href="@{/}" class="flex items-center gap-2 group">
+                    <div class="p-1.5 bg-brand-50 rounded-lg group-hover:bg-brand-100 transition-colors">
+                        <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Aula <span class="text-brand-600">Señora</span></h1>
+                </a>
+                <button id="mobile-sidebar-toggle" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 focus:outline-none transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <main class="flex-1 w-full relative z-0">
+                <!-- Content will be injected here by specific views -->
+                <div layout:fragment="content" class="h-full"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Script for mobile sidebar toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileBtn = document.getElementById('mobile-sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (mobileBtn && sidebar) {
+                mobileBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('hidden');
+                    sidebar.classList.toggle('absolute');
+                    sidebar.classList.toggle('inset-y-0');
+                    sidebar.classList.toggle('left-0');
+                    sidebar.classList.toggle('shadow-2xl');
+                });
+            }
+        });
+    </script>
+
+    <!-- Archivo JS Global -->
+    <script th:src="@{/js/main.js}"></script>
+
+    <!-- AOS & Toastify JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- Custom Page JS -->
+    <th:block layout:fragment="page-js"></th:block>
+
+</body>
+</html>

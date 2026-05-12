@@ -18,11 +18,47 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var isVolunteer = /*[[${#authorization.expression('hasRole(''ROLE_VOLUNTARIO'')')}]]*/ false;
+        var isAdmin = /*[[${#authorization.expression('hasRole(''ROLE_ADMIN'')')}]]*/ false;
+        
+        var brandColors = {
+            'ESTUDIANTE': { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', DEFAULT: '#0d9488' },
+            'VOLUNTARIO': { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309', 800: '#92400e', 900: '#78350f', DEFAULT: '#d97706' },
+            'ADMIN':      { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95', DEFAULT: '#7c3aed' }
+        };
+        
+        var selectedBrand = brandColors['ESTUDIANTE'];
+        if (isVolunteer) selectedBrand = brandColors['VOLUNTARIO'];
+        if (isAdmin) selectedBrand = brandColors['ADMIN'];
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: selectedBrand
+                    }
+                }
+            }
+        }
+        /*]]>*/
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+            }
+        }
+    </style>
+
     <!-- Custom Page CSS -->
     <th:block layout:fragment="page-css"></th:block>
 </head>
 
-<body class="site-wrapper" th:classappend="${#authorization.expression('hasRole(''ROLE_ESTUDIANTE'')') ? 'theme-student' : (#authorization.expression('hasRole(''ROLE_VOLUNTARIO'')') ? 'theme-volunteer' : (#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 'theme-admin' : ''))}">
+<body class="site-wrapper bg-slate-50 text-slate-900" th:classappend="${#authorization.expression('hasRole(''ROLE_ESTUDIANTE'')') ? 'theme-student' : (#authorization.expression('hasRole(''ROLE_VOLUNTARIO'')') ? 'theme-volunteer' : (#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 'theme-admin' : ''))}">
 
     <!-- Header Fragment -->
     <div th:replace="~{fragments/header :: header}"></div>

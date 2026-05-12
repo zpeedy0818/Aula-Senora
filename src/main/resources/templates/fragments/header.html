@@ -6,108 +6,132 @@
 </head>
 
 <body>
-    <header th:fragment="header" class="main-header">
-        <div class="container navbar flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a th:href="@{/}" class="brand-logo flex items-center gap-sm">
-                <!-- SVG Icon representing Education/Solidarity -->
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="brand-icon">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                </svg>
-                <span class="brand-text">Aula Señora</span>
-            </a>
+    <!-- Elegant Glassmorphism Header -->
+    <header th:fragment="header" class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/95 border-b border-slate-200 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo -->
+                <a th:href="@{/}" class="flex items-center gap-2 group transition-transform hover:scale-105">
+                    <div class="p-2 bg-brand-50 rounded-xl group-hover:bg-brand-100 transition-colors">
+                        <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-800">Aula <span class="text-brand-600">Señora</span></span>
+                </a>
 
-            <!-- Desktop Navigation -->
-            <nav class="desktop-nav hidden-mobile">
-                <ul class="nav-links flex items-center gap-md" style="margin-bottom:0; list-style:none;">
-
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center gap-6">
+                    
                     <!-- Unauthenticated Users -->
-                    <li sec:authorize="!isAuthenticated()">
-                        <a th:href="@{/login}" class="btn btn-outline" style="padding: 0.35rem 1rem;">Iniciar Sesión</a>
-                    </li>
-                    <li sec:authorize="!isAuthenticated()">
-                        <a th:href="@{/register}" class="btn btn-primary" style="padding: 0.35rem 1rem;">Regístrate</a>
-                    </li>
+                    <div sec:authorize="!isAuthenticated()" class="flex items-center gap-4">
+                        <a th:href="@{/login}" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Iniciar Sesión</a>
+                        <a th:href="@{/register}" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-sm hover:shadow-md transition-all">Regístrate</a>
+                    </div>
 
                     <!-- Authenticated Users -->
-                    <li sec:authorize="isAuthenticated()" class="dropdown" style="list-style:none; position: relative;">
-                        <button class="nav-link dropdown-toggle flex items-center gap-xs" aria-expanded="false"
-                            aria-haspopup="true" style="background:transparent; border:none; cursor:pointer; color:var(--text-primary);">
-                            <div class="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div sec:authorize="isAuthenticated()" class="relative group">
+                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none">
+                            <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold text-sm border border-brand-200">
+                                <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                             </div>
-                            <span class="hidden-mobile" sec:authentication="name">Usuario</span>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="m6 9 6 6 6-6" />
+                            <span class="text-sm font-medium text-slate-700" sec:authentication="name">Usuario</span>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <ul class="dropdown-menu hidden shadow-xl animate-scale-in"
-                            style="list-style: none; margin: 0; padding: 0.5rem 0; position: absolute; right: 0; top: 100%; background: white; border: 1px solid var(--border-color); border-radius: 12px; min-width: 200px; z-index: 2000;">
-                            <li sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')" style="border-bottom: 1px solid #f1f5f9;">
-                                <a th:href="@{/student/profile}" class="flex items-center gap-sm" style="padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none;">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    Mi Perfil
-                                </a>
-                            </li>
-                            <li sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')">
-                                <a th:href="@{/volunteer/dashboard}" class="flex items-center gap-sm" style="padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none;">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                                    Panel Voluntario
-                                </a>
-                            </li>
-                            <li>
-                                <form th:action="@{/logout}" method="post" style="margin: 0;">
-                                    <button type="submit" class="logout-btn w-full text-left flex items-center gap-sm" style="padding: 0.75rem 1rem; color: #ef4444; border:none; background:transparent; width:100%; cursor:pointer; font-weight:500;">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-                                        Cerrar Sesión
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
 
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="mobile-menu-btn hidden-desktop" aria-label="Menú principal"
-                aria-expanded="false">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12h18M3 6h18M3 18h18" />
-                </svg>
-            </button>
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 z-50">
+                            <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden py-1">
+                                <!-- Student Links -->
+                                <div sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')" class="px-2 py-1">
+                                    <a th:href="@{/student/dashboard}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                        Panel Estudiante
+                                    </a>
+                                </div>
+                                
+                                <!-- Volunteer Links -->
+                                <div sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')" class="px-2 py-1">
+                                    <a th:href="@{/volunteer/dashboard}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                        Panel Voluntario
+                                    </a>
+                                </div>
+
+                                <div class="h-px bg-slate-100 my-1 mx-2"></div>
+
+                                <!-- Logout -->
+                                <div class="px-2 py-1">
+                                    <form th:action="@{/logout}" method="post" class="m-0">
+                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                            Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors" aria-expanded="false">
+                        <span class="sr-only">Abrir menú</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Mobile Navigation Drawer -->
-        <nav id="mobile-menu" class="mobile-nav hidden">
-            <ul class="mobile-nav-links flex flex-col">
-                <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="mobile-nav-link">Iniciar Sesión</a>
-                </li>
-                <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}"
-                        class="mobile-nav-link text-primary font-bold">Regístrate</a></li>
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <div sec:authorize="!isAuthenticated()" class="flex flex-col gap-2">
+                    <a th:href="@{/login}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-brand-600 hover:bg-slate-50">Iniciar Sesión</a>
+                    <a th:href="@{/register}" class="block px-3 py-2 rounded-md text-base font-medium text-brand-600 bg-brand-50 hover:bg-brand-100">Regístrate</a>
+                </div>
 
-                <li sec:authorize="isAuthenticated()">
-                    <div class="mobile-user-section">
-                        <span class="mobile-username text-sm" sec:authentication="name">Usuario</span>
-                        <div sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/profile}"
-                                class="mobile-nav-link">Mi Perfil</a></div>
-                        <div sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')"><a th:href="@{/student/history}"
-                                class="mobile-nav-link">Mi Historial</a></div>
-                        <div sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')"><a th:href="@{/volunteer/dashboard}"
-                                class="mobile-nav-link">Panel Voluntario</a></div>
-                        <div sec:authorize="hasAnyRole('ADMIN', 'USER')"><a th:href="@{/admin/dashboard}"
-                                class="mobile-nav-link">Administración</a></div>
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="mobile-nav-link logout-btn w-full text-left">Cerrar
-                                Sesión</button>
+                <div sec:authorize="isAuthenticated()" class="pt-4 pb-3 border-t border-slate-200">
+                    <div class="flex items-center px-3 mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold">
+                                <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-slate-800" sec:authentication="name">Usuario</div>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <a sec:authorize="hasAnyRole('ESTUDIANTE', 'USER')" th:href="@{/student/dashboard}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-50">Panel Estudiante</a>
+                        <a sec:authorize="hasAnyRole('VOLUNTARIO', 'USER')" th:href="@{/volunteer/dashboard}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-50">Panel Voluntario</a>
+                        <form th:action="@{/logout}" method="post" class="m-0 mt-2">
+                            <button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50">Cerrar Sesión</button>
                         </form>
                     </div>
-                </li>
-            </ul>
-        </nav>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <script th:inline="javascript">
+        // Basic mobile menu toggle script scoped to the header
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if(btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
