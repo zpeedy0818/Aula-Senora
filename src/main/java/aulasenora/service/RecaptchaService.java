@@ -15,6 +15,7 @@ public class RecaptchaService {
     private String recaptchaSecret;
 
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+    private static final float RECAPTCHA_THRESHOLD = 0.5f;
 
     public boolean verifyRecaptcha(String ip, String recaptchaResponse) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -27,6 +28,6 @@ public class RecaptchaService {
         RestTemplate restTemplate = new RestTemplate();
         RecaptchaResponse apiResponse = restTemplate.postForObject(RECAPTCHA_VERIFY_URL, params, RecaptchaResponse.class);
 
-        return apiResponse != null && apiResponse.isSuccess();
+        return apiResponse != null && apiResponse.isSuccess() && apiResponse.getScore() >= RECAPTCHA_THRESHOLD;
     }
 }

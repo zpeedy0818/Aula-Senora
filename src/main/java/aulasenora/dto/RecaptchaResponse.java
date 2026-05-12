@@ -14,6 +14,9 @@ public class RecaptchaResponse {
     @JsonProperty("error-codes")
     private List<String> errorCodes;
 
+    private float score;
+    private String action;
+
     public boolean isSuccess() {
         return success;
     }
@@ -44,5 +47,21 @@ public class RecaptchaResponse {
 
     public void setErrorCodes(List<String> errorCodes) {
         this.errorCodes = errorCodes;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }

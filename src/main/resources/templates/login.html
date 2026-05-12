@@ -1,83 +1,296 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Iniciar Sesión</title>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Aula Señora</title>
+    <meta name="description" content="Inicia sesión en la plataforma de acompañamiento académico solidario.">
+
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <!-- Google reCAPTCHA v3 -->
+    <script th:src="'https://www.google.com/recaptcha/api.js?render=6Lc7quUsAAAAAHfqZ54vEIt3u9Nn0JX9vgQz6eyd'"></script>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            900: '#134e4a',
+                            DEFAULT: '#0d9488'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        .glass-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .bg-pattern {
+            background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background-color: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    </style>
 </head>
 
-<body>
-    <div layout:fragment="content" class="container"
-        style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: var(--space-xl) var(--space-md);">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen selection:bg-blue-500/30 flex items-center justify-center">
 
-        <div class="card w-full" style="max-width: 450px;">
-            <div class="text-center mb-xl">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-sm">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                    <polyline points="10 17 15 12 10 7" />
-                    <line x1="15" y1="12" x2="3" y2="12" />
-                </svg>
-                <h1 style="font-size: 1.75rem; margin-bottom: 0;">Bienvenido a Aula Señora</h1>
-                <p class="text-secondary mt-sm">Por favor, ingresa tus credenciales</p>
+    <!-- Error/Success Scripts -->
+    <script th:if="${param.error}">
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                Toastify({
+                    text: "Usuario o contraseña incorrectos",
+                    duration: 4000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: { background: "#ef4444", borderRadius: "8px", fontWeight: "600" }
+                }).showToast();
+            }, 100);
+        });
+    </script>
+
+    <script th:if="${param.logout}">
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                Toastify({
+                    text: "Has cerrado sesión exitosamente",
+                    duration: 4000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: { background: "#10b981", borderRadius: "8px", fontWeight: "600" }
+                }).showToast();
+            }, 100);
+        });
+    </script>
+
+    <div class="w-full min-h-screen flex flex-col md:flex-row">
+        
+        <!-- LEFT COLUMN: Branding & Features -->
+        <div class="hidden md:flex md:w-[45%] lg:w-[50%] relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-600 to-blue-500 flex-col justify-between p-12 lg:p-16">
+            <div class="absolute inset-0 bg-pattern opacity-30"></div>
+            
+            <!-- Logo -->
+            <div class="relative z-10">
+                <a th:href="@{/}" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:bg-white/30 transition-colors">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-white tracking-tight">Aula Señora</span>
+                </a>
             </div>
 
-            <!-- Error Message Alert via Toastify -->
-            <script th:if="${param.error}">
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        showToast('Usuario o contraseña incorrectos', 'error');
-                    }, 100);
-                });
-            </script>
+            <!-- Main Content -->
+            <div class="relative z-10 mt-12 mb-12">
+                <h1 class="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
+                    Transforma tu <br>
+                    <span class="text-blue-100">Experiencia de Aprendizaje</span>
+                </h1>
+                <p class="text-blue-50 text-lg mb-10 max-w-md">
+                    Únete a nuestra plataforma de acompañamiento solidario. Conectamos estudiantes con voluntarios dispuestos a potenciar su futuro.
+                </p>
 
-            <!-- Logout Message Alert via Toastify -->
-            <script th:if="${param.logout}">
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        showToast('Has cerrado sesión exitosamente', 'success');
-                    }, 100);
-                });
-            </script>
+                <!-- Feature Cards -->
+                <div class="space-y-4 max-w-md">
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md hover:bg-white/15 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0 border border-white/20">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white">Aprendizaje Interactivo</h3>
+                            <p class="text-blue-100 text-sm mt-0.5">Tutorías uno a uno personalizadas a tu propio ritmo.</p>
+                        </div>
+                    </div>
 
-            <!-- Login Form -->
-            <form th:action="@{/login}" method="post">
-                <div class="form-group">
-                    <label for="username" class="form-label">Correo Electrónico / Usuario</label>
-                    <input type="text" id="username" name="username" class="form-control" required autofocus
-                        aria-required="true" placeholder="estudiante@ejemplo.com">
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md hover:bg-white/15 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0 border border-white/20">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white">Espacio Colaborativo</h3>
+                            <p class="text-blue-100 text-sm mt-0.5">Conecta con voluntarios expertos en múltiples materias.</p>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="form-group mb-lg">
-                    <label for="password" class="form-label flex justify-between">
-                        Contraseña
-                        <a th:href="@{/forgot-password}" class="text-sm font-normal">¿Olvidaste tu contraseña?</a>
-                    </label>
-                    <input type="password" id="password" name="password" class="form-control" required
-                        aria-required="true" placeholder="••••••••">
-                </div>
-
-                <div class="form-group flex justify-between items-center mb-md">
-                    <label class="flex items-center gap-xs cursor-pointer text-sm">
-                        <input type="checkbox" name="remember-me" style="accent-color: var(--primary);">
-                        <span>Recordarme</span>
-                    </label>
-                </div>
-
-                <div class="form-group flex justify-center mb-xl">
-                    <div class="g-recaptcha" data-sitekey="6LdEyYksAAAAAO3NxMh5-xHpx_ItGtUF62px5NaU"></div>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-full"
-                    style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Ingresar</button>
-            </form>
-
-            <div class="text-center mt-xl border-t border-color-muted pt-md text-sm">
-                ¿Aún no tienes cuenta? <a th:href="@{/register}" class="font-bold">Regístrate aquí</a>
             </div>
+
+            <!-- Footer left -->
+            <div class="relative z-10 flex items-center justify-between text-blue-100 text-sm">
+                <span>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">202X</span> Aula Señora.</span>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition-colors">Privacidad</a>
+                    <a href="#" class="hover:text-white transition-colors">Términos</a>
+                </div>
+            </div>
+            
+            <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-400/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+            <div class="absolute -top-32 -right-32 w-96 h-96 bg-indigo-500/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
         </div>
 
-    </div>
-</body>
+        <!-- RIGHT COLUMN: Authentication -->
+        <!-- Cambiado bg-white a bg-slate-50 para darle contraste al modal -->
+        <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50 relative">
+            
+            <!-- Mobile Logo -->
+            <div class="md:hidden mb-10">
+                <a th:href="@{/}" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:bg-blue-500 transition-colors">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold text-slate-900 tracking-tight">Aula Señora</span>
+                </a>
+            </div>
 
+            <!-- Login Card -->
+            <div class="w-full max-w-md glass-card p-8 sm:p-10 rounded-[2rem] shadow-2xl relative z-10">
+                
+                <a th:href="@{/}" class="group flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-6 focus:outline-none w-fit">
+                    <span class="p-1 rounded bg-slate-100 group-hover:bg-slate-200 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </span>
+                    Volver al inicio
+                </a>
+
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Bienvenido de nuevo</h2>
+                    <p class="text-slate-500">Ingresa tus credenciales para acceder a tu panel.</p>
+                </div>
+
+                <form th:action="@{/login}" method="post" class="space-y-6">
+                    
+                    <div class="space-y-2">
+                        <label for="username" class="block text-sm font-medium text-slate-700">Correo Electrónico / Usuario</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <!-- Fondo de los inputs levemente mas gris (slate-50) o blanco dependiendo de la estetica, aqui usamos blanco con border -->
+                            <input type="text" id="username" name="username" required autofocus
+                                class="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none shadow-sm"
+                                placeholder="tu@correo.com">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label for="password" class="block text-sm font-medium text-slate-700">Contraseña</label>
+                            <a th:href="@{/forgot-password}" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">¿Olvidaste tu contraseña?</a>
+                        </div>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </div>
+                            <input type="password" id="password" name="password" required
+                                class="block w-full pl-11 pr-12 py-3.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none tracking-widest shadow-sm"
+                                placeholder="••••••••">
+                            <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none" onclick="togglePassword()">
+                                <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center justify-center w-5 h-5">
+                                <input type="checkbox" name="remember-me" class="peer appearance-none w-5 h-5 border border-slate-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer shadow-sm">
+                                <svg class="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Recordarme en este equipo</span>
+                        </label>
+                    </div>
+
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+
+                    <button type="submit" class="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-blue-600/20 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all group">
+                        Ingresar a la Plataforma
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </form>
+
+                <div class="mt-6 flex items-center">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="mx-4 flex-shrink-0 text-xs text-slate-400 uppercase tracking-wider font-semibold">O continuar con</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="/oauth2/authorization/google" class="w-full flex justify-center items-center gap-3 py-3.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300 shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </a>
+                </div>
+
+                <p class="mt-8 text-center text-sm text-slate-500">
+                    ¿Aún no tienes cuenta? 
+                    <a th:href="@{/register}" class="font-bold text-blue-600 hover:text-blue-700 transition-colors ml-1">Regístrate aquí</a>
+                </p>
+            </div>
+            
+            <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full mix-blend-screen filter blur-[100px] pointer-events-none"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+            }
+        }
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            grecaptcha.ready(function() {
+                grecaptcha.execute('6Lc7quUsAAAAAHfqZ54vEIt3u9Nn0JX9vgQz6eyd', {action: 'login'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    form.submit();
+                });
+            });
+        });
+    </script>
+</body>
 </html>
