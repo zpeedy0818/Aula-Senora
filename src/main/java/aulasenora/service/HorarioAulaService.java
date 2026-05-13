@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class HorarioAulaService {
@@ -43,7 +44,7 @@ public class HorarioAulaService {
 
     @Transactional
     public HorarioAula crearHorario(Long aulaId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia, String username, Boolean esGrupal) {
-        Aula aula = aulaRepository.findById(aulaId)
+        Aula aula = aulaRepository.findById(Objects.requireNonNull(aulaId))
                 .orElseThrow(() -> new IllegalArgumentException("Aula no encontrada"));
 
         // Validate volunteer owns the aula
@@ -57,7 +58,7 @@ public class HorarioAulaService {
 
     @Transactional
     public void eliminarHorario(Long horarioId, String username) {
-        HorarioAula horario = horarioAulaRepository.findById(horarioId)
+        HorarioAula horario = horarioAulaRepository.findById(Objects.requireNonNull(horarioId))
                 .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado"));
 
         if (!horario.getAula().getVoluntario().getUsuario().getUsername().equals(username)) {
@@ -66,14 +67,14 @@ public class HorarioAulaService {
 
         // Delete associated requests first
         List<SolicitudHorarioAula> solicitudes = solicitudHorarioAulaRepository.findByHorarioAula_Id(horarioId);
-        solicitudHorarioAulaRepository.deleteAll(solicitudes);
+        solicitudHorarioAulaRepository.deleteAll(Objects.requireNonNull(solicitudes));
 
         horarioAulaRepository.delete(horario);
     }
 
     @Transactional
     public SolicitudHorarioAula solicitarHorario(Long horarioId, String username) {
-        HorarioAula horario = horarioAulaRepository.findById(horarioId)
+        HorarioAula horario = horarioAulaRepository.findById(Objects.requireNonNull(horarioId))
                 .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado"));
 
         if ("OCUPADO".equals(horario.getEstado())) {
@@ -101,7 +102,7 @@ public class HorarioAulaService {
 
     @Transactional
     public void aprobarSolicitud(Long solicitudId, String username) {
-        SolicitudHorarioAula solicitud = solicitudHorarioAulaRepository.findById(solicitudId)
+        SolicitudHorarioAula solicitud = solicitudHorarioAulaRepository.findById(Objects.requireNonNull(solicitudId))
                 .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
 
         HorarioAula horario = solicitud.getHorarioAula();
@@ -134,7 +135,7 @@ public class HorarioAulaService {
 
     @Transactional
     public void rechazarSolicitud(Long solicitudId, String username) {
-        SolicitudHorarioAula solicitud = solicitudHorarioAulaRepository.findById(solicitudId)
+        SolicitudHorarioAula solicitud = solicitudHorarioAulaRepository.findById(Objects.requireNonNull(solicitudId))
                 .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
 
         HorarioAula horario = solicitud.getHorarioAula();

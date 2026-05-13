@@ -3,7 +3,6 @@ package aulasenora.service;
 import aulasenora.dto.MensajeAulaDTO;
 import aulasenora.model.Aula;
 import aulasenora.model.MensajeAula;
-import aulasenora.model.MiembroAula;
 import aulasenora.model.Usuario;
 import aulasenora.repository.AulaRepository;
 import aulasenora.repository.MensajeAulaRepository;
@@ -12,6 +11,7 @@ import aulasenora.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +30,7 @@ public class MensajeAulaService {
     }
 
     private void verificarAcceso(Long aulaId, Usuario usuario) {
-        Aula aula = aulaRepository.findById(aulaId).orElseThrow(() -> new RuntimeException("Aula no encontrada"));
+        Aula aula = aulaRepository.findById(Objects.requireNonNull(aulaId)).orElseThrow(() -> new RuntimeException("Aula no encontrada"));
         
         // Es el voluntario dueño del aula?
         if (aula.getVoluntario().getId().equals(usuario.getId())) {
@@ -38,7 +38,7 @@ public class MensajeAulaService {
         }
 
         // Es un estudiante miembro?
-        MiembroAula miembro = miembroAulaRepository.findByAulaIdAndUsuarioId(aulaId, usuario.getId())
+        miembroAulaRepository.findByAulaIdAndUsuarioId(aulaId, Objects.requireNonNull(usuario.getId()))
                 .orElseThrow(() -> new RuntimeException("No tienes acceso a esta aula"));
     }
 
@@ -54,7 +54,7 @@ public class MensajeAulaService {
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         verificarAcceso(aulaId, usuario);
 
-        Aula aula = aulaRepository.findById(aulaId).get();
+        Aula aula = aulaRepository.findById(Objects.requireNonNull(aulaId)).get();
 
         MensajeAula mensaje = new MensajeAula();
         mensaje.setAula(aula);
