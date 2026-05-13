@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 public class RegistroDTO {
     // Datos de Usuario
     @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Pattern(regexp = "^\\S+$", message = "El nombre de usuario no puede contener espacios")
     private String username;
 
     @NotBlank(message = "El nombre es obligatorio")

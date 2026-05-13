@@ -38,6 +38,30 @@ public class Usuario {
     @Column(name = "tiempo_acumulado", columnDefinition = "bigint default 0")
     private Long tiempoAcumulado = 0L;
 
+    @Column(length = 300)
+    private String bio;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column
+    private java.time.LocalDate birthDate;
+
+    @Column(length = 50)
+    private String gradoAcademico;
+
+    @Column(length = 100)
+    private String institucion;
+
+    @Column(length = 100)
+    private String ciudad;
+
+    @Column(length = 500)
+    private String profileImageUrl;
+
+    @Column(length = 500)
+    private String bannerImageUrl;
+
     // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -65,4 +89,28 @@ public class Usuario {
 
     public Long getTiempoAcumulado() { return tiempoAcumulado; }
     public void setTiempoAcumulado(Long tiempoAcumulado) { this.tiempoAcumulado = tiempoAcumulado; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public java.time.LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(java.time.LocalDate birthDate) { this.birthDate = birthDate; }
+
+    public String getGradoAcademico() { return gradoAcademico; }
+    public void setGradoAcademico(String gradoAcademico) { this.gradoAcademico = gradoAcademico; }
+
+    public String getInstitucion() { return institucion; }
+    public void setInstitucion(String institucion) { this.institucion = institucion; }
+
+    public String getCiudad() { return ciudad; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+
+    public String getProfileImageUrl() { return profileImageUrl; }
+    public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
+
+    public String getBannerImageUrl() { return bannerImageUrl; }
+    public void setBannerImageUrl(String bannerImageUrl) { this.bannerImageUrl = bannerImageUrl; }
 }

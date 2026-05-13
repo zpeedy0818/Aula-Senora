@@ -9,7 +9,7 @@ import aulasenora.model.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByUsername(String username);
 
-    Optional<Usuario> findByUsernameOrEmail(String username, String email);
+    Optional<Usuario> findByUsernameIgnoreCaseOrEmailIgnoreCase(String username, String email);
 
     boolean existsByUsername(String username);
 
