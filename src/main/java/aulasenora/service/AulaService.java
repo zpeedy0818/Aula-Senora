@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,7 +41,7 @@ public class AulaService {
     @Transactional
     public Aula crearAula(Aula aula, String username) {
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Voluntario voluntario = voluntarioRepository.findById(usuario.getId()).orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
+        Voluntario voluntario = voluntarioRepository.findById(Objects.requireNonNull(usuario.getId())).orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
 
         aula.setVoluntario(voluntario);
         Aula savedAula = aulaRepository.save(aula);
@@ -57,7 +58,7 @@ public class AulaService {
 
     public List<Aula> getAulasByVoluntario(String username) {
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return aulaRepository.findByVoluntarioId(usuario.getId());
+        return aulaRepository.findByVoluntarioId(Objects.requireNonNull(usuario.getId()));
     }
 
     public List<Aula> getAllAulas() {
@@ -65,7 +66,7 @@ public class AulaService {
     }
 
     public Aula getAulaById(Long id) {
-        return aulaRepository.findById(id).orElseThrow(() -> new RuntimeException("Aula no encontrada"));
+        return aulaRepository.findById(Objects.requireNonNull(id)).orElseThrow(() -> new RuntimeException("Aula no encontrada"));
     }
 
     @Transactional
@@ -73,12 +74,12 @@ public class AulaService {
         Aula aula = getAulaById(aulaId);
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Optional<SolicitudAula> existente = solicitudAulaRepository.findByAulaIdAndEstudianteId(aula.getId(), usuario.getId());
+        Optional<SolicitudAula> existente = solicitudAulaRepository.findByAulaIdAndEstudianteId(Objects.requireNonNull(aula.getId()), Objects.requireNonNull(usuario.getId()));
         if (existente.isPresent()) {
             throw new RuntimeException("Ya has enviado una solicitud a esta aula");
         }
 
-        Optional<MiembroAula> miembro = miembroAulaRepository.findByAulaIdAndUsuarioId(aula.getId(), usuario.getId());
+        Optional<MiembroAula> miembro = miembroAulaRepository.findByAulaIdAndUsuarioId(Objects.requireNonNull(aula.getId()), Objects.requireNonNull(usuario.getId()));
         if (miembro.isPresent()) {
             throw new RuntimeException("Ya eres miembro de esta aula");
         }
@@ -96,7 +97,7 @@ public class AulaService {
 
     @Transactional
     public void aprobarSolicitud(Long solicitudId) {
-        SolicitudAula solicitud = solicitudAulaRepository.findById(solicitudId).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        SolicitudAula solicitud = solicitudAulaRepository.findById(Objects.requireNonNull(solicitudId)).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         solicitud.setEstado("APROBADA");
         solicitudAulaRepository.save(solicitud);
 
@@ -109,7 +110,7 @@ public class AulaService {
 
     @Transactional
     public void rechazarSolicitud(Long solicitudId) {
-        SolicitudAula solicitud = solicitudAulaRepository.findById(solicitudId).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        SolicitudAula solicitud = solicitudAulaRepository.findById(Objects.requireNonNull(solicitudId)).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         solicitud.setEstado("RECHAZADA");
         solicitudAulaRepository.save(solicitud);
     }
@@ -163,5 +164,9 @@ public class AulaService {
             resultado.put(s.getAula().getId(), s.getEstado());
         }
         return resultado;
+    }
+
+    public List<SolicitudAula> getSolicitudesCompletasPorEstudiante(String username) {
+        return solicitudAulaRepository.findByEstudiante_Username(username);
     }
 }

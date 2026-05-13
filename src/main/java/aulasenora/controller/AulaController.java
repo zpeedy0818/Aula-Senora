@@ -107,7 +107,15 @@ public class AulaController {
     @PostMapping("/volunteer/aulas/{id}/horarios/create")
     public String createHorario(@PathVariable Long id, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha, @RequestParam String horaInicio, @RequestParam String horaFin, @RequestParam String materia, @RequestParam(defaultValue = "false") boolean esGrupal, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
-            horarioAulaService.crearHorario(id, fecha, LocalTime.parse(horaInicio), LocalTime.parse(horaFin), materia, authentication.getName(), esGrupal);
+            LocalTime start = LocalTime.parse(horaInicio);
+            LocalTime end = LocalTime.parse(horaFin);
+            
+            if (end.isBefore(start) || end.equals(start)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error: La hora de fin debe ser posterior a la hora de inicio.");
+                return "redirect:/volunteer/aulas/" + id;
+            }
+
+            horarioAulaService.crearHorario(id, fecha, start, end, materia, authentication.getName(), esGrupal);
             redirectAttributes.addFlashAttribute("successMessage", "Horario creado exitosamente.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al crear horario: " + e.getMessage());
