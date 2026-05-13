@@ -52,6 +52,21 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-wave-slow { animation: wave 25s linear infinite; }
+        .animate-wave-mid { animation: wave 15s linear infinite; }
+        .animate-wave-fast { animation: wave 10s linear infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) translateX(10px) rotate(5deg); }
+            66% { transform: translateY(10px) translateX(-15px) rotate(-5deg); }
+        }
+        .animate-float {
+            animation: float 15s ease-in-out infinite;
+        }
     </style>
 
     <!-- Original Styles (for components not yet migrated) -->
@@ -96,8 +111,39 @@
             </div>
 
             <main class="flex-1 w-full relative z-0">
+                <!-- Background Animated Waves -->
+                <div class="absolute bottom-0 left-0 w-full h-[150px] overflow-hidden z-0 pointer-events-none">
+                    <!-- Layer 1 (Back, Slow) -->
+                    <div class="absolute bottom-0 left-0 w-[200%] flex animate-wave-slow opacity-40">
+                        <svg class="w-[50%] h-[150px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-200" d="M0,60 C300,120 300,0 600,60 C900,120 900,0 1200,60 L1200,120 L0,120 Z"/></svg>
+                        <svg class="w-[50%] h-[150px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-200" d="M0,60 C300,120 300,0 600,60 C900,120 900,0 1200,60 L1200,120 L0,120 Z"/></svg>
+                    </div>
+                    <!-- Layer 2 (Mid) -->
+                    <div class="absolute bottom-0 left-0 w-[200%] flex animate-wave-mid opacity-60">
+                        <svg class="w-[50%] h-[100px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-300" d="M0,40 C300,100 300,0 600,40 C900,80 900,0 1200,40 L1200,120 L0,120 Z"/></svg>
+                        <svg class="w-[50%] h-[100px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-300" d="M0,40 C300,100 300,0 600,40 C900,80 900,0 1200,40 L1200,120 L0,120 Z"/></svg>
+                    </div>
+                    <!-- Layer 3 (Front, Fast) -->
+                    <div class="absolute bottom-0 left-0 w-[200%] flex animate-wave-fast opacity-80">
+                        <svg class="w-[50%] h-[70px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-400" d="M0,80 C300,0 300,120 600,80 C900,0 900,120 1200,80 L1200,120 L0,120 Z"/></svg>
+                        <svg class="w-[50%] h-[70px]" viewBox="0 0 1200 120" preserveAspectRatio="none"><path class="fill-brand-400" d="M0,80 C300,0 300,120 600,80 C900,0 900,120 1200,80 L1200,120 L0,120 Z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Upper Background Glassy Orbs (Contrast) -->
+                <div class="absolute top-0 left-0 w-full h-[500px] overflow-hidden z-0 pointer-events-none">
+                    <!-- Esfera 1 -->
+                    <div class="absolute top-[-5%] right-[5%] w-72 h-72 rounded-full border border-brand-300/20 bg-brand-400/5 backdrop-blur-xl animate-float">
+                        <div class="absolute top-1/4 left-1/4 w-full h-full bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
+                    </div>
+                    <!-- Esfera 2 -->
+                    <div class="absolute top-[15%] left-[10%] w-48 h-48 rounded-full border border-purple-300/20 bg-purple-400/5 backdrop-blur-lg animate-float" style="animation-delay: 4s;">
+                        <div class="absolute top-1/4 left-1/4 w-full h-full bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
+                    </div>
+                </div>
+
                 <!-- Content will be injected here by specific views -->
-                <div layout:fragment="content" class="h-full"></div>
+                <div layout:fragment="content" class="h-full relative z-10"></div>
             </main>
         </div>
     </div>
