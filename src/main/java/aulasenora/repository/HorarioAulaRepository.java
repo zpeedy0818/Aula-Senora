@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface HorarioAulaRepository extends JpaRepository<HorarioAula, Long> {
     List<HorarioAula> findByAula_IdOrderByFechaAscHoraInicioAsc(Long aulaId);
+    List<HorarioAula> findByAula_Voluntario(aulasenora.model.Voluntario voluntario);
 }

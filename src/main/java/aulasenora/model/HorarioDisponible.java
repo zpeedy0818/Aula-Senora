@@ -1,6 +1,7 @@
 package aulasenora.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -16,7 +17,7 @@ public class HorarioDisponible {
     private Voluntario voluntario;
 
     @Column(nullable = false)
-    private String diaSemana;
+    private LocalDate fecha;
 
     @Column(nullable = false)
     private LocalTime horaInicio;
@@ -27,11 +28,15 @@ public class HorarioDisponible {
     @Column(nullable = false)
     private String materia;
 
+    // Campo temporal para migración (evita error de not-null en BD)
+    @Column(name = "dia_semana", nullable = true)
+    private String diaSemana = "N/A";
+
     public HorarioDisponible() {}
 
-    public HorarioDisponible(Voluntario voluntario, String diaSemana, LocalTime horaInicio, LocalTime horaFin, String materia) {
+    public HorarioDisponible(Voluntario voluntario, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia) {
         this.voluntario = voluntario;
-        this.diaSemana = diaSemana;
+        this.fecha = fecha;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.materia = materia;
@@ -53,12 +58,12 @@ public class HorarioDisponible {
         this.voluntario = voluntario;
     }
 
-    public String getDiaSemana() {
-        return diaSemana;
+    public LocalDate getFecha() {
+        return fecha;
     }
 
-    public void setDiaSemana(String diaSemana) {
-        this.diaSemana = diaSemana;
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
     }
 
     public LocalTime getHoraInicio() {
