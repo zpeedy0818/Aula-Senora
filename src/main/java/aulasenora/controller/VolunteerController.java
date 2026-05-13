@@ -15,10 +15,9 @@ import jakarta.validation.Valid;
 import aulasenora.dto.PerfilVoluntarioDTO;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/volunteer")
@@ -39,19 +38,48 @@ public class VolunteerController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Principal principal, Model model) {
+    public String dashboard(@RequestParam(required = false, defaultValue = "inicio") String tab, Principal principal, Model model) {
         if (principal == null) return "redirect:/login";
 
         String username = principal.getName();
-        voluntarioRepository.findByUsuario_Username(username).ifPresent(voluntario -> {
-            model.addAttribute("voluntario", voluntario);
-            List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
-            model.addAttribute("solicitudes", solicitudes);
-            
-            // Aulas creadas por el voluntario
-            List<Aula> misAulas = aulaService.getAulasByVoluntario(username);
-            model.addAttribute("misAulas", misAulas);
-        });
+        var voluntarioOpt = voluntarioRepository.findByUsuario_Username(username);
+        
+        if (voluntarioOpt.isEmpty()) {
+            return "redirect:/";
+        }
+        
+        var voluntario = voluntarioOpt.get();
+        model.addAttribute("voluntario", voluntario);
+        
+        // Solo mostrar solicitudes pendientes y las últimas 5 procesadas para evitar que la página sea "pesada"
+        List<SolicitudCupo> todasLasSolicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
+        List<SolicitudCupo> solicitudesPendientes = todasLasSolicitudes.stream()
+                .filter(s -> "PENDIENTE".equals(s.getEstado()))
+                .sorted((a, b) -> {
+                    LocalDateTime fa = a.getFechaSolicitud() != null ? a.getFechaSolicitud() : LocalDateTime.MIN;
+                    LocalDateTime fb = b.getFechaSolicitud() != null ? b.getFechaSolicitud() : LocalDateTime.MIN;
+                    return fb.compareTo(fa);
+                })
+                .toList();
+        
+        List<SolicitudCupo> solicitudesRecientes = todasLasSolicitudes.stream()
+                .filter(s -> !"PENDIENTE".equals(s.getEstado()))
+                .sorted((a, b) -> {
+                    LocalDateTime fa = a.getFechaSolicitud() != null ? a.getFechaSolicitud() : LocalDateTime.MIN;
+                    LocalDateTime fb = b.getFechaSolicitud() != null ? b.getFechaSolicitud() : LocalDateTime.MIN;
+                    return fb.compareTo(fa);
+                })
+                .limit(5)
+                .toList();
+
+        model.addAttribute("solicitudes", solicitudesPendientes);
+        model.addAttribute("solicitudesHistorial", solicitudesRecientes);
+        
+        // Aulas creadas por el voluntario
+        List<Aula> misAulas = aulaService.getAulasByVoluntario(username);
+        model.addAttribute("misAulas", misAulas);
+        
+        model.addAttribute("activeTab", tab);
 
         return "volunteer/dashboard";
     }
@@ -105,22 +133,14 @@ public class VolunteerController {
         String username = principal.getName();
         voluntarioRepository.findByUsuario_Username(username).ifPresent(voluntario -> {
             model.addAttribute("voluntario", voluntario);
-            List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
-            model.addAttribute("horarios", horarios);
-
-            // Group by diaSemana for the grid, avoiding nulls
-            Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
-                    .filter(h -> h.getDiaSemana() != null)
-                    .collect(Collectors.groupingBy(h -> h.getDiaSemana().trim().toLowerCase()));
-            model.addAttribute("horariosPorDia", horariosPorDia);
         });
 
-        return "volunteer/schedule";
+        return "volunteer/calendar";
     }
 
     @PostMapping("/schedule/add")
     public String addSchedule(
-            @RequestParam String diaSemana,
+            @RequestParam String fecha,
             @RequestParam String horaInicio,
             @RequestParam String horaFin,
             @RequestParam String materia,
@@ -128,12 +148,19 @@ public class VolunteerController {
         
         if (principal == null) return "redirect:/login";
 
+        LocalTime start = LocalTime.parse(horaInicio);
+        LocalTime end = LocalTime.parse(horaFin);
+
+        if (end.isBefore(start) || end.equals(start)) {
+            return "redirect:/volunteer/schedule?error=time";
+        }
+
         voluntarioRepository.findByUsuario_Username(principal.getName()).ifPresent(voluntario -> {
             HorarioDisponible horario = new HorarioDisponible();
             horario.setVoluntario(voluntario);
-            horario.setDiaSemana(diaSemana);
-            horario.setHoraInicio(LocalTime.parse(horaInicio));
-            horario.setHoraFin(LocalTime.parse(horaFin));
+            horario.setFecha(java.time.LocalDate.parse(fecha));
+            horario.setHoraInicio(start);
+            horario.setHoraFin(end);
             horario.setMateria(materia);
             horarioDisponibleRepository.save(horario);
         });
@@ -148,6 +175,11 @@ public class VolunteerController {
         horarioDisponibleRepository.findById(id).ifPresent(horario -> {
             // Verificar que el horario pertenezca al voluntario actual
             if (horario.getVoluntario().getUsuario().getUsername().equals(principal.getName())) {
+                // Eliminar solicitudes asociadas primero para evitar error de integridad referencial
+                List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario(horario);
+                if (!solicitudes.isEmpty()) {
+                    solicitudCupoRepository.deleteAll(solicitudes);
+                }
                 horarioDisponibleRepository.delete(horario);
             }
         });
@@ -156,7 +188,7 @@ public class VolunteerController {
     }
 
     @PostMapping("/request/{id}/status")
-    public String updateRequestStatus(@PathVariable long id, @RequestParam String status, Principal principal) {
+    public String updateRequestStatus(@PathVariable long id, @RequestParam String status, @RequestParam(required = false) Boolean fromCalendar, Principal principal) {
         if (principal == null) return "redirect:/login";
 
         solicitudCupoRepository.findById(id).ifPresent(solicitud -> {
@@ -169,6 +201,9 @@ public class VolunteerController {
             }
         });
 
+        if (fromCalendar != null && fromCalendar) {
+            return "redirect:/volunteer/schedule?statusUpdated=true";
+        }
         return "redirect:/volunteer/dashboard?statusUpdated=true";
     }
 }

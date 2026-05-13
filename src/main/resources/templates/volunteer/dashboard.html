@@ -3,407 +3,248 @@
 
 <head>
     <title>Panel de Voluntario - Aula Señora</title>
+    <th:block layout:fragment="page-css">
+        <style>
+
+            .glass-header {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            }
+            .hover-lift {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .hover-lift:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 25px -5px rgba(13, 148, 136, 0.15), 0 8px 10px -6px rgba(13, 148, 136, 0.1);
+                border-color: rgba(20, 184, 166, 0.4);
+            }
+            .floating-icon {
+                animation: float 6s ease-in-out infinite;
+            }
+            .floating-icon-delayed {
+                animation: float 6s ease-in-out infinite;
+                animation-delay: 3s;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-12px) rotate(5deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+            }
+        </style>
+    </th:block>
 </head>
 
 <body>
-<<<<<<< Updated upstream
-    <div layout:fragment="content" class="container py-xl">
-
-        <!-- Welcome Section -->
-        <div class="welcome-header flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
-            <div>
-                <h1 style="margin-bottom: var(--space-xs);">Hola, <span
-                        th:text="${#authentication.name}">Voluntario</span> 🎓</h1>
-                <p class="text-secondary">Gracias por donar tu tiempo. Aquí puedes gestionar tutorías y recursos.</p>
-            </div>
-            <div class="flex gap-md">
-                <a th:href="@{/volunteer/profile}" class="btn btn-outline btn-lg bg-white shadow-sm flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        class="mr-sm" style="margin-right:0.5rem;">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    Mi Perfil
-                </a>
-                <button class="btn btn-secondary btn-lg shadow-md"
-                    onclick="document.getElementById('resource-modal').classList.remove('hidden')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        class="mr-sm" style="margin-right:0.5rem;">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                    </svg>
-                    Subir Recurso
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard Widgets -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-2xl">
-
-            <div class="card bg-secondary text-white"
-                style="background-color: var(--secondary); color: white; border: none;">
-                <h3 class="card-title text-white" style="color: white; font-size: 1.1rem; opacity: 0.9;">Estudiantes
-                    Ayudados</h3>
-                <div class="flex items-end justify-between mt-md">
-                    <span style="font-size: 2.5rem; font-weight: 700; line-height: 1;">42</span>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        opacity="0.8">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Horas Donadas</h3>
-                <div class="flex items-end justify-between mt-md">
-                    <div class="flex items-baseline gap-xs">
-                        <span style="font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--text-primary);" th:text="${T(java.lang.Math).floor(voluntario.usuario.tiempoAcumulado / 3600.0).intValue()}">0</span>
-                        <span class="text-sm text-secondary">hrs</span>
-                    </div>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)"
-                        stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title text-secondary" style="font-size: 1.1rem;">Mis Especialidades</h3>
-                <div class="flex gap-sm mt-md flex-wrap">
-                    <span class="badge" style="background-color: #e0f2fe; color: #0369a1;">Matemáticas</span>
-                    <span class="badge" style="background-color: #fce7f3; color: #be185d;">Física</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Main Content Area: Requests & Sessions -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl" style="display:none;">
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
-
-            <!-- Mis Aulas Section -->
-            <div class="col-span-1 lg:col-span-2 mb-xl">
-                <div class="flex justify-between items-center mb-md">
-                    <h2 class="section-title m-0">Mis Aulas</h2>
-                    <button class="btn btn-secondary btn-sm shadow-md"
-                        onclick="document.getElementById('aula-modal').classList.remove('hidden')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-xs" style="margin-right:0.25rem;">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Crear Aula
-                    </button>
-                </div>
-                
-                <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
-                <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-                    <div th:each="aula : ${misAulas}" class="card bg-surface hover:shadow-lg transition-all flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-xs text-primary" th:text="${aula.nombreAula}">Nombre Aula</h3>
-                            <span th:if="${aula.submateria != null}" class="badge mb-sm inline-block" style="background-color: #e0f2fe; color: #0369a1; padding: 0.15rem 0.5rem; font-size: 0.75rem;" th:text="${aula.submateria}">Submateria</span>
-                            <p class="text-secondary text-sm mb-md line-clamp-3" th:text="${aula.descripcion}">Descripción del aula...</p>
-                        </div>
-                        <div class="mt-md pt-md border-t border-color-muted flex justify-between items-center">
-                            <span class="text-xs text-secondary" th:text="${#temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
-                            <div class="flex gap-sm">
-                                <button type="button" class="btn btn-outline btn-sm text-error delete-aula-btn" style="padding: 0.25rem 0.5rem; border-color:transparent;" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
-                                </button>
-                                <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.75rem;">Gestionar Aula</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div th:if="${misAulas == null or misAulas.isEmpty()}" class="col-span-full p-xl text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
-                        Aún no has creado ninguna aula. ¡Crea una para invitar a los estudiantes!
-                    </div>
-                </div>
-            </div>
-
-            <!-- Active Sessions & Shared Resources -->
-            <div class="col-span-1 flex flex-col gap-xl">
-
-                <!-- Active Sessions -->
-=======
-    <div layout:fragment="content" class="w-full h-full p-6 md:p-8 bg-slate-50">
-        <div class="max-w-6xl mx-auto space-y-8">
+    <!-- Main Content Area -->
+    <div layout:fragment="content" class="w-full relative z-10">
+        <div class="max-w-6xl mx-auto p-6 md:p-8 space-y-8 relative z-10">
             
             <!-- Welcome Section -->
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in-up">
->>>>>>> Stashed changes
-                <div>
-                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Hola, <span class="text-brand-600" th:text="${#authentication.name}">Voluntario</span> 🎓</h1>
-                    <p class="text-slate-600 font-medium mt-1">Gracias por donar tu tiempo. Aquí puedes gestionar tutorías y recursos.</p>
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in-up glass-header p-6 md:p-8 rounded-3xl relative overflow-hidden">
+                <!-- Floating Icons -->
+                <div class="absolute top-6 right-32 text-brand-400 opacity-20 floating-icon pointer-events-none hidden md:block">
+                    <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button class="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all focus:outline-none"
-                        onclick="document.getElementById('resource-modal').classList.remove('hidden')">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        Subir Recurso
-                    </button>
+                <div class="absolute bottom-4 left-40 text-purple-500 opacity-20 floating-icon-delayed pointer-events-none hidden md:block">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z"></path></svg>
+                </div>
+                
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Hola, <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-500" th:text="${#authentication.name}">Voluntario</span> 🎓</h1>
+                    <p class="text-slate-600 font-medium mt-2 text-lg">Gracias por donar tu tiempo. Aquí puedes gestionar tus tutorías y aulas.</p>
                 </div>
             </header>
 
-<<<<<<< Updated upstream
-                    <div id="link-upload" class="form-group" style="display: none;">
-                        <label for="resource-url" class="form-label">URL del Enlace</label>
-                        <input type="url" id="resource-url" name="url" class="form-control"
-                            placeholder="https://youtube.com/...">
-                    </div>
-
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline"
-                            onclick="document.getElementById('resource-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn btn-secondary">Subir Recurso</button>
-                    </div>
-                </form>
+            <!-- Alertas de éxito/error -->
+            <div th:if="${successMessage}" class="p-4 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 flex items-start gap-3 shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${successMessage}"></span>
             </div>
-        </div>
-
-        <!-- Create Aula Modal -->
-        <div id="aula-modal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
-            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-lg bg-surface relative"
-                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 600px;">
-                <button type="button"
-                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
-                    onclick="document.getElementById('aula-modal').classList.add('hidden')"
-                    aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-
-                <h2 class="mb-lg">Crear Nueva Aula</h2>
-
-                <form th:action="@{/volunteer/aulas/create}" method="post">
-                    <div class="form-group mb-md">
-                        <label for="aula-title" class="form-label">Nombre del Aula</label>
-                        <input type="text" id="aula-title" name="nombreAula" class="form-control" required
-                            placeholder="Ej: Grupo de Estudio de Matemáticas">
-                    </div>
-
-                    <div class="form-group mb-md">
-                        <label for="aula-desc" class="form-label">Descripción</label>
-                        <textarea id="aula-desc" name="descripcion" class="form-control" required rows="4"
-                            placeholder="Describe el propósito del aula, los temas que se tratarán, etc."></textarea>
-                    </div>
-
-                    <div class="form-group mb-md">
-                        <label for="aula-submateria-select" class="form-label">Materia Específica (Submateria)</label>
-                        <select id="aula-submateria-select" class="form-control" required style="appearance: auto; cursor:pointer;" onchange="handleSubmateriaChange()">
-                            <!-- Las opciones se generarán dinámicamente -->
-                        </select>
-                        <input type="text" id="aula-submateria-otro" class="form-control mt-sm" style="display: none;" placeholder="Especifica la materia...">
-                        <!-- Este campo oculto es el que realmente se envía al servidor -->
-                        <input type="hidden" name="submateria" id="hidden-submateria">
-                    </div>
-
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline"
-                            onclick="document.getElementById('aula-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn btn-secondary">Crear Aula</button>
-                    </div>
-                </form>
+            <div th:if="${errorMessage}" class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 flex items-start gap-3 shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${errorMessage}"></span>
             </div>
-        </div>
 
-        <!-- Delete Aula Modal -->
-        <div id="delete-aula-modal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
-            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-md bg-surface relative"
-                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
-                <button type="button"
-                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
-                    onclick="document.getElementById('delete-aula-modal').classList.add('hidden')"
-                    aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-
-                <div class="text-center mb-md">
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900" id="delete-modal-title">¿Eliminar aula?</h3>
-                    <div class="mt-2 text-sm text-secondary">
-                        <p>Esta acción no se puede deshacer. Todos los estudiantes serán removidos y se borrarán las solicitudes pendientes.</p>
-=======
-            <!-- Dashboard Widgets Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Widget 1: Stats Card -->
-                <div class="bg-brand-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden transform hover:-translate-y-1 transition-all duration-300">
+            <!-- Dashboard Widgets Grid (Inicio) -->
+            <div th:if="${activeTab == 'inicio'}" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Widget 1: Estudiantes Ayudados -->
+                <div class="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden hover-lift">
                     <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                     <h3 class="text-brand-100 font-medium text-sm mb-4">Estudiantes Ayudados</h3>
                     <div class="flex items-end justify-between relative z-10">
                         <span class="text-4xl font-bold tracking-tight">42</span>
                         <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </div>
->>>>>>> Stashed changes
                     </div>
                 </div>
 
-                <!-- Widget 2: Hours Donated -->
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transform hover:-translate-y-1 transition-all duration-300">
+                <!-- Widget 2: Horas Donadas -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover-lift relative overflow-hidden">
                     <h3 class="text-slate-500 font-medium text-sm mb-4">Horas Donadas</h3>
-                    <div class="flex items-end justify-between">
-                        <span class="text-4xl font-extrabold text-slate-900 tracking-tight">38</span>
-                        <div class="p-2 bg-brand-50 rounded-lg text-brand-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-4xl font-bold text-slate-800 tracking-tight" th:text="${voluntario.usuario.tiempoAcumulado != null ? T(java.lang.Math).floor(voluntario.usuario.tiempoAcumulado / 3600.0).intValue() : 0}">0</span>
+                            <span class="text-sm font-medium text-slate-500">hrs</span>
+                        </div>
+                        <div class="relative w-14 h-14 flex items-center justify-center text-brand-500 bg-brand-50 rounded-full">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"></circle><polyline points="12 6 12 12 16 14" stroke-width="2"></polyline></svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- Widget 3: Specialities -->
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transform hover:-translate-y-1 transition-all duration-300">
+                <!-- Widget 3: Especialidades -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover-lift">
                     <h3 class="text-slate-500 font-medium text-sm mb-4">Mis Especialidades</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">Matemáticas</span>
-                        <span class="px-3 py-1 rounded-lg bg-pink-50 text-pink-700 text-xs font-bold border border-pink-100">Física</span>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200" th:text="${voluntario.materiaEspecializada != null ? voluntario.materiaEspecializada : 'General'}">Materia</span>
+                        <th:block th:if="${voluntario.skills != null}">
+                            <span th:each="skill : ${#strings.arraySplit(voluntario.skills, ',')}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-100 text-brand-800 border border-brand-200" th:text="${skill.trim()}">Skill</span>
+                        </th:block>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Sections Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <!-- Left: Mis Aulas -->
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3">
-                            <span class="p-2 bg-white rounded-xl text-brand-600 shadow-sm border border-slate-100">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            </span>
-                            Mis Aulas
-                        </h2>
-                        <button class="flex items-center gap-2 text-brand-600 font-bold text-sm hover:text-brand-700 transition-colors"
-                            onclick="document.getElementById('aula-modal').classList.remove('hidden')">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+            <!-- Sección: Mis Aulas -->
+            <section th:if="${activeTab == 'inicio' or activeTab == 'aulas'}" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Mis Aulas Administradas
+                    </h2>
+                    <div class="flex items-center gap-3">
+                        <a th:if="${activeTab == 'inicio'}" th:href="@{/volunteer/dashboard(tab='aulas')}" class="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline">Ver todas</a>
+                        <button onclick="document.getElementById('aula-modal').classList.remove('hidden')" class="px-4 py-2 bg-brand-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             Crear Aula
                         </button>
                     </div>
-
-                    <div th:if="${successMessage}" class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 animate-fade-in">
-                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span th:text="${successMessage}"></span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div th:each="aula : ${misAulas}" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col justify-between group">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <h3 class="font-bold text-lg text-slate-800 group-hover:text-brand-600 transition-colors" th:text="${aula.nombreAula}">Nombre Aula</h3>
-                                    <span class="px-2 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold rounded uppercase tracking-wider" th:text="${#temporals.format(aula.fechaCreacion, 'dd MMM')}">Fecha</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div th:each="aula : ${misAulas}" class="group bg-white rounded-2xl shadow-sm border border-slate-100 hover-lift overflow-hidden flex flex-col h-full">
+                        <div class="h-2 w-full bg-gradient-to-r from-brand-400 to-purple-400"></div>
+                        <div class="p-6 flex flex-col flex-1">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-brand-50 rounded-xl text-brand-600 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                 </div>
-                                <p class="text-slate-500 text-sm mb-6 line-clamp-2" th:text="${aula.descripcion}">Descripción del aula...</p>
+                                <span class="text-xs font-bold text-slate-400 uppercase" th:text="${#temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
                             </div>
-                            <div class="flex justify-between items-center pt-4 border-t border-slate-50">
-                                <button type="button" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors delete-aula-btn" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}">
+                            <h3 class="font-bold text-lg text-slate-800 mb-1" th:text="${aula.nombreAula}">Nombre Aula</h3>
+                            <span th:if="${aula.submateria != null}" class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 mb-3 w-fit" th:text="${aula.submateria}">Submateria</span>
+                            <p class="text-slate-500 text-sm mb-6 line-clamp-3 flex-1" th:text="${aula.descripcion}">Descripción del aula...</p>
+                            
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-50">
+                                <button type="button" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors delete-aula-btn" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
-                                <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="px-4 py-2 bg-brand-50 text-brand-600 font-bold text-xs rounded-lg hover:bg-brand-100 transition-colors">Gestionar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right: Active Sessions & Resources -->
-                <div class="space-y-8">
-                    <!-- Active Sessions -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                        <h2 class="text-lg font-bold text-slate-900 mb-6">Tutorías Activas</h2>
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-4 p-3 bg-brand-50 rounded-xl border border-brand-100">
-                                <div class="w-10 h-10 bg-brand-500 text-white rounded-full flex items-center justify-center shrink-0 shadow-sm shadow-brand-500/20">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m15 14-4-4-4 4" /></svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-sm text-slate-900 truncate">Matemáticas con Luis</h4>
-                                    <p class="text-xs text-brand-600 font-medium">Chat activo • 5 min</p>
-                                </div>
-                                <button class="px-3 py-1.5 bg-white text-brand-600 font-bold text-xs rounded-lg border border-brand-200 hover:bg-brand-50 transition-colors">Abrir</button>
+                                <a th:href="@{'/volunteer/aulas/' + ${aula.id}}" class="px-4 py-2 bg-brand-50 text-brand-600 font-bold text-sm rounded-xl hover:bg-brand-600 hover:text-white transition-colors shadow-sm">
+                                    Gestionar Aula
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Resources -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                        <h2 class="text-lg font-bold text-slate-900 mb-6">Mis Recursos</h2>
-                        <ul class="space-y-4">
-                            <li class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-slate-800">Resumen Derivadas</h4>
-                                        <p class="text-[10px] text-slate-400 font-medium uppercase">15 descargas</p>
-                                    </div>
-                                </div>
-                                <button class="text-slate-400 hover:text-red-500 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </li>
-                        </ul>
+                    <!-- Empty State -->
+                    <div th:if="${misAulas == null or misAulas.isEmpty()}" class="col-span-full py-12 px-4 text-center bg-white rounded-2xl border border-dashed border-slate-300">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-50 text-brand-400 mb-4">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-900 mb-1">Aún no has creado aulas</h3>
+                        <p class="text-slate-500 text-sm max-w-sm mx-auto mb-4">Las aulas son espacios donde invitas a estudiantes a acceder a tus recursos y foros.</p>
+                        <button onclick="document.getElementById('aula-modal').classList.remove('hidden')" class="px-5 py-2 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-all text-sm">Crear tu primera Aula</button>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Sección: Solicitudes de Cupo (Pendientes) -->
+            <section th:if="${activeTab == 'inicio' or activeTab == 'solicitudes'}" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Solicitudes de Estudiantes
+                    </h2>
+                    <a th:if="${activeTab == 'inicio'}" th:href="@{/volunteer/dashboard(tab='solicitudes')}" class="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline">Ver todas</a>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-100">
+                    <!-- Sección de Pendientes -->
+                    <div class="bg-slate-50/50 px-5 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pendientes de Respuesta</div>
+                    <div th:each="solicitud : ${solicitudes}" class="p-5 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-bold text-slate-800 text-sm">
+                                    <span th:text="${solicitud.estudiante.firstName}"></span>
+                                    <span th:text="${solicitud.estudiante.lastName}"></span>
+                                    <span th:if="${solicitud.estudiante.firstName == null}" th:text="${solicitud.estudiante.username}"></span>
+                                </span>
+                                <span class="text-xs text-slate-400" th:if="${solicitud.fechaSolicitud != null}" th:text="${' - Solicitado el ' + #temporals.format(solicitud.fechaSolicitud, 'dd MMM HH:mm')}">Fecha</span>
+                            </div>
+                            <p class="text-slate-600 text-sm mb-2" th:if="${solicitud.horario != null}">
+                                <strong class="text-brand-600">Sesión:</strong> 
+                                <span th:text="${solicitud.horario.fecha != null ? #temporals.format(solicitud.horario.fecha, 'EEEE d MMM') : 'Sin fecha'}"></span>
+                                <span th:text="${' (' + solicitud.horario.horaInicio + ' - ' + solicitud.horario.horaFin + ')'}"></span>
+                            </p>
+                            <p class="text-slate-500 text-xs italic" th:if="${solicitud.mensaje != null and !#strings.isEmpty(solicitud.mensaje)}" th:text="${'“' + solicitud.mensaje + '”'}">Mensaje...</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <div class="flex gap-2">
+                                <form th:action="@{'/volunteer/request/' + ${solicitud.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="RECHAZADA">
+                                    <button type="submit" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold rounded-lg transition-colors">Rechazar</button>
+                                </form>
+                                <form th:action="@{'/volunteer/request/' + ${solicitud.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="ACEPTADA">
+                                    <button type="submit" class="px-4 py-1.5 bg-emerald-500 text-white hover:bg-emerald-600 text-xs font-bold rounded-lg transition-colors shadow-sm shadow-emerald-500/20">Aceptar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${solicitudes == null or solicitudes.isEmpty()}" class="p-8 text-center text-slate-400 text-sm italic">
+                        No tienes solicitudes pendientes.
+                    </div>
+
+                    <!-- Sección de Historial Reciente -->
+                    <div th:if="${solicitudesHistorial != null and !solicitudesHistorial.isEmpty()}" class="bg-slate-50/50 px-5 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-t border-slate-100">Procesadas Recientemente</div>
+                    <div th:each="solicitud : ${solicitudesHistorial}" 
+                         class="p-4 bg-slate-50/30 opacity-70 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-100/50 transition-colors group"
+                         th:data-id="${solicitud.id}"
+                         th:data-estudiante="${solicitud.estudiante.firstName + ' ' + (solicitud.estudiante.lastName != null ? solicitud.estudiante.lastName : '')}"
+                         th:data-fecha="${solicitud.horario.fecha != null ? #temporals.format(solicitud.horario.fecha, 'EEEE d MMM') : 'Sin fecha'}"
+                         th:data-hora="${solicitud.horario.horaInicio + ' - ' + solicitud.horario.horaFin}"
+                         th:data-materia="${solicitud.horario.materia}"
+                         th:data-mensaje="${solicitud.mensaje != null ? solicitud.mensaje : ''}"
+                         th:data-estado="${solicitud.estado}"
+                         onclick="openRequestDetail(this.getAttribute('data-id'), this.getAttribute('data-estudiante'), this.getAttribute('data-fecha'), this.getAttribute('data-hora'), this.getAttribute('data-materia'), this.getAttribute('data-mensaje'), this.getAttribute('data-estado'))">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-bold text-slate-700 text-xs group-hover:text-brand-600 transition-colors">
+                                    <span th:text="${solicitud.estudiante.firstName}"></span>
+                                    <span th:if="${solicitud.estudiante.firstName == null}" th:text="${solicitud.estudiante.username}"></span>
+                                </span>
+                                <span class="text-[10px] text-slate-400" th:text="${solicitud.horario.fecha != null ? #temporals.format(solicitud.horario.fecha, 'dd/MM') : '--/--'}"></span>
+                                <span class="text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity ml-2">Click para ver detalle</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span th:if="${solicitud.estado == 'ACEPTADA'}" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">Aceptada</span>
+                            <span th:if="${solicitud.estado == 'RECHAZADA'}" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600 border border-slate-300">Rechazada</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
 
-        <!-- Modals and Scripts would follow here, maintaining the existing logic but with improved Tailwind classes -->
-        <!-- [MODALS REMAIN THE SAME LOGICALLY BUT STYLED WITH MODERN TAILWIND] -->
-        <div id="resource-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
-             <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-fade-in-up">
-                 <button onclick="document.getElementById('resource-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                 </button>
-                 <h2 class="text-2xl font-bold text-slate-900 mb-6">Subir Nuevo Recurso</h2>
-                 <!-- Form logic stays same -->
-                 <form th:action="@{/volunteer/upload-resource}" method="post" enctype="multipart/form-data" class="space-y-4">
-                     <div>
-                         <label class="block text-sm font-bold text-slate-700 mb-2">Título</label>
-                         <input type="text" name="title" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                     </div>
-                     <div>
-                         <label class="block text-sm font-bold text-slate-700 mb-2">Materia</label>
-                         <select name="subject" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none">
-                             <option value="matematicas">Matemáticas</option>
-                             <option value="fisica">Física</option>
-                             <option value="lenguaje">Lenguaje</option>
-                         </select>
-                     </div>
-                     <div class="flex justify-end gap-3 pt-6">
-                         <button type="button" onclick="document.getElementById('resource-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
-                         <button type="submit" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all">Subir Recurso</button>
-                     </div>
-                 </form>
-             </div>
-        </div>
-
-        <!-- [OTHER MODALS UPDATED SIMILARLY] -->
+        <!-- ================= MODALS ================= -->
+        
+        <!-- Crear Aula Modal -->
         <div id="aula-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
              <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-fade-in-up">
                  <button onclick="document.getElementById('aula-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
@@ -413,11 +254,19 @@
                  <form th:action="@{/volunteer/aulas/create}" method="post" class="space-y-4">
                      <div>
                          <label class="block text-sm font-bold text-slate-700 mb-2">Nombre del Aula</label>
-                         <input type="text" name="nombreAula" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                         <input type="text" name="nombreAula" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all" placeholder="Ej: Grupo de Estudio de Cálculo">
                      </div>
                      <div>
                          <label class="block text-sm font-bold text-slate-700 mb-2">Descripción</label>
-                         <textarea name="descripcion" required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all"></textarea>
+                         <textarea name="descripcion" required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all" placeholder="Describe el propósito del aula..."></textarea>
+                     </div>
+                     <div>
+                         <label class="block text-sm font-bold text-slate-700 mb-2">Materia Específica (Submateria)</label>
+                         <select id="aula-submateria-select" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none" required onchange="handleSubmateriaChange()">
+                             <!-- Se llena via JS -->
+                         </select>
+                         <input type="text" id="aula-submateria-otro" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl mt-2 outline-none transition-all" style="display: none;" placeholder="Especifica la materia...">
+                         <input type="hidden" name="submateria" id="hidden-submateria">
                      </div>
                      <div class="flex justify-end gap-3 pt-6">
                          <button type="button" onclick="document.getElementById('aula-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
@@ -427,21 +276,99 @@
              </div>
         </div>
 
+        <!-- Eliminar Aula Modal -->
         <div id="delete-aula-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
              <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 text-center animate-fade-in-up">
                  <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                  </div>
                  <h3 class="text-xl font-bold text-slate-900 mb-2" id="delete-modal-title">¿Eliminar aula?</h3>
-                 <p class="text-slate-500 text-sm mb-8">Esta acción no se puede deshacer. Todos los datos asociados se perderán.</p>
+                 <p class="text-slate-500 text-sm mb-8">Esta acción no se puede deshacer. Todos los datos, miembros y mensajes del foro serán eliminados.</p>
                  <form id="delete-aula-form" method="post" action="" class="flex gap-3 justify-center">
                      <button type="button" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
-                     <button type="submit" class="px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Eliminar</button>
+                     <button type="submit" class="px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Sí, Eliminar</button>
                  </form>
              </div>
         </div>
 
+        <!-- Subir Recurso Modal (Placeholder visual para Dashboard) -->
+        <div id="resource-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+             <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-fade-in-up text-center">
+                 <button onclick="document.getElementById('resource-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                 </button>
+                 <div class="w-16 h-16 bg-brand-50 text-brand-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                 </div>
+                 <h2 class="text-2xl font-bold text-slate-900 mb-2">Subir Recurso</h2>
+                 <p class="text-slate-500 mb-6">Para subir recursos a los estudiantes, debes hacerlo desde la vista de gestión dentro de un aula específica.</p>
+                 <button onclick="document.getElementById('resource-modal').classList.add('hidden')" class="px-6 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors">Entendido</button>
+             </div>
+        </div>
+
+        <!-- Request Detail Modal -->
+        <div id="request-detail-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+             <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 relative animate-fade-in-up">
+                 <button onclick="document.getElementById('request-detail-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                 </button>
+                 
+                 <div id="rd-status-badge" class="inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4">Estado</div>
+                 <h2 class="text-2xl font-bold text-slate-900 mb-2" id="rd-estudiante">Estudiante</h2>
+                 <p class="text-brand-600 font-bold text-sm mb-6" id="rd-materia">Materia</p>
+                 
+                 <div class="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-6">
+                     <div class="flex items-center gap-3 text-slate-600">
+                         <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-brand-500 shadow-sm">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                         </div>
+                         <span class="text-sm font-medium" id="rd-fecha">Fecha</span>
+                     </div>
+                     <div class="flex items-center gap-3 text-slate-600">
+                         <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-brand-500 shadow-sm">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                         </div>
+                         <span class="text-sm font-medium" id="rd-hora">Hora</span>
+                     </div>
+                 </div>
+                 
+                 <div id="rd-mensaje-container" class="mb-8">
+                     <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Mensaje del Estudiante</h4>
+                     <p class="text-slate-600 text-sm italic bg-white border border-slate-100 p-4 rounded-xl shadow-sm" id="rd-mensaje">"Mensaje..."</p>
+                 </div>
+                 
+                 <button onclick="document.getElementById('request-detail-modal').classList.add('hidden')" class="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-colors shadow-lg">Cerrar Detalle</button>
+             </div>
+        </div>
+
         <script>
+            function openRequestDetail(id, estudiante, fecha, hora, materia, mensaje, estado) {
+                document.getElementById('rd-estudiante').textContent = estudiante;
+                document.getElementById('rd-fecha').textContent = fecha;
+                document.getElementById('rd-hora').textContent = hora;
+                document.getElementById('rd-materia').textContent = materia;
+                
+                const msgElem = document.getElementById('rd-mensaje');
+                const msgCont = document.getElementById('rd-mensaje-container');
+                if (mensaje) {
+                    msgElem.textContent = '“' + mensaje + '”';
+                    msgCont.classList.remove('hidden');
+                } else {
+                    msgCont.classList.add('hidden');
+                }
+                
+                const badge = document.getElementById('rd-status-badge');
+                badge.textContent = estado;
+                if (estado === 'ACEPTADA') {
+                    badge.className = 'inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 bg-emerald-100 text-emerald-700 border border-emerald-200';
+                } else {
+                    badge.className = 'inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 bg-slate-100 text-slate-600 border border-slate-200';
+                }
+                
+                document.getElementById('request-detail-modal').classList.remove('hidden');
+            }
+
+            // Modal Logic
             function openDeleteModal(aulaId, aulaNombre) {
                 const modal = document.getElementById('delete-aula-modal');
                 const form = document.getElementById('delete-aula-form');
@@ -450,26 +377,18 @@
                 form.action = '/volunteer/aulas/' + aulaId + '/delete';
                 modal.classList.remove('hidden');
             }
+
             document.querySelectorAll('.delete-aula-btn').forEach(btn => {
                 btn.addEventListener('click', () => openDeleteModal(btn.dataset.aulaId, btn.dataset.aulaNombre));
             });
-            // Submaterias dinámicas
+
+            // Submaterias Logic
             const dicMaterias = {
-                "Matemáticas": [
-                    "Álgebra", "Geometría", "Cálculo", "Estadística", "Trigonometría", "Matemática discreta", "Lógica matemática"
-                ],
-                "Ciencias Naturales": [
-                    "Física", "Química", "Biología", "Astronomía", "Geología", "Ecología"
-                ],
-                "Lengua y Comunicación": [
-                    "Español", "Inglés", "Francés", "Lingüística", "Gramática", "Literatura", "Escritura", "Comunicación oral"
-                ],
-                "Ciencias Sociales": [
-                    "Historia", "Geografía", "Sociología", "Economía", "Política", "Antropología"
-                ],
-                "Filosofía y Pensamiento": [
-                    "Filosofía", "Ética", "Lógica", "Metafísica", "Epistemología"
-                ]
+                "Matemáticas": ["Álgebra", "Geometría", "Cálculo", "Estadística", "Trigonometría", "Matemática discreta", "Lógica matemática"],
+                "Ciencias Naturales": ["Física", "Química", "Biología", "Astronomía", "Geología", "Ecología"],
+                "Lengua y Comunicación": ["Español", "Inglés", "Francés", "Lingüística", "Gramática", "Literatura", "Escritura", "Comunicación oral"],
+                "Ciencias Sociales": ["Historia", "Geografía", "Sociología", "Economía", "Política", "Antropología"],
+                "Filosofía y Pensamiento": ["Filosofía", "Ética", "Lógica", "Metafísica", "Epistemología"]
             };
 
             const materiaEspecializada = "[[${voluntario.materiaEspecializada}]]";
@@ -489,7 +408,6 @@
                     select.appendChild(opt);
                 });
                 
-                // Siempre añadir la opción "Otro"
                 const optOtro = document.createElement('option');
                 optOtro.value = "Otro";
                 optOtro.textContent = "Otro (Especificar)";
@@ -512,14 +430,14 @@
                 }
             }
 
-            // Bind input change to update hidden field
-            document.getElementById('aula-submateria-otro').addEventListener('input', function() {
-                document.getElementById('hidden-submateria').value = this.value;
-            });
+            const inputOtroElem = document.getElementById('aula-submateria-otro');
+            if(inputOtroElem){
+                 inputOtroElem.addEventListener('input', function() {
+                     document.getElementById('hidden-submateria').value = this.value;
+                 });
+            }
 
-            // Llenar al cargar
             document.addEventListener('DOMContentLoaded', fillSubmaterias);
-
         </script>
     </div>
 </body>
