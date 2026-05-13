@@ -2,14 +2,14 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/app-layout}">
 
 <head>
-    <title>Mi Perfil | Aula Aura</title>
+    <title>Mi Perfil | Aula Señora</title>
 </head>
 
 <body>
     <div layout:fragment="content" class="w-full min-h-full bg-slate-50 transition-colors duration-300 relative pb-16">
         
         <!-- Success Alert -->
-        <div th:if="${param.success}" class="absolute top-4 right-4 z-50 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-start gap-3 shadow-lg animate-fade-in-up">
+        <div th:if="${param.success}" class="fixed top-4 right-4 z-50 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-start gap-3 shadow-lg animate-fade-in-up">
             <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <div>
                 <h3 class="text-sm font-bold">¡Actualizado!</h3>
@@ -20,10 +20,11 @@
             </button>
         </div>
 
-        <!-- Banner -->
+        <!-- Banner Decorativo -->
         <div class="h-48 md:h-64 w-full bg-gradient-to-r from-brand-600 to-brand-800 relative overflow-hidden">
             <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-            <button class="absolute top-6 right-6 md:top-8 md:right-8 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-white text-sm font-medium transition-colors border border-white/30 flex items-center gap-2 shadow-sm">
+            <!-- Botón de edición de banner (Funcionalidad futura) -->
+            <button class="absolute top-6 right-6 md:top-8 md:right-8 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-white text-sm font-medium transition-colors border border-white/30 flex items-center gap-2 shadow-sm cursor-not-allowed opacity-50" title="Subida de archivos próximamente">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 <span class="hidden sm:inline">Cambiar portada</span>
             </button>
@@ -33,30 +34,34 @@
             
             <div class="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 mb-8">
                 <div class="flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-                    <div class="relative group cursor-pointer shrink-0">
+                    <div class="relative group shrink-0">
+                        <!-- Avatar circular -->
                         <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-brand-50 border-4 border-white shadow-xl flex items-center justify-center text-brand-600 font-bold text-5xl overflow-hidden relative z-10">
-                            <span th:text="${user != null ? #strings.substring(user.firstName, 0, 1).toUpperCase() : 'U'}">U</span>
+                            <span th:if="${user.profileImageUrl == null}" th:text="${#strings.substring(user.firstName, 0, 1).toUpperCase()}">U</span>
+                            <img th:if="${user.profileImageUrl != null}" th:src="${user.profileImageUrl}" class="w-full h-full object-cover">
                         </div>
+                        <!-- Indicador online -->
                         <div class="absolute bottom-3 right-3 w-5 h-5 bg-green-500 border-4 border-white rounded-full z-30"></div>
                     </div>
 
                     <div class="mb-2">
-                        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight" th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Usuario'}">Usuario</h1>
+                        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight" th:text="${user.firstName + ' ' + user.lastName}">Usuario</h1>
                         <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-1.5">
-                            <p class="text-slate-500 font-medium" th:text="${user != null ? user.email : 'correo@ejemplo.com'}">correo@ejemplo.com</p>
+                            <p class="text-slate-500 font-medium" th:text="${user.email}">correo@ejemplo.com</p>
                             <span class="w-1.5 h-1.5 bg-slate-300 rounded-full hidden sm:block"></span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-100 text-brand-700 uppercase tracking-wider" th:text="${user != null ? user.rol : 'ESTUDIANTE'}">Estudiante</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-100 text-brand-700 uppercase tracking-wider" th:text="${user.rol}">ESTUDIANTE</span>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Progreso del perfil -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 w-full md:w-72 shrink-0">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm font-semibold text-slate-700">Perfil completado</span>
-                        <span class="text-sm font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">75%</span>
+                        <span class="text-sm font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md" th:text="${profileCompletion + '%'}">75%</span>
                     </div>
                     <div class="w-full bg-slate-100 rounded-full h-2.5 mb-2">
-                        <div class="bg-brand-500 h-2.5 rounded-full transition-all duration-1000" style="width: 75%"></div>
+                        <div class="bg-brand-500 h-2.5 rounded-full transition-all duration-1000" th:style="'width: ' + ${profileCompletion} + '%'"></div>
                     </div>
                 </div>
             </div>
@@ -65,6 +70,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     <div class="lg:col-span-2 space-y-6">
+                        <!-- Sección: Información Personal -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8">
                             <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3 mb-6">
                                 <span class="p-2 bg-slate-50 rounded-xl text-slate-500">
@@ -76,16 +82,32 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
                                     <label class="text-sm font-semibold text-slate-700">Nombre(s)</label>
-                                    <input type="text" name="firstName" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" th:value="${user != null ? user.firstName : ''}" required>
+                                    <input type="text" name="firstName" th:value="${user.firstName}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" required>
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-sm font-semibold text-slate-700">Apellidos</label>
-                                    <input type="text" name="lastName" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" th:value="${user != null ? user.lastName : ''}" required>
+                                    <input type="text" name="lastName" th:value="${user.lastName}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" required>
                                 </div>
                                 <div class="space-y-2 md:col-span-2">
-                                    <label class="text-sm font-semibold text-slate-700">Correo Electrónico</label>
+                                    <label class="text-sm font-semibold text-slate-700">Biografía / Sobre mí</label>
+                                    <textarea name="bio" th:text="${user.bio}" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">Teléfono</label>
+                                    <input type="text" name="phoneNumber" th:value="${user.phoneNumber}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" placeholder="+57 300 0000000">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">Fecha de Nacimiento</label>
+                                    <input type="date" name="birthDate" th:value="${user.birthDate}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">Ciudad</label>
+                                    <input type="text" name="ciudad" th:value="${user.ciudad}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" placeholder="Ej: Bogotá">
+                                </div>
+                                <div class="space-y-2 md:col-span-2">
+                                    <label class="text-sm font-semibold text-slate-700">Correo Electrónico (Protegido)</label>
                                     <div class="relative">
-                                        <input type="email" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl cursor-not-allowed outline-none text-sm" th:value="${user != null ? user.email : ''}" readonly>
+                                        <input type="email" th:value="${user.email}" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl cursor-not-allowed outline-none text-sm" readonly>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                         </div>
@@ -94,22 +116,31 @@
                             </div>
                         </div>
 
+                        <!-- Sección: Detalles Académicos -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8">
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3 mb-2">
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3 mb-6">
                                 <span class="p-2 bg-slate-50 rounded-xl text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                                 </span>
-                                Preferencias de Estudio
+                                Formación Académica
                             </h2>
-                            <p class="text-sm text-slate-500 mb-6 ml-11">Selecciona las materias de tu interés.</p>
                             
-                            <div class="flex flex-wrap gap-3 ml-11">
-                                <label th:each="materia : ${ {'matematicas', 'fisica', 'quimica', 'biologia', 'lenguaje', 'ingles'} }" class="cursor-pointer">
-                                    <input type="checkbox" class="peer sr-only" name="prefs" th:value="${materia}" checked>
-                                    <div class="px-5 py-2.5 rounded-full border border-slate-200 bg-white text-slate-600 font-medium text-sm transition-all peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 hover:bg-slate-50">
-                                        <span th:text="${#strings.capitalize(materia)}">Materia</span>
-                                    </div>
-                                </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">Grado Académico</label>
+                                    <select name="gradoAcademico" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all">
+                                        <option value="" th:selected="${user.gradoAcademico == null}">Selecciona un nivel...</option>
+                                        <option value="Primaria" th:selected="${user.gradoAcademico == 'Primaria'}">Primaria</option>
+                                        <option value="Secundaria" th:selected="${user.gradoAcademico == 'Secundaria'}">Secundaria</option>
+                                        <option value="Preparatoria" th:selected="${user.gradoAcademico == 'Preparatoria'}">Preparatoria</option>
+                                        <option value="Universidad" th:selected="${user.gradoAcademico == 'Universidad'}">Universidad</option>
+                                        <option value="Otro" th:selected="${user.gradoAcademico == 'Otro'}">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">Institución Educativa</label>
+                                    <input type="text" name="institucion" th:value="${user.institucion}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 outline-none transition-all" placeholder="Ej: Colegio Mayor de San Bartolomé">
+                                </div>
                             </div>
                         </div>
 
@@ -120,52 +151,58 @@
                     </div>
 
                     <div class="space-y-6">
+                        <!-- Card: Estadísticas -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
                             <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-3">
                                 <span class="p-2 bg-slate-50 rounded-xl text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                                 </span>
-                                Ajustes
+                                Resumen de Actividad
                             </h3>
-                            
                             <div class="space-y-4">
-                                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-900">Notificaciones</p>
-                                        <p class="text-xs text-slate-500">Alertas de tutorías</p>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" class="sr-only peer" checked>
-                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
-                                    </label>
+                                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-2xl">
+                                    <span class="text-sm font-medium text-slate-600">Aulas Inscritas</span>
+                                    <span class="text-xl font-bold text-brand-600" th:text="${aulasInscritas}">0</span>
                                 </div>
-                                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-900">Recordatorios</p>
-                                        <p class="text-xs text-slate-500">Vía correo electrónico</p>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" class="sr-only peer" checked>
-                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
-                                    </label>
+                                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-2xl">
+                                    <span class="text-sm font-medium text-slate-600">Horas de Estudio</span>
+                                    <span class="text-xl font-bold text-indigo-600" th:text="${T(java.lang.Math).floor(user.tiempoAcumulado / 3600.0).intValue()}">0</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-2xl">
+                                    <span class="text-sm font-medium text-slate-600">Solicitudes Aprobadas</span>
+                                    <span class="text-xl font-bold text-emerald-600" th:text="${solicitudesAprobadas}">0</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-2xl">
+                                    <span class="text-sm font-medium text-slate-600">Pendientes</span>
+                                    <span class="text-xl font-bold text-amber-600" th:text="${solicitudesPendientes}">0</span>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Card: Línea de Tiempo -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
                             <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-3">
                                 <span class="p-2 bg-slate-50 rounded-xl text-slate-500">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </span>
-                                Actividad
+                                Actividad Reciente
                             </h3>
                             <div class="relative pl-4 space-y-6">
                                 <div class="absolute top-2 bottom-2 left-[5px] w-0.5 bg-slate-100"></div>
-                                <div class="relative">
-                                    <div class="absolute -left-[18px] top-1.5 w-2.5 h-2.5 bg-brand-500 rounded-full border-2 border-white ring-4 ring-brand-50"></div>
-                                    <p class="text-sm font-bold text-slate-900">Tutoría Completada</p>
-                                    <p class="text-xs text-slate-500 mt-0.5">Matemáticas con Ana P.</p>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 block">Ayer, 4:00 PM</span>
+                                
+                                <div th:each="activity : ${recentActivity}" class="relative">
+                                    <div class="absolute -left-[18px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-white ring-4 ring-slate-50"
+                                         th:classappend="${activity.estado == 'PENDIENTE' ? 'bg-amber-500' : (activity.estado == 'APROBADA' ? 'bg-emerald-500' : 'bg-slate-400')}"></div>
+                                    <p class="text-sm font-bold text-slate-900" th:text="${activity.aula.nombreAula}">Aula</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">
+                                        Estado: <span th:text="${activity.estado}">Pendiente</span>
+                                    </p>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 block" 
+                                          th:text="${activity.fechaSolicitud != null ? #temporals.format(activity.fechaSolicitud, 'dd MMM, hh:mm a') : 'Recientemente'}">Fecha</span>
+                                </div>
+
+                                <div th:if="${recentActivity.empty}" class="text-center py-4 text-slate-400 italic text-sm">
+                                    No hay actividad reciente.
                                 </div>
                             </div>
                         </div>
@@ -183,4 +220,6 @@
         </div>
     </div>
 </body>
+</html>
+
 </html>
