@@ -1,20 +1,18 @@
 package aulasenora.controller;
 
-import aulasenora.model.HorarioDisponible;
+import aulasenora.model.Aula;
+import aulasenora.model.MiembroAula;
 import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.UsuarioRepository;
 import aulasenora.service.AulaService;
-import aulasenora.model.Aula;
-import aulasenora.model.MiembroAula;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,8 +32,10 @@ public class StudentController {
     }
 
     @GetMapping("/dashboard")
-    public String studentDashboard(Principal principal, Model model) {
+    public String studentDashboard(Principal principal, Model model, @RequestParam(required = false, defaultValue = "inicio") String tab) {
         if (principal == null) return "redirect:/login";
+
+        model.addAttribute("activeTab", tab);
 
         // Aquí pasaremos solo información de resumen para el panel principal en el futuro
         // Por ahora, el dashboard cargará rápido sin la pesada lógica de horarios.
@@ -59,6 +59,8 @@ public class StudentController {
         java.util.Map<Long, String> misSolicitudesAula = aulaService.getSolicitudesAulaPorEstudiante(username);
         model.addAttribute("misSolicitudesAula", misSolicitudesAula);
 
+        model.addAttribute("solicitudesCompletas", aulaService.getSolicitudesCompletasPorEstudiante(username));
+
         return "student/dashboard";
     }
 
@@ -66,24 +68,28 @@ public class StudentController {
     public String studentSchedule(Principal principal, Model model) {
         if (principal == null) return "redirect:/login";
 
-        // Obtener todos los horarios disponibles
-        List<HorarioDisponible> horarios = horarioDisponibleRepository.findAll();
+        String username = principal.getName();
         
-        // Agrupar por día, ignorando nulos y convirtiendo a minúsculas
-        Map<String, List<HorarioDisponible>> horariosPorDia = horarios.stream()
-                .filter(h -> h.getDiaSemana() != null)
-                .collect(Collectors.groupingBy(h -> h.getDiaSemana().trim().toLowerCase()));
+        // Obtener solo las aulas en las que el estudiante ya está inscrito
+        List<MiembroAula> misAulas = aulaService.getAulasByEstudiante(username);
+        
+        // Extraer los voluntarios de esas aulas (usando un set para evitar duplicados si un voluntario tiene varias aulas)
+        List<aulasenora.model.Voluntario> voluntariosInscritos = misAulas.stream()
+                .map(miembro -> miembro.getAula().getVoluntario())
+                .distinct()
+                .collect(Collectors.toList());
                 
-        model.addAttribute("horariosPorDia", horariosPorDia);
+        model.addAttribute("misAulasInscritas", misAulas);
+        model.addAttribute("voluntarios", voluntariosInscritos);
 
-        return "student/schedule";
+        return "student/calendar";
     }
 
     @PostMapping("/request-slot")
     public String requestSlot(@RequestParam long horarioId, @RequestParam String mensaje, Principal principal) {
         if (principal == null) return "redirect:/login";
 
-        usuarioRepository.findByUsernameOrEmail(principal.getName(), principal.getName()).ifPresent(estudiante -> {
+        usuarioRepository.findByUsername(principal.getName()).ifPresent(estudiante -> {
             horarioDisponibleRepository.findById(horarioId).ifPresent(horario -> {
                 SolicitudCupo solicitud = new SolicitudCupo();
                 solicitud.setEstudiante(estudiante);
