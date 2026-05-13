@@ -32,7 +32,7 @@ public class UsuarioDetailsService implements UserDetailsService {
             throw new RuntimeException("Cuenta bloqueada temporalmente. Por favor, intente en 15 minutos.");
         }
 
-        Usuario usuario = usuarioRepository.findByUsernameOrEmail(username, username)
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(username, username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo o username: " + username));
 
         // construir un UserDetails sencillo usando el builder importado
