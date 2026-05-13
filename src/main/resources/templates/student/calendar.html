@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/app-layout}">
+
+<head>
+    <title>Horarios y Tutorías - Estudiante</title>
+    <style>
+        .fc-event {
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 4px 6px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer;
+        }
+        .fc-event:hover {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            filter: brightness(1.1);
+        }
+        .fc-v-event .fc-event-main {
+            padding: 2px !important;
+        }
+        .fc-timegrid-event-short .fc-event-main {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .fc-timegrid-slot {
+            height: 3em !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content" class="p-6 md:p-10 h-full flex flex-col">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 animate-fade-in">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Calendario de Tutorías</h1>
+                <p class="text-slate-500 mt-2">Visualiza tus clases programadas y solicita nuevos cupos con voluntarios.</p>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+                <label for="volunteer-select" class="text-sm font-bold text-slate-600 pl-2">Ver disponibilidad de:</label>
+                <select id="volunteer-select" class="bg-slate-50 border-none text-sm font-medium rounded-lg focus:ring-brand-500 py-2 pl-3 pr-8">
+                    <option value="mine">Mis Tutorías (Seleccionado)</option>
+                    <option th:each="miembro : ${misAulasInscritas}" 
+                            th:value="${miembro.getAula().getVoluntario().getId()}" 
+                            th:text="${'Aula: ' + miembro.getAula().getNombreAula() + ' (' + (miembro.getAula().getVoluntario().getUsuario().firstName != null ? miembro.getAula().getVoluntario().getUsuario().firstName : miembro.getAula().getVoluntario().getUsuario().username) + ')'}">
+                        Aula - Voluntario
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <div th:if="${param.requestSent}" class="mb-6 p-4 text-sm text-brand-700 bg-brand-50 rounded-xl border border-brand-200 animate-fade-in">
+            <span class="font-bold">¡Solicitud enviada!</span> El voluntario revisará tu petición pronto.
+        </div>
+
+        <div class="mb-6 flex flex-wrap gap-4 animate-fade-in">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#10b981]"></div>
+                <span class="text-sm font-medium text-slate-600">Disponible</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#f59e0b]"></div>
+                <span class="text-sm font-medium text-slate-600">Tu Solicitud (Pendiente)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#6366f1]"></div>
+                <span class="text-sm font-medium text-slate-600">Tu Tutoría (Aceptada)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#8b5cf6]"></div>
+                <span class="text-sm font-medium text-slate-600">Aula Virtual / Ocupado</span>
+            </div>
+        </div>
+
+        <div class="glass-card flex-1 min-h-[600px] p-6 rounded-3xl animate-fade-in relative z-0">
+            <div id="calendar" class="h-full"></div>
+        </div>
+
+        <!-- Modal de Información General del Evento -->
+        <div id="event-info-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity">
+            <div class="glass-card w-full max-w-md p-8 rounded-3xl relative animate-scale-in">
+                <button type="button" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 transition-colors"
+                        onclick="document.getElementById('event-info-modal').classList.add('hidden')">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div class="flex items-center gap-3 mb-4">
+                    <div id="info-modal-icon" class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800" id="info-modal-title">Detalles</h2>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha y Hora</span>
+                        <span class="text-slate-700 font-medium" id="info-modal-date"></span>
+                    </div>
+                    <div class="flex flex-col" id="info-modal-status-container">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado</span>
+                        <span class="text-slate-700 font-medium" id="info-modal-status"></span>
+                    </div>
+                    <div class="flex flex-col hidden" id="info-modal-meet">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Enlace a Google Meet</span>
+                        <a href="#" class="text-brand-600 hover:text-brand-700 font-medium flex items-center gap-2 mt-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Próximamente
+                        </a>
+                    </div>
+                </div>
+
+                <div id="info-modal-actions" class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                    <!-- Actions injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Solicitar Cupo -->
+        <div id="request-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity">
+            <div class="glass-card w-full max-w-md p-8 rounded-3xl relative animate-scale-in">
+                <button type="button" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 transition-colors"
+                        onclick="document.getElementById('request-modal').classList.add('hidden')">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Solicitar Tutoría</h2>
+                <p class="text-sm text-slate-500 mb-6" id="modal-subtitle">Horario seleccionado</p>
+
+                <form th:action="@{/student/request-slot}" method="post" class="space-y-5">
+                    <input type="hidden" id="modal-horario-id" name="horarioId">
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Mensaje (Opcional)</label>
+                        <textarea name="mensaje" rows="4" placeholder="¿En qué tema específico necesitas ayuda?" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-200 transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" class="px-5 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition-colors" onclick="document.getElementById('request-modal').classList.add('hidden')">Cancelar</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 shadow-lg shadow-brand-500/30 transition-all">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <!-- FullCalendar Script -->
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('calendar');
+                var currentEventSource = '/api/calendar/student/events';
+                
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridWeek',
+                    locale: 'es',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    slotMinTime: '06:00:00',
+                    slotMaxTime: '22:00:00',
+                    allDaySlot: false,
+                    slotEventOverlap: false,
+                    eventMinHeight: 40,
+                    nowIndicator: true,
+                    events: currentEventSource,
+                    eventClick: function(arg) {
+                        const props = arg.event.extendedProps;
+                        const modal = document.getElementById('event-info-modal');
+                        const titleEl = document.getElementById('info-modal-title');
+                        const dateEl = document.getElementById('info-modal-date');
+                        const statusEl = document.getElementById('info-modal-status');
+                        const actionsDiv = document.getElementById('info-modal-actions');
+                        const meetDiv = document.getElementById('info-modal-meet');
+                        
+                        titleEl.textContent = arg.event.title;
+                        const options = { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+                        dateEl.textContent = arg.event.start.toLocaleDateString('es-ES', options);
+                        
+                        actionsDiv.innerHTML = '';
+                        meetDiv.classList.add('hidden');
+                        
+                        if(props.tipo === 'disponible') {
+                            statusEl.innerHTML = '<span class="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-bold">Disponible</span>';
+                            actionsDiv.innerHTML = `
+                                <button type="button" onclick="openRequestModal('${arg.event.id}', '${arg.event.title}', '${arg.event.start.toISOString()}')" class="w-full px-5 py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Solicitar Tutoría
+                                </button>
+                            `;
+                        } else if (props.tipo === 'aula') {
+                            statusEl.innerHTML = '<span class="px-2 py-1 bg-violet-100 text-violet-700 rounded-lg text-sm font-bold">Aula Virtual (Clase Grupal)</span>';
+                            meetDiv.classList.remove('hidden');
+                        } else if (props.estado) {
+                            if (props.estado === 'PENDIENTE') {
+                                statusEl.innerHTML = '<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-bold">Solicitud Pendiente</span>';
+                                if(props.voluntario) {
+                                    statusEl.innerHTML += '<div class="mt-2 text-xs text-slate-500">Esperando respuesta de: ' + props.voluntario + '</div>';
+                                }
+                            } else if (props.estado === 'ACEPTADA') {
+                                statusEl.innerHTML = '<span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-bold">Tutoría Aceptada</span>';
+                                if(props.voluntario) {
+                                    statusEl.innerHTML += '<div class="mt-2 text-xs text-slate-500">Voluntario: ' + props.voluntario + '</div>';
+                                }
+                                meetDiv.classList.remove('hidden');
+                            } else {
+                                statusEl.innerHTML = '<span class="px-2 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-bold">Rechazada</span>';
+                            }
+                        } else {
+                            statusEl.innerHTML = '<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-lg text-sm font-bold">Ocupado</span>';
+                        }
+                        
+                        modal.classList.remove('hidden');
+                    }
+                });
+                
+                calendar.render();
+
+                // Cambiar la fuente de datos cuando se selecciona un voluntario diferente
+                document.getElementById('volunteer-select').addEventListener('change', function(e) {
+                    const val = e.target.value;
+                    const oldSource = currentEventSource;
+                    
+                    if (val === 'mine') {
+                        currentEventSource = '/api/calendar/student/events';
+                    } else {
+                        currentEventSource = '/api/calendar/volunteer/' + val + '/availability';
+                    }
+                    
+                    // Remover todas las fuentes para evitar duplicados
+                    calendar.getEventSources().forEach(source => source.remove());
+                    
+                    // Añadir la nueva fuente
+                    calendar.addEventSource({
+                        id: currentEventSource,
+                        url: currentEventSource
+                    });
+                });
+
+                // Close modal clicking outside
+                document.getElementById('event-info-modal').addEventListener('click', function (e) {
+                    if (e.target === this) this.classList.add('hidden');
+                });
+                document.getElementById('request-modal').addEventListener('click', function (e) {
+                    if (e.target === this) this.classList.add('hidden');
+                });
+            });
+
+            function openRequestModal(id, title, startStr) {
+                document.getElementById('event-info-modal').classList.add('hidden');
+                document.getElementById('modal-horario-id').value = id;
+                
+                const date = new Date(startStr);
+                const options = { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+                document.getElementById('modal-subtitle').textContent = title + ' el ' + date.toLocaleDateString('es-ES', options);
+                
+                document.getElementById('request-modal').classList.remove('hidden');
+            }
+        </script>
+    </th:block>
+</body>
+</html>
