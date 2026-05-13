@@ -1,343 +1,392 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 
 <head>
-    <title>Detalles del Aula</title>
+    <title th:text="${aula.nombreAula + ' - Detalles'}">Detalles del Aula</title>
+    <th:block layout:fragment="page-css">
+        <style>
+            @keyframes blob {
+                0% { transform: translate(0px, 0px) scale(1); }
+                33% { transform: translate(30px, -50px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+                100% { transform: translate(0px, 0px) scale(1); }
+            }
+            .animate-blob {
+                animation: blob 7s infinite;
+            }
+            .animation-delay-2000 {
+                animation-delay: 2s;
+            }
+            .animation-delay-4000 {
+                animation-delay: 4s;
+            }
+            .glass-header {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            }
+            .hover-lift {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .hover-lift:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 25px -5px rgba(13, 148, 136, 0.15), 0 8px 10px -6px rgba(13, 148, 136, 0.1);
+            }
+        </style>
+    </th:block>
 </head>
 
 <body>
-    <div layout:fragment="content" class="container py-xl">
-
-        <!-- Header Section -->
-        <div class="mb-xl flex items-center justify-between">
-            <div>
-                <a th:href="@{/volunteer/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
-                <div class="flex items-center gap-md mb-xs">
-                    <h1 class="text-3xl font-bold text-primary m-0" th:text="${aula.nombreAula}">Nombre del Aula</h1>
-                    <button type="button" class="btn btn-outline btn-sm text-error delete-aula-btn" style="border-color:transparent;" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
-                    </button>
-                </div>
-                <span th:if="${aula.submateria != null}" class="badge mb-sm inline-block" style="background-color: #e0f2fe; color: #0369a1; padding: 0.15rem 0.5rem; font-size: 0.75rem;" th:text="${aula.submateria}">Submateria</span>
-                <p class="text-secondary" th:text="${aula.descripcion}">Descripción del aula...</p>
-            </div>
-            <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
+    <div layout:fragment="content" class="w-full min-h-screen relative bg-slate-50 overflow-hidden">
+        
+        <!-- Aurora Background Mesh -->
+        <div class="absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-[-10%] left-[-5%] w-96 h-96 bg-brand-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob"></div>
+            <div class="absolute top-[10%] right-[10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
         </div>
 
-        <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
-
-        <div class="flex flex-col lg:flex-row gap-xl items-start">
+        <div class="max-w-6xl mx-auto p-6 md:p-8 space-y-8 relative z-10">
             
-            <!-- Main Content (Left) -->
-            <div class="flex-1 w-full">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
-
-            <!-- Horarios del Aula Section -->
-            <div class="col-span-1 lg:col-span-2 mb-md">
-                <div class="flex justify-between items-center mb-md">
-                    <h2 class="section-title m-0">Horarios del Aula</h2>
-                    <button class="btn btn-secondary btn-sm shadow-md"
-                        onclick="document.getElementById('horario-modal').classList.remove('hidden')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-xs" style="margin-right:0.25rem;">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Añadir Horario
+            <!-- Breadcrumb & Actions -->
+            <div class="flex items-center justify-between">
+                <a th:href="@{/volunteer/dashboard(tab='aulas')}" class="flex items-center gap-2 text-slate-500 hover:text-brand-600 transition-colors font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Volver a Mis Aulas
+                </a>
+                <div class="flex items-center gap-2">
+                     <button type="button" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors delete-aula-btn" th:data-aula-id="${aula.id}" th:data-aula-nombre="${aula.nombreAula}" title="Eliminar Aula">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-                    <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md">
-                        <div class="flex justify-between items-start mb-sm">
-                            <span class="badge capitalize" style="background-color: #e0f2fe; color: #0369a1;" th:text="${#temporals.format(horario.fecha, 'EEEE, d ''de'' MMMM')}">Fecha</span>
-                            <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/' + ${horario.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar este horario?');">
-                                <button type="submit" class="text-error hover:opacity-80 p-xs" title="Eliminar Horario">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
-                                </button>
-                            </form>
+            </div>
+
+            <!-- Header Section -->
+            <header class="glass-header p-6 md:p-8 rounded-3xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between gap-6">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                            <span th:if="${aula.submateria != null}" class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-brand-100 text-brand-700 border border-brand-200" th:text="${aula.submateria}">Submateria</span>
                         </div>
-                        <h4 class="font-bold mb-xs" th:text="${horario.materia}">Materia</h4>
-                        <div class="flex items-center gap-sm mb-sm">
-                            <span class="text-sm text-secondary" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</span>
-                            <span th:if="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200 flex items-center gap-1" style="background-color: #eef2ff; color: #4338ca; border-color: #c7d2fe;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                Grupal
+                        <p class="text-slate-600 text-lg max-w-2xl" th:text="${aula.descripcion}">Descripcion del aula...</p>
+                        <div class="flex items-center gap-4 text-slate-400 text-sm font-medium pt-2">
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
                             </span>
-                            <span th:unless="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded-md border border-gray-200 flex items-center gap-1">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                Individual
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                <span th:text="${(miembros != null ? miembros.size() : 0) + ' Miembros'}">Miembros</span>
                             </span>
                         </div>
-                        
-                        <div class="flex justify-between items-center mt-xs pt-xs border-t border-color-muted">
-                            <div>
-                                <span th:if="${horario.estado == 'DISPONIBLE'}" class="badge" style="background-color: #dcfce7; color: #166534;">Disponible</span>
-                                <span th:if="${horario.estado == 'PENDIENTE'}" class="badge" style="background-color: #fef08a; color: #854d0e;">Pendiente</span>
-                                <span th:if="${horario.estado == 'OCUPADO'}" class="badge" style="background-color: #fee2e2; color: #991b1b;">Ocupado</span>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 self-start">
+                        <button onclick="document.getElementById('horario-modal').classList.remove('hidden')" class="px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Anadir Horario
+                        </button>
+                    </div>
+                </div>
+            </header>
 
-                        <!-- Estudiantes Inscritos Panel -->
-                        <details class="mt-sm bg-gray-50 rounded border border-gray-200">
-                            <summary class="text-xs text-primary font-bold cursor-pointer select-none p-2 hover:bg-gray-100 transition-colors">
-                                Ver estudiantes inscritos
-                            </summary>
-                            <div class="p-2 border-t border-gray-200 max-h-32 overflow-y-auto">
-                                <div class="flex flex-col gap-1">
-                                    <div th:each="sol : ${solicitudesHorarios}" 
-                                         th:if="${sol.horarioAula.id == horario.id and sol.estado == 'ACEPTADA'}" 
-                                         class="flex items-center gap-2 bg-white p-1 rounded shadow-sm border border-gray-100">
-                                        <div class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center font-bold" style="font-size: 0.6rem;" th:text="${#strings.substring(sol.estudiante.firstName,0,1) + #strings.substring(sol.estudiante.lastName,0,1)}">XX</div>
-                                        <span class="text-xs text-gray-700 truncate" th:text="${sol.estudiante.firstName + ' ' + sol.estudiante.lastName}">Nombre</span>
+            <div th:if="${successMessage}" class="p-4 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 flex items-start gap-3 shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 flex items-start gap-3 shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Main Column (Left/Center) -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Horarios Grid -->
+                    <section class="space-y-4">
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Horarios de Tutoria
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div th:each="horario : ${horarios}" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover-lift relative group">
+                                <div class="flex justify-between items-start mb-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-600 capitalize" th:text="${horario.fecha != null ? #temporals.format(horario.fecha, 'EEEE, d MMM') : 'N/A'}">Fecha</span>
+                                    <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/' + ${horario.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar este horario?');">
+                                        <button type="submit" class="p-1 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                <h3 class="font-bold text-slate-800 mb-1" th:text="${horario.materia}">Materia</h3>
+                                <div class="flex items-center gap-3 text-sm text-slate-500 mb-4">
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span th:text="${horario.horaInicio}"></span>
+                                        <span>-</span>
+                                        <span th:text="${horario.horaFin}"></span>
+                                    </span>
+                                    <span th:if="${horario.esGrupal}" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m12-9a4 4 0 100-8 4 4 0 000 8z"></path></svg>
+                                        Grupal
+                                    </span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                                    <div th:switch="${horario.estado}">
+                                        <span th:case="'DISPONIBLE'" class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">Disponible</span>
+                                        <span th:case="'PENDIENTE'" class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">Pendiente</span>
+                                        <span th:case="'OCUPADO'" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">Ocupado</span>
                                     </div>
-                                    <div th:unless="${#lists.size(solicitudesHorarios.?[horarioAula.id == __${horario.id}__ and estado == 'ACEPTADA']) > 0}" class="text-xs text-secondary text-center italic py-1">
-                                        Ningún estudiante inscrito.
+                                    <details class="relative">
+                                        <summary class="list-none text-xs text-brand-600 font-bold cursor-pointer hover:underline">Ver inscritos</summary>
+                                        <div class="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-2 z-20">
+                                            <div class="space-y-1">
+                                                <th:block th:if="${solicitudesHorarios != null}">
+                                                    <div th:each="sol : ${solicitudesHorarios}" 
+                                                         th:if="${sol.horarioAula.id == horario.id and sol.estado == 'ACEPTADA'}" 
+                                                         class="flex items-center gap-2 p-1.5 hover:bg-slate-50 rounded-lg">
+                                                        <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-[10px] font-bold flex items-center justify-center" 
+                                                             th:text="${(sol.estudiante.firstName != null and !#strings.isEmpty(sol.estudiante.firstName)) ? #strings.substring(sol.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                                        <span class="text-[10px] font-medium text-slate-700 truncate">
+                                                            <span th:text="${sol.estudiante.firstName}"></span>
+                                                            <span th:text="${sol.estudiante.lastName}"></span>
+                                                            <span th:if="${sol.estudiante.firstName == null}" th:text="${sol.estudiante.username}"></span>
+                                                        </span>
+                                                    </div>
+                                                </th:block>
+                                                <div th:if="${solicitudesHorarios == null or solicitudesHorarios.isEmpty()}" class="text-[10px] text-slate-400 p-2 italic text-center">
+                                                    Sin inscritos
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                            
+                            <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                                <p class="text-slate-400 text-sm italic">No hay horarios programados para esta aula.</p>
+                                <button onclick="document.getElementById('horario-modal').classList.remove('hidden')" class="mt-4 text-brand-600 font-bold text-sm hover:underline">+ Crear primer horario</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Miembros Grid -->
+                    <section class="space-y-4">
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Estudiantes en el Aula
+                        </h2>
+                        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                            <div th:each="miembro : ${miembros}" th:if="${miembro.rol == 'ESTUDIANTE'}" class="p-4 flex items-center justify-between group hover:bg-slate-50/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 font-bold flex items-center justify-center" th:text="${(miembro.usuario.firstName != null and !#strings.isEmpty(miembro.usuario.firstName)) ? #strings.substring(miembro.usuario.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm">
+                                            <span th:text="${miembro.usuario.firstName}"></span>
+                                            <span th:text="${miembro.usuario.lastName}"></span>
+                                            <span th:if="${miembro.usuario.firstName == null}" th:text="${miembro.usuario.username}"></span>
+                                        </h4>
+                                        <p class="text-xs text-slate-400" th:text="${miembro.usuario.email}">Email</p>
                                     </div>
                                 </div>
-                            </div>
-                        </details>
-                    </div>
-                    <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
-                        No hay horarios configurados para esta aula.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estudiantes Inscritos -->
-            <div class="col-span-1 lg:col-span-2">
-                <h2 class="section-title mb-md">Estudiantes Inscritos</h2>
-                
-                <div class="card p-0 overflow-hidden">
-                    <ul class="list-none m-0">
-                        <li th:each="miembro : ${miembros}" th:if="${miembro.rol == 'ESTUDIANTE'}" class="p-md border-b border-color-muted flex justify-between items-center hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-md">
-                                <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold" th:text="${#strings.substring(miembro.usuario.firstName,0,1) + #strings.substring(miembro.usuario.lastName,0,1)}">
-                                    XX
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-md" th:text="${miembro.usuario.firstName + ' ' + miembro.usuario.lastName}">Nombre Apellido</h4>
-                                    <p class="text-xs text-secondary mt-xs" th:text="${miembro.usuario.email}">email@ejemplo.com</p>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] font-bold text-slate-300 uppercase tracking-wider" th:text="${'Unido: ' + #temporals.format(miembro.fechaUnion, 'dd/MM/yy')}">Fecha</span>
+                                    <button type="button" class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 delete-estudiante-btn" th:data-aula-id="${aula.id}" th:data-estudiante-id="${miembro.usuario.id}" th:data-estudiante-nombre="${(miembro.usuario.firstName != null ? miembro.usuario.firstName + ' ' : '') + (miembro.usuario.lastName != null ? miembro.usuario.lastName : '')}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 21v-1a6 6 0 00-12 0v1M18 9l5 5m0-5l-5 5"></path></svg>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-md">
-                                <span class="text-xs text-secondary" th:text="${'Unido el ' + #temporals.format(miembro.fechaUnion, 'dd/MM/yyyy')}">Fecha</span>
-                                <button type="button" class="btn btn-outline btn-sm text-error delete-estudiante-btn" style="padding: 0.25rem 0.5rem; border-color:transparent;" th:data-aula-id="${aula.id}" th:data-estudiante-id="${miembro.usuario.id}" th:data-estudiante-nombre="${miembro.usuario.firstName + ' ' + miembro.usuario.lastName}" title="Eliminar Estudiante">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
-                                </button>
+                            <div th:if="${miembros != null and miembros.size() <= 1}" class="p-12 text-center text-slate-400 italic text-sm">
+                                No hay estudiantes inscritos aun.
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column (Requests) -->
+                <div class="space-y-8">
                     
-                    <div th:if="${miembros.size() <= 1}" class="p-xl text-center text-secondary text-sm bg-surface">
-                        Aún no hay estudiantes inscritos en esta aula.
-                    </div>
+                    <!-- Solicitudes de Acceso -->
+                    <section class="space-y-4">
+                        <h2 class="text-lg font-bold text-slate-800">Solicitudes de Acceso</h2>
+                        <div class="space-y-3">
+                            <div th:each="solicitud : ${solicitudesPendientes}" class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100">
+                                <h4 class="font-bold text-slate-800 text-sm">
+                                    <span th:text="${solicitud.estudiante.firstName}"></span>
+                                    <span th:text="${solicitud.estudiante.lastName}"></span>
+                                    <span th:if="${solicitud.estudiante.firstName == null}" th:text="${solicitud.estudiante.username}"></span>
+                                </h4>
+                                <p class="text-[10px] text-slate-400 mb-4" th:if="${solicitud.fechaSolicitud != null}" th:text="${'Solicitado el ' + #temporals.format(solicitud.fechaSolicitud, 'dd MMM HH:mm')}">Fecha</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/reject'}" method="post">
+                                        <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                        <button type="submit" class="w-full py-1.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">Rechazar</button>
+                                    </form>
+                                    <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/approve'}" method="post">
+                                        <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                        <button type="submit" class="w-full py-1.5 text-xs font-bold text-white bg-teal-500 hover:bg-teal-600 rounded-lg transition-colors shadow-sm">Aprobar</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div th:if="${solicitudesPendientes == null or solicitudesPendientes.isEmpty()}" class="p-6 text-center text-slate-400 italic text-xs bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
+                                Sin solicitudes pendientes
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Solicitudes de Horarios -->
+                    <section class="space-y-4">
+                        <h2 class="text-lg font-bold text-slate-800">Cupos de Tutoria</h2>
+                        <div class="space-y-3">
+                            <div th:each="solicitudH : ${solicitudesHorarios}" th:if="${solicitudH.estado == 'PENDIENTE'}" class="bg-white rounded-2xl p-4 shadow-sm border border-brand-100">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-[10px]" 
+                                         th:text="${(solicitudH.estudiante.firstName != null and !#strings.isEmpty(solicitudH.estudiante.firstName)) ? #strings.substring(solicitudH.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-xs">
+                                            <span th:text="${solicitudH.estudiante.firstName}"></span>
+                                            <span th:text="${solicitudH.estudiante.lastName}"></span>
+                                            <span th:if="${solicitudH.estudiante.firstName == null}" th:text="${solicitudH.estudiante.username}"></span>
+                                        </h4>
+                                        <p class="text-[9px] text-slate-400" th:text="${solicitudH.horarioAula.materia}">Materia</p>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-2 mb-4">
+                                    <p class="text-[10px] text-slate-600 font-medium" th:text="${#temporals.format(solicitudH.horarioAula.fecha, 'EEEE, d MMM')}">Fecha</p>
+                                    <p class="text-[10px] text-slate-400" th:text="${solicitudH.horarioAula.horaInicio + ' - ' + solicitudH.horarioAula.horaFin}">Hora</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/reject'}" method="post">
+                                        <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                        <button type="submit" class="w-full py-1.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">Rechazar</button>
+                                    </form>
+                                    <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/approve'}" method="post">
+                                        <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                        <button type="submit" class="w-full py-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-lg transition-colors shadow-sm">Aceptar</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div th:if="${solicitudesHorarios == null or solicitudesHorarios.isEmpty()}" class="p-6 text-center text-slate-400 italic text-xs bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
+                                Sin reservas pendientes
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
+        </div>
 
-            <!-- Solicitudes Pendientes -->
-            <div class="col-span-1">
-                <h2 class="section-title mb-md">Solicitudes Pendientes</h2>
-                
-                <div class="flex flex-col gap-md">
-                    <div th:each="solicitud : ${solicitudesPendientes}" class="card p-md shadow-sm border border-warning">
-                        <h4 class="font-bold text-md mb-xs" th:text="${solicitud.estudiante.firstName + ' ' + solicitud.estudiante.lastName}">Nombre</h4>
-                        <p class="text-xs text-secondary mb-md" th:text="${'Solicitó el ' + #temporals.format(solicitud.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</p>
-                        
-                        <div class="flex gap-sm w-full">
-                            <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/reject'}" method="post" class="flex-1">
-                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
-                                <button type="submit" class="btn btn-outline btn-sm w-full text-error" style="border-color: #fca5a5;">Rechazar</button>
-                            </form>
-                            <form th:action="@{'/volunteer/aulas/requests/' + ${solicitud.id} + '/approve'}" method="post" class="flex-1">
-                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
-                                <button type="submit" class="btn btn-secondary btn-sm w-full text-white" style="background-color: var(--success); border-color: var(--success);">Aprobar</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div th:if="${solicitudesPendientes == null or solicitudesPendientes.isEmpty()}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
-                        No hay solicitudes pendientes.
-                    </div>
-                </div>
-
-                <h2 class="section-title mb-md mt-xl">Solicitudes de Horarios</h2>
-                
-                <div class="flex flex-col gap-md">
-                    <div th:each="solicitudH : ${solicitudesHorarios}" th:if="${solicitudH.estado == 'PENDIENTE'}" class="card p-md shadow-sm border border-warning">
-                        <h4 class="font-bold text-md mb-xs" th:text="${solicitudH.estudiante.firstName + ' ' + solicitudH.estudiante.lastName}">Nombre</h4>
-                        <p class="text-xs text-secondary mb-xs" th:text="${#temporals.format(solicitudH.horarioAula.fecha, 'EEEE, d ''de'' MMMM') + ' ' + solicitudH.horarioAula.horaInicio + '-' + solicitudH.horarioAula.horaFin}">Horario</p>
-                        <p class="text-xs text-secondary mb-xs" th:text="${solicitudH.horarioAula.materia}">Materia</p>
-                        <p class="text-xs text-secondary mb-md" th:text="${'Solicitó el ' + #temporals.format(solicitudH.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</p>
-                        
-                        <div class="flex gap-sm w-full">
-                            <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/reject'}" method="post" class="flex-1">
-                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
-                                <button type="submit" class="btn btn-outline btn-sm w-full text-error" style="border-color: #fca5a5;">Rechazar</button>
-                            </form>
-                            <form th:action="@{'/volunteer/aulas/horarios/requests/' + ${solicitudH.id} + '/approve'}" method="post" class="flex-1">
-                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
-                                <button type="submit" class="btn btn-secondary btn-sm w-full text-white" style="background-color: var(--success); border-color: var(--success);">Aprobar</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div th:if="${solicitudesHorarios == null or #lists.size(solicitudesHorarios.?[estado == 'PENDIENTE']) == 0}" class="p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
-                        No hay solicitudes de horario pendientes.
-                    </div>
-                </div>
-            </div>
-
-            </div> <!-- End of inner grid -->
-        </div> <!-- End of Main Content -->
-
-        <!-- Chat Section (Floating Widget) -->
-        <div style="position: fixed; top: 80px; right: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end;">
+        <!-- Floating Chat Widget -->
+        <div class="fixed bottom-6 right-6 z-[99] flex flex-col items-end gap-3 group">
             <div th:replace="~{fragments/chat :: aula-chat}"></div>
         </div>
 
+        <!-- Modals -->
+        
         <!-- Delete Aula Modal -->
-        <div id="delete-aula-modal" class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-md bg-surface relative" style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
-                <button type="button" class="absolute top-md right-md text-secondary hover:text-primary transition-colors" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')" aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                </button>
-                <div class="text-center mb-md">
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900" id="delete-aula-title">¿Eliminar aula?</h3>
-                    <div class="mt-2 text-sm text-secondary">
-                        <p>Esta acción no se puede deshacer. Todos los estudiantes serán removidos y se borrarán las solicitudes pendientes.</p>
-                    </div>
-                </div>
-                <form id="delete-aula-form" method="post" action="">
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--error); border-color: var(--error);">Sí, eliminar</button>
-                    </div>
-                </form>
-            </div>
+        <div id="delete-aula-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+             <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 text-center animate-fade-in-up">
+                 <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                 </div>
+                 <h3 class="text-xl font-bold text-slate-900 mb-2" id="delete-aula-title">Eliminar aula?</h3>
+                 <p class="text-slate-500 text-sm mb-8">Esta accion no se puede deshacer. Se borraran todos los datos del aula permanentemente.</p>
+                 <form id="delete-aula-form" method="post" action="" class="flex gap-3 justify-center">
+                     <button type="button" onclick="document.getElementById('delete-aula-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                     <button type="submit" class="px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Si, Eliminar</button>
+                 </form>
+             </div>
         </div>
 
-        <!-- Delete Estudiante Modal -->
-        <div id="delete-estudiante-modal" class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-md bg-surface relative" style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
-                <button type="button" class="absolute top-md right-md text-secondary hover:text-primary transition-colors" onclick="document.getElementById('delete-estudiante-modal').classList.add('hidden')" aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                </button>
-                <div class="text-center mb-md">
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-sm" style="background-color: #fee2e2; color: #ef4444;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900" id="delete-estudiante-title">¿Eliminar estudiante?</h3>
-                    <div class="mt-2 text-sm text-secondary">
-                        <p>El estudiante será removido del aula y ya no tendrá acceso.</p>
-                    </div>
-                </div>
-                <form id="delete-estudiante-form" method="post" action="">
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline" onclick="document.getElementById('delete-estudiante-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--error); border-color: var(--error);">Sí, eliminar</button>
-                    </div>
-                </form>
-            </div>
+        <!-- Delete Student Modal -->
+        <div id="delete-estudiante-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+             <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 text-center animate-fade-in-up">
+                 <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m12-9a4 4 0 100-8 4 4 0 000 8z"></path></svg>
+                 </div>
+                 <h3 class="text-xl font-bold text-slate-900 mb-2" id="delete-estudiante-title">Remover estudiante?</h3>
+                 <p class="text-slate-500 text-sm mb-8">El estudiante perdera acceso al aula de inmediato.</p>
+                 <form id="delete-estudiante-form" method="post" action="" class="flex gap-3 justify-center">
+                     <button type="button" onclick="document.getElementById('delete-estudiante-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                     <button type="submit" class="px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Remover</button>
+                 </form>
+             </div>
         </div>
 
         <!-- Create Horario Modal -->
-        <div id="horario-modal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black bg-opacity-50 hidden"
-            style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-            <div class="card w-full max-w-md bg-surface relative"
-                style="max-height: 90vh; overflow-y: auto; width: 100%; max-width: 500px;">
-                <button type="button"
-                    class="absolute top-md right-md text-secondary hover:text-primary transition-colors"
-                    onclick="document.getElementById('horario-modal').classList.add('hidden')"
-                    aria-label="Cerrar modal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-
-                <h2 class="mb-lg">Añadir Horario Semanal</h2>
-
-                <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/create'}" method="post">
-                    <div class="form-group mb-md">
-                        <label for="fecha" class="form-label">Fecha de la Sesión</label>
-                        <input type="date" id="fecha" name="fecha" class="form-control" required>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-md mb-md">
-                        <div class="form-group">
-                            <label for="horaInicio" class="form-label">Hora Inicio</label>
-                            <input type="time" id="horaInicio" name="horaInicio" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="horaFin" class="form-label">Hora Fin</label>
-                            <input type="time" id="horaFin" name="horaFin" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-md">
-                        <label for="materia" class="form-label">Materia / Tema</label>
-                        <input type="text" id="materia" name="materia" class="form-control" placeholder="Ej: Matemáticas" required>
-                    </div>
-
-                    <div class="form-group mb-lg">
-                        <label class="form-label">Tipo de Sesión</label>
-                        <div class="flex flex-col gap-sm p-sm border border-color-muted rounded-md bg-surface">
-                            <label class="flex items-center gap-sm cursor-pointer hover:bg-gray-50 p-xs rounded transition-colors">
-                                <input type="radio" name="esGrupal" value="false" checked style="accent-color: var(--primary); width: 1.2rem; height: 1.2rem;">
-                                <div>
-                                    <span class="block font-bold text-sm text-gray-800">Individual</span>
-                                    <span class="block text-xs text-secondary">Para un solo estudiante. Se marcará como ocupado una vez reservado.</span>
-                                </div>
-                            </label>
-                            <label class="flex items-center gap-sm cursor-pointer hover:bg-gray-50 p-xs rounded transition-colors">
-                                <input type="radio" name="esGrupal" value="true" style="accent-color: var(--primary); width: 1.2rem; height: 1.2rem;">
-                                <div>
-                                    <span class="block font-bold text-sm text-gray-800">Grupal</span>
-                                    <span class="block text-xs text-secondary">Para varios estudiantes. Permite múltiples inscripciones.</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-md mt-xl pt-md border-t border-color-muted">
-                        <button type="button" class="btn btn-outline"
-                            onclick="document.getElementById('horario-modal').classList.add('hidden')">Cancelar</button>
-                        <button type="submit" class="btn btn-secondary">Guardar Horario</button>
-                    </div>
-                </form>
-            </div>
+        <div id="horario-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+             <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-fade-in-up">
+                 <button onclick="document.getElementById('horario-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                 </button>
+                 <h2 class="text-2xl font-bold text-slate-900 mb-6">Programar Sesion</h2>
+                 <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/horarios/create'}" method="post" class="space-y-4" onsubmit="return validateTime()">
+                     <div>
+                         <label class="block text-sm font-bold text-slate-700 mb-2">Fecha de la Sesion</label>
+                         <input type="date" name="fecha" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                     </div>
+                     <div class="grid grid-cols-2 gap-4">
+                         <div>
+                             <label class="block text-sm font-bold text-slate-700 mb-2">Hora Inicio</label>
+                             <input type="time" id="aula-hora-inicio" name="horaInicio" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                         </div>
+                         <div>
+                             <label class="block text-sm font-bold text-slate-700 mb-2">Hora Fin</label>
+                             <input type="time" id="aula-hora-fin" name="horaFin" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                         </div>
+                     </div>
+                     <div>
+                         <label class="block text-sm font-bold text-slate-700 mb-2">Materia / Tema</label>
+                         <input type="text" name="materia" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all" th:value="${aula.submateria}" placeholder="Ej: Trigonometria avanzada">
+                     </div>
+                     <div class="space-y-3">
+                         <label class="block text-sm font-bold text-slate-700">Tipo de Sesion</label>
+                         <div class="flex gap-4">
+                             <label class="flex-1 cursor-pointer">
+                                 <input type="radio" name="esGrupal" value="false" checked class="hidden peer">
+                                 <div class="p-3 border-2 border-slate-100 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-center">
+                                     <span class="block font-bold text-slate-800 text-sm">Individual</span>
+                                     <span class="text-[10px] text-slate-500">1 Estudiante</span>
+                                 </div>
+                             </label>
+                             <label class="flex-1 cursor-pointer">
+                                 <input type="radio" name="esGrupal" value="true" class="hidden peer">
+                                 <div class="p-3 border-2 border-slate-100 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-center">
+                                     <span class="block font-bold text-slate-800 text-sm">Grupal</span>
+                                     <span class="text-[10px] text-slate-500">Multiples</span>
+                                 </div>
+                             </label>
+                         </div>
+                     </div>
+                     <div class="flex justify-end gap-3 pt-6">
+                         <button type="button" onclick="document.getElementById('horario-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                         <button type="submit" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all">Guardar Horario</button>
+                     </div>
+                 </form>
+             </div>
         </div>
 
         <script>
-            // Utilities to close modals
-            document.getElementById('delete-aula-modal').addEventListener('click', function (e) {
-                if (e.target === this) this.classList.add('hidden');
-            });
-            document.getElementById('delete-estudiante-modal').addEventListener('click', function (e) {
-                if (e.target === this) this.classList.add('hidden');
-            });
-            document.getElementById('horario-modal').addEventListener('click', function (e) {
-                if (e.target === this) this.classList.add('hidden');
-            });
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    document.getElementById('delete-aula-modal').classList.add('hidden');
-                    document.getElementById('delete-estudiante-modal').classList.add('hidden');
-                    document.getElementById('horario-modal').classList.add('hidden');
+            function validateTime() {
+                const start = document.getElementById('aula-hora-inicio').value;
+                const end = document.getElementById('aula-hora-fin').value;
+                
+                if (start >= end) {
+                    alert('La hora de fin debe ser posterior a la hora de inicio.');
+                    return false;
                 }
-            });
+                return true;
+            }
 
             function openDeleteAulaModal(aulaId, aulaNombre) {
                 const modal = document.getElementById('delete-aula-modal');
                 const form = document.getElementById('delete-aula-form');
                 const title = document.getElementById('delete-aula-title');
-                
-                title.textContent = '¿Eliminar aula "' + aulaNombre + '"?';
+                title.textContent = 'Eliminar "' + aulaNombre + '"?';
                 form.action = '/volunteer/aulas/' + aulaId + '/delete';
                 modal.classList.remove('hidden');
             }
@@ -346,24 +395,17 @@
                 const modal = document.getElementById('delete-estudiante-modal');
                 const form = document.getElementById('delete-estudiante-form');
                 const title = document.getElementById('delete-estudiante-title');
-                
-                title.textContent = '¿Eliminar a ' + estudianteNombre + '?';
+                title.textContent = 'Remover a ' + estudianteNombre + '?';
                 form.action = '/volunteer/aulas/' + aulaId + '/estudiantes/' + estudianteId + '/delete';
                 modal.classList.remove('hidden');
             }
 
-            // Bind delete aula button
-            document.querySelectorAll('.delete-aula-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    openDeleteAulaModal(this.dataset.aulaId, this.dataset.aulaNombre);
-                });
+            document.querySelectorAll('.delete-aula-btn').forEach(btn => {
+                btn.addEventListener('click', () => openDeleteAulaModal(btn.dataset.aulaId, btn.dataset.aulaNombre));
             });
 
-            // Bind delete estudiante buttons
-            document.querySelectorAll('.delete-estudiante-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    openDeleteEstudianteModal(this.dataset.aulaId, this.dataset.estudianteId, this.dataset.estudianteNombre);
-                });
+            document.querySelectorAll('.delete-estudiante-btn').forEach(btn => {
+                btn.addEventListener('click', () => openDeleteEstudianteModal(btn.dataset.aulaId, btn.dataset.estudianteId, btn.dataset.estudianteNombre));
             });
         </script>
 
