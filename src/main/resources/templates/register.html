@@ -49,6 +49,33 @@
             background-size: 24px 24px;
         }
 
+        /* Page entrance animations */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-left {
+            animation: slideInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-slide-right {
+            animation: slideInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.15s;
+            opacity: 0;
+        }
+        .animate-card-in {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background-color: #f1f5f9; }
@@ -83,7 +110,7 @@
     <div class="w-full min-h-screen flex flex-col md:flex-row">
         
         <!-- LEFT COLUMN: Branding & Info -->
-        <div class="hidden md:flex md:w-[45%] lg:w-[45%] relative overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 flex-col justify-between p-12 lg:p-16">
+        <div class="hidden md:flex md:w-[45%] lg:w-[45%] relative overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 flex-col justify-between p-12 lg:p-16 animate-slide-left">
             <div class="absolute inset-0 bg-pattern opacity-30"></div>
             
             <div class="relative z-10 flex items-center gap-3">
@@ -132,7 +159,7 @@
         </div>
 
         <!-- RIGHT COLUMN: Registration Area -->
-        <div class="w-full md:w-[55%] lg:w-[55%] flex flex-col bg-slate-50 relative h-screen overflow-y-auto">
+        <div class="w-full md:w-[55%] lg:w-[55%] flex flex-col bg-slate-50 relative h-screen overflow-y-auto animate-slide-right">
             
             <div class="md:hidden flex items-center gap-2 p-6 pb-0">
                 <a th:href="@{/}" class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
@@ -146,7 +173,7 @@
 
             <div class="w-full max-w-xl mx-auto p-6 sm:p-12 my-auto">
                 
-                <div id="role-selection" class="animate-fade-in-right glass-card p-8 sm:p-10 rounded-[2rem] shadow-xl relative z-10">
+                <div id="role-selection" class="animate-card-in glass-card p-8 sm:p-10 rounded-[2rem] shadow-xl relative z-10">
                     <div class="mb-10 text-center">
                         <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 tracking-tight">Crea tu cuenta</h2>
                         <p class="text-slate-500 text-lg">Selecciona tu perfil para comenzar.</p>
@@ -217,12 +244,23 @@
                                 placeholder="correo@ejemplo.com">
                         </div>
 
-                        <div class="space-y-1.5">
-                            <label for="password" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Contraseña</label>
-                            <div class="relative">
-                                <input type="password" id="password" th:field="*{password}" required
-                                    class="block w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none sm:text-sm tracking-widest transition-all shadow-sm"
-                                    placeholder="••••••••">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label for="password" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Contraseña</label>
+                                <div class="relative">
+                                    <input type="password" id="password" th:field="*{password}" required
+                                        class="block w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none sm:text-sm tracking-widest transition-all shadow-sm"
+                                        placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="confirmPassword" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Confirmar Contraseña</label>
+                                <div class="relative">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                                        class="block w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none sm:text-sm tracking-widest transition-all shadow-sm"
+                                        placeholder="••••••••">
+                                </div>
                             </div>
                         </div>
 
@@ -352,6 +390,22 @@
         document.getElementById('register-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = this;
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                Toastify({
+                    text: "Las contraseñas no coinciden. Por favor, verifícalas.",
+                    duration: 4000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: { background: "#ef4444", borderRadius: "8px", fontWeight: "600" }
+                }).showToast();
+                return;
+            }
+
             grecaptcha.ready(function() {
                 grecaptcha.execute('6Lc7quUsAAAAAHfqZ54vEIt3u9Nn0JX9vgQz6eyd', {action: 'register'}).then(function(token) {
                     document.getElementById('g-recaptcha-response').value = token;

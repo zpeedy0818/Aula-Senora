@@ -49,6 +49,33 @@
             background-size: 24px 24px;
         }
 
+        /* Page entrance animations */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-left {
+            animation: slideInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-slide-right {
+            animation: slideInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.15s;
+            opacity: 0;
+        }
+        .animate-card-in {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background-color: #f1f5f9; }
@@ -92,7 +119,7 @@
     <div class="w-full min-h-screen flex flex-col md:flex-row">
         
         <!-- LEFT COLUMN: Branding & Features -->
-        <div class="hidden md:flex md:w-[45%] lg:w-[50%] relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-600 to-blue-500 flex-col justify-between p-12 lg:p-16">
+        <div class="hidden md:flex md:w-[45%] lg:w-[50%] relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-600 to-blue-500 flex-col justify-between p-12 lg:p-16 animate-slide-left">
             <div class="absolute inset-0 bg-pattern opacity-30"></div>
             
             <!-- Logo -->
@@ -157,7 +184,7 @@
 
         <!-- RIGHT COLUMN: Authentication -->
         <!-- Cambiado bg-white a bg-slate-50 para darle contraste al modal -->
-        <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50 relative">
+        <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50 relative animate-slide-right">
             
             <!-- Mobile Logo -->
             <div class="md:hidden mb-10">
@@ -173,7 +200,7 @@
             </div>
 
             <!-- Login Card -->
-            <div class="w-full max-w-md glass-card p-8 sm:p-10 rounded-[2rem] shadow-2xl relative z-10">
+            <div class="w-full max-w-md glass-card p-8 sm:p-10 rounded-[2rem] shadow-2xl relative z-10 animate-card-in">
                 
                 <a th:href="@{/}" class="group flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-6 focus:outline-none w-fit">
                     <span class="p-1 rounded bg-slate-100 group-hover:bg-slate-200 transition-colors">
