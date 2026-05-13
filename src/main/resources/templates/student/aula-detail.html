@@ -2,115 +2,228 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{fragments/layout}">
 
 <head>
-    <title>Detalles del Aula</title>
+    <title th:text="${aula.nombreAula + ' - Aula Señora'}">Detalles del Aula</title>
+    <th:block layout:fragment="page-css">
+        <style>
+            @keyframes blob {
+                0% { transform: translate(0px, 0px) scale(1); }
+                33% { transform: translate(30px, -50px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+                100% { transform: translate(0px, 0px) scale(1); }
+            }
+            .animate-blob {
+                animation: blob 7s infinite;
+            }
+            .animation-delay-2000 {
+                animation-delay: 2s;
+            }
+            .animation-delay-4000 {
+                animation-delay: 4s;
+            }
+            .glass-header {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            }
+            .glass-card {
+                background: rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
+            .hover-lift {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .hover-lift:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 25px -5px rgba(13, 148, 136, 0.15), 0 8px 10px -6px rgba(13, 148, 136, 0.1);
+                border-color: rgba(20, 184, 166, 0.4);
+            }
+            .floating-icon {
+                animation: float 6s ease-in-out infinite;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-12px) rotate(5deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+            }
+        </style>
+    </th:block>
 </head>
 
-<body>
-    <div layout:fragment="content" class="container py-xl">
-
-        <!-- Header Section -->
-        <div class="mb-xl flex items-center justify-between">
-            <div>
-                <a th:href="@{/student/dashboard}" class="text-sm text-secondary hover:text-primary mb-sm inline-block">&larr; Volver al Dashboard</a>
-                <h1 class="text-3xl font-bold text-primary mb-xs" th:text="${aula.nombreAula}">Nombre del Aula</h1>
-                <span th:if="${aula.submateria != null}" class="badge mb-sm inline-block" style="background-color: #e0f2fe; color: #0369a1; padding: 0.15rem 0.5rem; font-size: 0.75rem;" th:text="${aula.submateria}">Submateria</span>
-                <div class="flex items-center gap-sm mt-xs">
-                    <span class="badge" style="background-color: var(--primary-light); color: var(--primary);" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
-                    <span class="text-secondary text-sm" th:text="${'Voluntario: ' + aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Voluntario</span>
-                </div>
-            </div>
+<body>    <div layout:fragment="content" class="w-full min-h-screen relative bg-slate-50 overflow-hidden">
+        
+        <!-- Aurora Background Mesh -->
+        <div class="absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-[-10%] left-[-5%] w-96 h-96 bg-brand-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-30 animate-blob"></div>
+            <div class="absolute top-[10%] right-[10%] w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-[100px] opacity-30 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply filter blur-[100px] opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div th:if="${successMessage}" class="p-sm text-sm text-success bg-green-50 rounded border border-success mb-md" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="p-sm text-sm text-error bg-red-50 rounded border border-error mb-md" th:text="${errorMessage}"></div>
-
-        <div class="flex flex-col lg:flex-row gap-xl items-start">
+        <div class="max-w-7xl mx-auto p-6 md:p-8 space-y-8 relative z-10">
             
-            <!-- Main Content (Left) -->
-            <div class="flex-1 w-full flex flex-col gap-xl">
-                <div>
-                <h2 class="section-title mb-md">Descripción e Información</h2>
+            <!-- Breadcrumbs & Header -->
+            <header class="animate-fade-in-up">
+                <a th:href="@{/student/dashboard}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors mb-6 group">
+                    <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    Volver al Panel Principal
+                </a>
                 
-                <div class="card p-xl bg-surface">
-                    <p class="text-secondary leading-relaxed" th:text="${aula.descripcion}">Descripción del aula...</p>
-                </div>
-            </div>
-
-            <div class="col-span-1">
-                <h2 class="section-title mb-md">Horarios Disponibles</h2>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-md mb-xl">
-                    <div th:each="horario : ${horarios}" class="card bg-surface border border-color-muted p-md hover:shadow-md transition-shadow">
-                        <div class="flex justify-between items-start mb-sm">
-                            <span class="badge capitalize" style="background-color: #e0f2fe; color: #0369a1;" th:text="${#temporals.format(horario.fecha, 'EEEE, d ''de'' MMMM')}">Fecha</span>
+                <div class="glass-header p-6 md:p-8 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+                    <div class="flex items-center gap-6 relative z-10">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         </div>
-                        <h4 class="font-bold mb-xs text-primary" th:text="${horario.materia}">Materia</h4>
-                        <div class="flex items-center gap-sm mb-md">
-                            <span class="text-sm text-secondary font-medium" th:text="${horario.horaInicio + ' - ' + horario.horaFin}">Hora</span>
-                            <span th:if="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200 flex items-center gap-1" style="background-color: #eef2ff; color: #4338ca; border-color: #c7d2fe;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                Grupal
-                            </span>
-                            <span th:unless="${horario.esGrupal != null and horario.esGrupal}" class="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded-md border border-gray-200 flex items-center gap-1">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                Individual
-                            </span>
-                        </div>
-                        
-                        <div class="mt-auto pt-md border-t border-color-muted"
-                             th:with="estadoEstudiante=${misSolicitudes != null and misSolicitudes.containsKey(horario.id) ? misSolicitudes.get(horario.id) : null},
-                                      effectiveStatus=${estadoEstudiante != null ? estadoEstudiante : horario.estado}">
-                            <div th:switch="${effectiveStatus}">
-                                <div th:case="'ACEPTADA'" class="text-center p-xs rounded text-xs font-bold border" style="background-color: #f0fdf4; color: #166534; border-color: #bbf7d0;">
-                                    ✓ Solicitud Aceptada
+                        <div>
+                            <div class="flex items-center gap-3 mb-1">
+                                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight" th:text="${aula.nombreAula}">Nombre del Aula</h1>
+                                <span th:if="${aula.submateria != null}" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-100 text-brand-700 border border-brand-200" th:text="${aula.submateria}">Submateria</span>
+                            </div>
+                            <div class="flex items-center gap-4 text-slate-600">
+                                <div class="flex items-center gap-2 group cursor-pointer">
+                                    <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-white">
+                                        <span th:text="${#strings.substring(aula.voluntario.usuario.firstName, 0, 1)}">V</span>
+                                    </div>
+                                    <span class="text-sm font-medium hover:text-brand-600 transition-colors" th:text="${aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Voluntario</span>
                                 </div>
-                                <div th:case="'PENDIENTE'" class="text-center p-xs rounded bg-yellow-50 text-yellow-800 text-xs font-bold border border-yellow-200">
-                                    Solicitud Pendiente
-                                </div>
-                                <div th:case="'RECHAZADA'" class="text-center p-xs rounded text-xs font-bold border" style="background-color: #fef2f2; color: #991b1b; border-color: #fecaca;">
-                                    Solicitud Rechazada
-                                </div>
-                                <div th:case="'OCUPADO'" class="text-center p-xs rounded bg-red-50 text-red-800 text-xs font-bold border border-red-200">
-                                    Horario Ocupado
-                                </div>
-                                <div th:case="'DISPONIBLE'">
-                                    <form th:action="@{'/student/aulas/horarios/' + ${horario.id} + '/request'}" method="post">
-                                        <input type="hidden" name="aulaId" th:value="${aula.id}" />
-                                        <button type="submit" class="btn btn-secondary w-full text-sm py-xs">Solicitar Cupo</button>
-                                    </form>
-                                </div>
+                                <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                <span class="text-sm font-medium" th:text="${'Creada: ' + #temporals.format(aula.fechaCreacion, 'dd MMM yyyy')}">Fecha</span>
                             </div>
                         </div>
                     </div>
-                    <div th:if="${horarios == null or horarios.isEmpty()}" class="col-span-full p-lg text-center text-secondary text-sm bg-surface rounded-md border border-color-muted">
-                        El voluntario aún no ha publicado horarios para esta aula.
+                    
+                    <div class="flex items-center gap-3 relative z-10 w-full md:w-auto">
+                        <button onclick="toggleChat()" class="flex-1 md:flex-none px-6 py-3 bg-white text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm border border-slate-200 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            Abrir Chat
+                        </button>
+                        <a href="#horarios" class="flex-1 md:flex-none px-6 py-3 bg-brand-600 text-white font-bold rounded-2xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 text-center">
+                            Ver Horarios
+                        </a>
                     </div>
                 </div>
+            </header>
+
+            <div th:if="${successMessage}" class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 flex items-start gap-3 shadow-sm animate-fade-in mb-8">
+                <svg class="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${successMessage}"></span>
             </div>
 
-            <div class="col-span-1">
-                <h2 class="section-title mb-md">Contenido del Aula</h2>
-                <div class="card p-xl text-center border-dashed border-2 border-color-muted bg-gray-50">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" class="mx-auto mb-md opacity-50">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    <h3 class="font-bold text-lg mb-sm text-secondary">El contenido estará disponible pronto</h3>
-                    <p class="text-secondary mb-0">El voluntario publicará recursos, guías y enlaces de interés en este espacio.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Main Content (Left) -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Descripción -->
+                    <section class="animate-fade-in" style="animation-delay: 0.1s;">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Sobre esta Aula
+                        </h2>
+                        <div class="glass-card p-8 rounded-3xl">
+                            <p class="text-slate-600 leading-relaxed text-lg" th:text="${aula.descripcion}">Descripción del aula...</p>
+                        </div>
+                    </section>
+
+                    <!-- Horarios -->
+                    <section id="horarios" class="animate-fade-in" style="animation-delay: 0.2s;">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Horarios de Tutoría
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div th:each="horario : ${horarios}" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover-lift relative overflow-hidden group">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-600 border border-brand-100" th:text="${#temporals.format(horario.fecha, 'EEEE, d ''de'' MMMM')}">Fecha</div>
+                                    <div th:if="${horario.esGrupal}" class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg" title="Sesión Grupal">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m12-14a4 4 0 11-8 0 4 4 0 018 0zm2 0h2m-2 4h2m-2 4h2"/></svg>
+                                    </div>
+                                </div>
+                                
+                                <h3 class="font-bold text-slate-800 mb-1" th:text="${horario.materia}">Materia</h3>
+                                <div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span th:text="${horario.horaInicio}"></span>
+                                    <span>-</span>
+                                    <span th:text="${horario.horaFin}"></span>
+                                </div>
+                                
+                                <div class="mt-auto pt-4 border-t border-slate-50"
+                                     th:with="estadoEstudiante=${misSolicitudes != null and misSolicitudes.containsKey(horario.id) ? misSolicitudes.get(horario.id) : null},
+                                              effectiveStatus=${estadoEstudiante != null ? estadoEstudiante : horario.estado}">
+                                    <div th:switch="${effectiveStatus}">
+                                        <div th:case="'ACEPTADA'" class="flex items-center justify-center gap-2 p-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            Solicitud Aceptada
+                                        </div>
+                                        <div th:case="'PENDIENTE'" class="flex items-center justify-center gap-2 p-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                                            <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            Solicitud Pendiente
+                                        </div>
+                                        <div th:case="'DISPONIBLE'">
+                                            <form th:action="@{'/student/aulas/horarios/' + ${horario.id} + '/request'}" method="post">
+                                                <input type="hidden" name="aulaId" th:value="${aula.id}" />
+                                                <button type="submit" class="w-full py-2.5 bg-brand-50 text-brand-600 font-bold rounded-xl hover:bg-brand-600 hover:text-white transition-all text-sm">
+                                                    Solicitar Cupo
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div th:case="*" class="text-center p-2 rounded-xl bg-slate-50 text-slate-500 text-xs font-bold border border-slate-100" th:text="${effectiveStatus}">No disponible</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${horarios == null or horarios.isEmpty()}" class="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <p class="text-slate-500 font-medium">No hay horarios publicados aún.</p>
+                        </div>
+                    </section>
                 </div>
+
+                <!-- Sidebar (Right) -->
+                <div class="space-y-8 animate-fade-in" style="animation-delay: 0.3s;">
+                    
+                    <!-- Voluntario Info -->
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">Tu Voluntario</h2>
+                        <div class="glass-card p-6 rounded-3xl text-center">
+                            <div class="w-20 h-20 rounded-2xl bg-brand-100 flex items-center justify-center text-brand-600 font-bold text-2xl border-4 border-white shadow-md mx-auto mb-4">
+                                <span th:text="${#strings.substring(aula.voluntario.usuario.firstName, 0, 1)}">V</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 mb-1" th:text="${aula.voluntario.usuario.firstName + ' ' + aula.voluntario.usuario.lastName}">Nombre</h3>
+                            <p class="text-brand-600 text-sm font-bold mb-4" th:text="${aula.voluntario.institution}">Institución</p>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <span th:each="skill : ${#strings.arraySplit(aula.voluntario.skills, ',')}" class="px-2 py-1 bg-white/50 rounded-lg text-[10px] font-bold text-slate-600 border border-white/50" th:text="${skill}">Skill</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recursos -->
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">Material del Aula</h2>
+                        <div class="bg-white/40 border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center group hover:border-brand-300 transition-colors">
+                            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 text-slate-400 group-hover:text-brand-500 transition-colors shadow-sm">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </div>
+                            <h4 class="font-bold text-slate-700 text-sm mb-1">Recursos próximamente</h4>
+                            <p class="text-slate-500 text-xs">El voluntario subirá guías y lecturas pronto.</p>
+                        </div>
+                    </section>
                 </div>
             </div>
-
-        </div> <!-- End of Main Content -->
-
-        <!-- Chat Section (Floating Widget) -->
-        <div style="position: fixed; top: 80px; right: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end;">
-            <div th:replace="~{fragments/chat :: aula-chat}"></div>
         </div>
 
+        <!-- Floating Chat -->
+        <div class="fixed bottom-8 right-8 z-50">
+             <div th:replace="~{fragments/chat :: aula-chat}"></div>
+        </div>
+
+    </div>
     </div>
 </body>
 </html>
