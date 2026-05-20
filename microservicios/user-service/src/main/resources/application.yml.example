@@ -1,0 +1,37 @@
+﻿# Copia este archivo a application.yml y pon aquí tus valores locales.
+server:
+  port: 8081 # El microservicio de usuarios corre en el 8081 para no chocar con el monolito en el 8080
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://<HOST>:<PORT>/<DB>?prepareThreshold=0
+    username: <DB_USERNAME>
+    password: <DB_PASSWORD>
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: never # La base de datos se inicializÃ³ directamente via Supabase MCP
+  jpa:
+    hibernate:
+      ddl-auto: none # Hibernate no intentarÃ¡ crear las tablas, se delega a schema.sql
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false # Requerido para pgbouncer / Supabase transaction mode
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 
+            client-secret: 
+            scope:
+              - email
+              - profile

@@ -41,3 +41,7 @@ TestDB.java
 TestDB.class
 *.class
 .agents/
+
+# Ignore local user-service secret config
+microservicios/user-service/src/main/resources/application.yml
+
