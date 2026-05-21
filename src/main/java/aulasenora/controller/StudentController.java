@@ -47,6 +47,11 @@ public class StudentController {
         List<MiembroAula> misAulas = aulaService.getAulasByEstudiante(username);
         model.addAttribute("misAulas", misAulas);
 
+        long tutoriasActivas = misAulas.stream()
+                .filter(m -> "ESTUDIANTE".equals(m.getRol()))
+                .count();
+        model.addAttribute("tutoriasActivas", tutoriasActivas);
+
         // Filter out aulas the student is already a member of
         java.util.Set<Long> misAulaIds = misAulas.stream()
                 .map(m -> m.getAula().getId())
