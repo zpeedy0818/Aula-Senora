@@ -40,6 +40,12 @@ public class HorarioAula {
     @Version
     private Long version;
 
+    @Column(name = "google_event_id")
+    private String googleEventId;
+
+    @Column(name = "meet_link")
+    private String meetLink;
+
     public HorarioAula() {}
 
     public HorarioAula(Aula aula, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia, Boolean esGrupal) {
@@ -123,5 +129,21 @@ public class HorarioAula {
 
     public void setEsGrupal(Boolean esGrupal) {
         this.esGrupal = esGrupal;
+    }
+
+    public String getGoogleEventId() {
+        return googleEventId;
+    }
+
+    public void setGoogleEventId(String googleEventId) {
+        this.googleEventId = googleEventId;
+    }
+
+    public String getMeetLink() {
+        return meetLink;
+    }
+
+    public void setMeetLink(String meetLink) {
+        this.meetLink = meetLink;
     }
 }

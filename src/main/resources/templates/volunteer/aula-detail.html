@@ -136,10 +136,16 @@
                                 </div>
                                 
                                 <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-                                    <div th:switch="${horario.estado}">
-                                        <span th:case="'DISPONIBLE'" class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">Disponible</span>
-                                        <span th:case="'PENDIENTE'" class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">Pendiente</span>
-                                        <span th:case="'OCUPADO'" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">Ocupado</span>
+                                    <div class="flex items-center gap-2">
+                                        <div th:switch="${horario.estado}">
+                                            <span th:case="'DISPONIBLE'" class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">Disponible</span>
+                                            <span th:case="'PENDIENTE'" class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">Pendiente</span>
+                                            <span th:case="'OCUPADO'" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">Ocupado</span>
+                                        </div>
+                                        <a th:if="${horario.meetLink != null}" th:href="${horario.meetLink}" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-xs font-bold transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            Unirse a Meet
+                                        </a>
                                     </div>
                                     <details class="relative">
                                         <summary class="list-none text-xs text-brand-600 font-bold cursor-pointer hover:underline">Ver inscritos</summary>
@@ -149,8 +155,13 @@
                                                     <div th:each="sol : ${solicitudesHorarios}" 
                                                          th:if="${sol.horarioAula.id == horario.id and sol.estado == 'ACEPTADA'}" 
                                                          class="flex items-center gap-2 p-1.5 hover:bg-slate-50 rounded-lg">
-                                                        <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-[10px] font-bold flex items-center justify-center" 
-                                                             th:text="${(sol.estudiante.firstName != null and !#strings.isEmpty(sol.estudiante.firstName)) ? #strings.substring(sol.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                                        <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-[10px] font-bold flex items-center justify-center overflow-hidden">
+                                                            <img th:if="${!#strings.isEmpty(sol.estudiante.profileImageUrl)}" 
+                                                                 th:src="${sol.estudiante.profileImageUrl}" 
+                                                                 alt="Perfil" class="w-full h-full object-cover">
+                                                            <span th:unless="${!#strings.isEmpty(sol.estudiante.profileImageUrl)}"
+                                                                  th:text="${(sol.estudiante.firstName != null and !#strings.isEmpty(sol.estudiante.firstName)) ? #strings.substring(sol.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</span>
+                                                        </div>
                                                         <span class="text-[10px] font-medium text-slate-700 truncate">
                                                             <span th:text="${sol.estudiante.firstName}"></span>
                                                             <span th:text="${sol.estudiante.lastName}"></span>
@@ -183,7 +194,13 @@
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
                             <div th:each="miembro : ${miembros}" th:if="${miembro.rol == 'ESTUDIANTE'}" class="p-4 flex items-center justify-between group hover:bg-slate-50/50 transition-colors">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 font-bold flex items-center justify-center" th:text="${(miembro.usuario.firstName != null and !#strings.isEmpty(miembro.usuario.firstName)) ? #strings.substring(miembro.usuario.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 font-bold flex items-center justify-center overflow-hidden">
+                                        <img th:if="${!#strings.isEmpty(miembro.usuario.profileImageUrl)}" 
+                                             th:src="${miembro.usuario.profileImageUrl}" 
+                                             alt="Perfil" class="w-full h-full object-cover">
+                                        <span th:unless="${!#strings.isEmpty(miembro.usuario.profileImageUrl)}"
+                                              th:text="${(miembro.usuario.firstName != null and !#strings.isEmpty(miembro.usuario.firstName)) ? #strings.substring(miembro.usuario.firstName,0,1).toUpperCase() : 'U'}">U</span>
+                                    </div>
                                     <div>
                                         <h4 class="font-bold text-slate-800 text-sm">
                                             <span th:text="${miembro.usuario.firstName}"></span>
@@ -202,6 +219,71 @@
                             </div>
                             <div th:if="${miembros != null and miembros.size() <= 1}" class="p-12 text-center text-slate-400 italic text-sm">
                                 No hay estudiantes inscritos aun.
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recursos del Aula -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Recursos del Aula
+                            </h2>
+                            <button type="button" onclick="document.getElementById('upload-recurso-modal').classList.remove('hidden')"
+                                    class="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl shadow-md shadow-brand-500/20 hover:bg-brand-700 transition-all text-sm flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Subir recurso
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                            <div th:each="recurso : ${recursos}" class="p-4 flex items-center justify-between group hover:bg-slate-50/50 transition-colors">
+                                <div class="flex items-center gap-4 min-w-0 flex-1">
+                                    <div th:switch="${recurso.tipo}" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <div th:case="'PDF'" class="w-11 h-11 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <div th:case="'IMAGEN'" class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <div th:case="'OFFICE'" class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        </div>
+                                        <div th:case="*" class="w-11 h-11 rounded-xl bg-slate-50 text-slate-500 border border-slate-100 flex items-center justify-center">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h4 class="font-bold text-slate-800 text-sm truncate" th:text="${recurso.nombreOriginal}">archivo.pdf</h4>
+                                        <p th:if="${recurso.descripcion != null and !recurso.descripcion.isEmpty()}" class="text-xs text-slate-500 truncate" th:text="${recurso.descripcion}">Descripción</p>
+                                        <div class="flex items-center gap-3 text-[10px] text-slate-400 font-medium mt-0.5">
+                                            <span th:text="${#numbers.formatDecimal(recurso.tamanoBytes / 1024.0, 0, 1) + ' KB'}">120 KB</span>
+                                            <span>·</span>
+                                            <span th:text="${#temporals.format(recurso.fechaSubida, 'dd MMM yyyy HH:mm')}">Fecha</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <button type="button" class="preview-recurso-btn px-3 py-1.5 text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
+                                            th:data-recurso-id="${recurso.id}"
+                                            th:data-recurso-tipo="${recurso.tipo}"
+                                            th:data-recurso-nombre="${recurso.nombreOriginal}">
+                                        Ver
+                                    </button>
+                                    <a th:href="@{'/recursos/' + ${recurso.id} + '/view'}" target="_blank"
+                                       class="px-3 py-1.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                                        Abrir
+                                    </a>
+                                    <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/recursos/' + ${recurso.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar este recurso?');">
+                                        <button type="submit" class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div th:if="${recursos == null or recursos.isEmpty()}" class="p-12 text-center text-slate-400 italic text-sm">
+                                Aún no has subido recursos a esta aula.
                             </div>
                         </div>
                     </section>
@@ -244,8 +326,13 @@
                         <div class="space-y-3">
                             <div th:each="solicitudH : ${solicitudesHorarios}" th:if="${solicitudH.estado == 'PENDIENTE'}" class="bg-white rounded-2xl p-4 shadow-sm border border-brand-100">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-[10px]" 
-                                         th:text="${(solicitudH.estudiante.firstName != null and !#strings.isEmpty(solicitudH.estudiante.firstName)) ? #strings.substring(solicitudH.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</div>
+                                    <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-[10px] overflow-hidden">
+                                        <img th:if="${!#strings.isEmpty(solicitudH.estudiante.profileImageUrl)}" 
+                                             th:src="${solicitudH.estudiante.profileImageUrl}" 
+                                             alt="Perfil" class="w-full h-full object-cover">
+                                        <span th:unless="${!#strings.isEmpty(solicitudH.estudiante.profileImageUrl)}"
+                                              th:text="${(solicitudH.estudiante.firstName != null and !#strings.isEmpty(solicitudH.estudiante.firstName)) ? #strings.substring(solicitudH.estudiante.firstName,0,1).toUpperCase() : 'U'}">U</span>
+                                    </div>
                                     <div>
                                         <h4 class="font-bold text-slate-800 text-xs">
                                             <span th:text="${solicitudH.estudiante.firstName}"></span>
@@ -370,6 +457,51 @@
              </div>
         </div>
 
+        <!-- Upload Recurso Modal -->
+        <div id="upload-recurso-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+            <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-fade-in-up">
+                <button type="button" onclick="document.getElementById('upload-recurso-modal').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Subir recurso</h2>
+                <p class="text-sm text-slate-500 mb-6">PDF, imagen (JPG/PNG/WEBP) o documento Office. Máx. 20 MB.</p>
+                <form th:action="@{'/volunteer/aulas/' + ${aula.id} + '/recursos/upload'}" method="post" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Archivo</label>
+                        <input type="file" name="file" required
+                               accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                               class="w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-brand-50 file:text-brand-700 file:font-bold hover:file:bg-brand-100 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Descripción (opcional)</label>
+                        <input type="text" name="descripcion" maxlength="300"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                               placeholder="Ej: Guía de ejercicios — Capítulo 3">
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="document.getElementById('upload-recurso-modal').classList.add('hidden')" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                        <button type="submit" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all">Subir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preview Recurso Modal -->
+        <div id="preview-recurso-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden">
+            <div class="bg-white w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
+                <div class="flex items-center justify-between p-5 border-b border-slate-100">
+                    <h3 id="preview-recurso-title" class="font-bold text-slate-800 truncate flex-1 pr-4">Vista previa</h3>
+                    <div class="flex items-center gap-2">
+                        <a id="preview-recurso-open" href="#" target="_blank" class="px-3 py-1.5 text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors">Abrir en pestaña</a>
+                        <button type="button" onclick="document.getElementById('preview-recurso-modal').classList.add('hidden')" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="preview-recurso-body" class="flex-1 overflow-auto bg-slate-50 flex items-center justify-center"></div>
+            </div>
+        </div>
+
         <script>
             function validateTime() {
                 const start = document.getElementById('aula-hora-inicio').value;
@@ -406,6 +538,34 @@
 
             document.querySelectorAll('.delete-estudiante-btn').forEach(btn => {
                 btn.addEventListener('click', () => openDeleteEstudianteModal(btn.dataset.aulaId, btn.dataset.estudianteId, btn.dataset.estudianteNombre));
+            });
+
+            function openPreviewRecurso(id, tipo, nombre) {
+                const modal = document.getElementById('preview-recurso-modal');
+                const title = document.getElementById('preview-recurso-title');
+                const body = document.getElementById('preview-recurso-body');
+                const openLink = document.getElementById('preview-recurso-open');
+                const viewUrl = '/recursos/' + id + '/view';
+                title.textContent = nombre;
+                openLink.href = viewUrl;
+                if (tipo === 'PDF') {
+                    body.innerHTML = '<embed src="' + viewUrl + '" type="application/pdf" class="w-full h-[80vh]" />';
+                } else if (tipo === 'IMAGEN') {
+                    body.innerHTML = '<img src="' + viewUrl + '" alt="" class="max-h-[80vh] max-w-full object-contain" />';
+                } else {
+                    body.innerHTML = '<div class="p-12 text-center text-slate-500 max-w-md">' +
+                        '<div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">' +
+                        '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>' +
+                        '</div>' +
+                        '<p class="font-bold text-slate-700 mb-2">Vista previa no disponible</p>' +
+                        '<p class="text-sm">Los archivos de Office se abren con tu aplicación local. Pulsa "Abrir en pestaña" para descargarlo.</p>' +
+                        '</div>';
+                }
+                modal.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.preview-recurso-btn').forEach(btn => {
+                btn.addEventListener('click', () => openPreviewRecurso(btn.dataset.recursoId, btn.dataset.recursoTipo, btn.dataset.recursoNombre));
             });
         </script>
 

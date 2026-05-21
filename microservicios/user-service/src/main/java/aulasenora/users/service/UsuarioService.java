@@ -56,6 +56,7 @@ public class UsuarioService {
         
         String rol = (dto.getRol() == null || dto.getRol().equals("USER") || dto.getRol().isBlank()) ? "ESTUDIANTE" : dto.getRol();
         usuario.setRol(rol);
+        usuario.setPerfilCompleto(true);
 
         Usuario savedUsuario = usuarioRepository.save(usuario);
 

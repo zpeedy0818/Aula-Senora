@@ -66,4 +66,8 @@ public class LoginViewController {
         
         return "index";
     }
+    @GetMapping("/login-success")
+    public String loginSuccess() {
+        return "login-success";
+    }
 }

@@ -136,12 +136,16 @@
         
         <div class="p-4 border-t border-slate-200/50 bg-slate-50/30">
             <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/60 transition-colors border border-transparent hover:border-slate-200/50 hover:shadow-sm group">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-100 to-brand-50 flex items-center justify-center text-brand-700 font-bold text-lg border border-brand-200/60 shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0">
-                    <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-100 to-brand-50 flex items-center justify-center text-brand-700 font-bold text-lg border border-brand-200/60 shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0 overflow-hidden">
+                    <img th:if="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}" 
+                         th:src="${currentUser.profileImageUrl}" 
+                         alt="Perfil" class="w-full h-full object-cover">
+                    <span th:unless="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}"
+                          th:text="${currentUser != null and currentUser.firstName != null ? #strings.substring(currentUser.firstName, 0, 1).toUpperCase() : #strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                 </div>
                 <div class="flex-1 overflow-hidden transition-all duration-300">
                     <p class="text-sm font-semibold text-slate-800 line-clamp-1" sec:authentication="name">Usuario</p>
-                    <p class="text-xs text-slate-500 capitalize" th:text="${#strings.toLowerCase(#strings.replace(#authentication.principal.authorities[0].authority, 'ROLE_', ''))}">Rol</p>
+                    <p class="text-xs text-slate-500 capitalize" th:text="${#strings.toLowerCase(#strings.replace(#authentication.authorities[0].authority, 'ROLE_', ''))}">Rol</p>
                 </div>
                 
                 <!-- Quick Logout Button in Sidebar -->

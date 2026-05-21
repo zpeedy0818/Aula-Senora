@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     last_name VARCHAR(100) NOT NULL,
     rol VARCHAR(50) DEFAULT 'USER',
     activo BOOLEAN DEFAULT TRUE,
+    perfil_completo BOOLEAN DEFAULT FALSE,
     tiempo_acumulado BIGINT DEFAULT 0,
     bio VARCHAR(300),
     phone_number VARCHAR(20),

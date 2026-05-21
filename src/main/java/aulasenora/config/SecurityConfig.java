@@ -24,19 +24,16 @@ public class SecurityConfig {
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf.disable())
-                                // .addFilterBefore(new RecaptchaFilter(recaptchaService), UsernamePasswordAuthenticationFilter.class)
+                                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                                 .authorizeHttpRequests(auth -> auth
                                                 // allow registration, login and static resources
                                                 .requestMatchers("/", "/register", "/registrar", "/registrar/success",
-                                                                "/api/registro",
-                                                                "/login", "/css/**", "/js/**", "/img/**",
-                                                                "/student/**", "/volunteer/**", "/admin/**") // Abiertos
-                                                                                                             // temporalmente
-                                                                                                             // para
-                                                                                                             // demo del
-                                                                                                             // MVP
+                                                                 "/api/registro", "/login-success", "/debug-users", "/debug-login-as", "/debug-voluntarios",
+                                                                 "/login", "/error", "/css/**", "/js/**", "/img/**",
+                                                                 "/auth/**", "/recursos/**", "/uploads/**",
+                                                                 "/student/**", "/volunteer/**", "/admin/**")
                                                 .permitAll()
-                                                // dashbaords específicos según rol
+                                                // dashboards específicos según rol
                                                 .requestMatchers("/dashboard-admin").hasRole("ADMIN")
                                                 .requestMatchers("/dashboard-voluntario").hasRole("VOLUNTARIO")
                                                 .requestMatchers("/dashboard-estudiante").hasRole("ESTUDIANTE")

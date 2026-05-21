@@ -275,10 +275,28 @@
                             } else if (props.estado === 'ACEPTADA') {
                                 statusEl.innerHTML = '<span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-bold">Tutoría Aceptada</span>';
                                 meetDiv.classList.remove('hidden');
+                                if (props.meetLink && props.meetLink.trim() !== '') {
+                                    meetDiv.querySelector('a').href = props.meetLink;
+                                    meetDiv.querySelector('a').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Unirse a Jitsi Meet';
+                                    meetDiv.querySelector('a').target = '_blank';
+                                } else {
+                                    meetDiv.querySelector('a').href = '#';
+                                    meetDiv.querySelector('a').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Próximamente';
+                                    meetDiv.querySelector('a').removeAttribute('target');
+                                }
                             }
                         } else if (props.tipo === 'aula') {
                             statusEl.innerHTML = '<span class="px-2 py-1 bg-violet-100 text-violet-700 rounded-lg text-sm font-bold">Aula Virtual Ocupada</span>';
                             meetDiv.classList.remove('hidden');
+                            if (props.meetLink && props.meetLink.trim() !== '') {
+                                meetDiv.querySelector('a').href = props.meetLink;
+                                meetDiv.querySelector('a').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Unirse a Jitsi Meet';
+                                meetDiv.querySelector('a').target = '_blank';
+                            } else {
+                                meetDiv.querySelector('a').href = '#';
+                                meetDiv.querySelector('a').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Próximamente';
+                                meetDiv.querySelector('a').removeAttribute('target');
+                            }
                         }
                         
                         modal.classList.remove('hidden');

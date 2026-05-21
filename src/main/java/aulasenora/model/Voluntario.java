@@ -23,6 +23,12 @@ public class Voluntario {
     @Column
     private String materiaEspecializada;
 
+    @Column
+    private Boolean verificado = false;
+
+    @Column
+    private String diplomaUrl;
+
     // Constructores
     public Voluntario() {}
 
@@ -71,5 +77,25 @@ public class Voluntario {
 
     public void setMateriaEspecializada(String materiaEspecializada) {
         this.materiaEspecializada = materiaEspecializada;
+    }
+
+    public Boolean getVerificado() {
+        return verificado != null && verificado;
+    }
+
+    public Boolean isVerificado() {
+        return verificado != null && verificado;
+    }
+
+    public void setVerificado(Boolean verificado) {
+        this.verificado = verificado;
+    }
+
+    public String getDiplomaUrl() {
+        return diplomaUrl;
+    }
+
+    public void setDiplomaUrl(String diplomaUrl) {
+        this.diplomaUrl = diplomaUrl;
     }
 }

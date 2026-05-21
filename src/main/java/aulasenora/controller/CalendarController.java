@@ -62,7 +62,7 @@ public class CalendarController {
             
             if ("ACEPTADA".equals(s.getEstado())) {
                 event.put("color", "#6366f1"); // Indigo
-                event.put("extendedProps", Map.of("materia", s.getHorario().getMateria(), "tipo", "ocupado", "estado", "ACEPTADA"));
+                event.put("extendedProps", Map.of("materia", s.getHorario().getMateria(), "tipo", "ocupado", "estado", "ACEPTADA", "meetLink", s.getHorario().getMeetLink() != null ? s.getHorario().getMeetLink() : ""));
             } else {
                 event.put("color", "#f59e0b"); // Amber (Pendiente)
                 event.put("extendedProps", Map.of("materia", s.getHorario().getMateria(), "tipo", "ocupado", "estado", "PENDIENTE"));
@@ -97,7 +97,7 @@ public class CalendarController {
             event.put("end", ha.getFecha() + "T" + ha.getHoraFin());
             event.put("color", "#8b5cf6"); // Violeta Tailwind
             event.put("textColor", "white");
-            event.put("extendedProps", Map.of("aula", ha.getAula().getNombreAula(), "tipo", "aula"));
+            event.put("extendedProps", Map.of("aula", ha.getAula().getNombreAula(), "tipo", "aula", "meetLink", ha.getMeetLink() != null ? ha.getMeetLink() : ""));
             events.add(event);
         }
 
@@ -142,7 +142,7 @@ public class CalendarController {
             }
             
             event.put("textColor", "white");
-            event.put("extendedProps", Map.of("estado", s.getEstado(), "voluntario", s.getHorario().getVoluntario().getUsuario().getUsername()));
+            event.put("extendedProps", Map.of("estado", s.getEstado(), "voluntario", s.getHorario().getVoluntario().getUsuario().getUsername(), "meetLink", s.getHorario().getMeetLink() != null ? s.getHorario().getMeetLink() : ""));
             events.add(event);
         }
 

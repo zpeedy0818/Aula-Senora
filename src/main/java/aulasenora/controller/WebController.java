@@ -16,16 +16,54 @@ import java.util.List;
 public class WebController {
     
     private final aulasenora.repository.UsuarioRepository usuarioRepository;
+    private final aulasenora.repository.VoluntarioRepository voluntarioRepository;
     private final AulaService aulaService;
 
     public WebController(aulasenora.repository.UsuarioRepository usuarioRepository,
+                         aulasenora.repository.VoluntarioRepository voluntarioRepository,
                          AulaService aulaService) {
         this.usuarioRepository = usuarioRepository;
+        this.voluntarioRepository = voluntarioRepository;
         this.aulaService = aulaService;
     }
 
     // Removing "/", "/login", "/register" because they are handled by
     // LoginViewController / RegistroController
+
+    @GetMapping("/debug-users")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<String> debugUsers() {
+        return usuarioRepository.findAll().stream()
+            .map(u -> u.getUsername() + ":" + u.getRol() + ":" + u.isActivo())
+            .toList();
+    }
+
+    @GetMapping("/debug-login-as")
+    public String debugLoginAs(@org.springframework.web.bind.annotation.RequestParam String username, jakarta.servlet.http.HttpServletRequest request) {
+        var user = usuarioRepository.findByUsername(username).orElse(null);
+        if (user != null) {
+            var auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRol()))
+            );
+            var ctx = org.springframework.security.core.context.SecurityContextHolder.createEmptyContext();
+            ctx.setAuthentication(auth);
+            org.springframework.security.core.context.SecurityContextHolder.setContext(ctx);
+            request.getSession(true).setAttribute(
+                org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, ctx
+            );
+        }
+        return "redirect:/dashboard";
+    }
+
+    @GetMapping("/debug-voluntarios")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<String> debugVoluntarios() {
+        return voluntarioRepository.findAll().stream()
+            .map(v -> (v.getUsuario() != null ? v.getUsuario().getUsername() : "null") + " - verificado: " + v.getVerificado() + " - diploma: " + v.getDiplomaUrl())
+            .toList();
+    }
 
     @GetMapping("/student/profile")
     public String studentProfile(java.security.Principal principal, org.springframework.ui.Model model) {
@@ -84,14 +122,7 @@ public class WebController {
         return "student/history";
     }
 
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(org.springframework.ui.Model model) {
-        model.addAttribute("totalEstudiantes", 1248);
-        model.addAttribute("totalVoluntarios", 312);
-        model.addAttribute("totalTutorias", 8504);
-        model.addAttribute("reportesPendientes", 3);
-        return "admin/dashboard";
-    }
+
 
     @PostMapping("/student/profile/update")
     public String updateProfile(

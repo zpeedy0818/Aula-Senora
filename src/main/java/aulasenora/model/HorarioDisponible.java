@@ -32,6 +32,9 @@ public class HorarioDisponible {
     @Column(name = "dia_semana", nullable = true)
     private String diaSemana = "N/A";
 
+    @Column(name = "meet_link", nullable = true)
+    private String meetLink;
+
     public HorarioDisponible() {}
 
     public HorarioDisponible(Voluntario voluntario, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String materia) {
@@ -88,5 +91,13 @@ public class HorarioDisponible {
 
     public void setMateria(String materia) {
         this.materia = materia;
+    }
+
+    public String getMeetLink() {
+        return meetLink;
+    }
+
+    public void setMeetLink(String meetLink) {
+        this.meetLink = meetLink;
     }
 }

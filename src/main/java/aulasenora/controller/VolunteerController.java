@@ -18,6 +18,14 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/volunteer")
@@ -50,6 +58,8 @@ public class VolunteerController {
         
         var voluntario = voluntarioOpt.get();
         model.addAttribute("voluntario", voluntario);
+        model.addAttribute("isDashboard", true);
+        model.addAttribute("isVerificado", voluntario.isVerificado() != null && voluntario.isVerificado());
         
         // Solo mostrar solicitudes pendientes y las últimas 5 procesadas para evitar que la página sea "pesada"
         List<SolicitudCupo> todasLasSolicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
@@ -99,6 +109,19 @@ public class VolunteerController {
             
             model.addAttribute("perfilDTO", dto);
             model.addAttribute("username", voluntario.getUsuario().getUsername());
+            model.addAttribute("user", voluntario.getUsuario());
+
+            // Estadísticas
+            long aulasCount = aulaService.getAulasByVoluntario(principal.getName()).size();
+            long tutoriasCount = horarioDisponibleRepository.findByVoluntario(voluntario).size();
+            java.util.List<SolicitudCupo> todasLasSolicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
+            long solicitudesPendientes = todasLasSolicitudes.stream().filter(s -> "PENDIENTE".equals(s.getEstado())).count();
+            long solicitudesAprobadas = todasLasSolicitudes.stream().filter(s -> "ACEPTADA".equals(s.getEstado()) || "APROBADA".equals(s.getEstado())).count();
+
+            model.addAttribute("aulasCount", aulasCount);
+            model.addAttribute("tutoriasCount", tutoriasCount);
+            model.addAttribute("solicitudesPendientes", solicitudesPendientes);
+            model.addAttribute("solicitudesAprobadas", solicitudesAprobadas);
         });
 
         return "volunteer/profile";
@@ -162,6 +185,11 @@ public class VolunteerController {
             horario.setHoraInicio(start);
             horario.setHoraFin(end);
             horario.setMateria(materia);
+            
+            // Generate unique Jitsi Meet link for this specific class
+            String jitsiLink = "https://meet.jit.si/AulaSenora-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+            horario.setMeetLink(jitsiLink);
+            
             horarioDisponibleRepository.save(horario);
         });
 
@@ -205,5 +233,46 @@ public class VolunteerController {
             return "redirect:/volunteer/schedule?statusUpdated=true";
         }
         return "redirect:/volunteer/dashboard?statusUpdated=true";
+    }
+
+    @PostMapping("/upload-diploma")
+    public String uploadDiploma(@RequestParam("file") MultipartFile file,
+                                Principal principal,
+                                RedirectAttributes redirectAttributes) {
+        if (principal == null) return "redirect:/login";
+
+        String username = principal.getName();
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "El archivo está vacío.");
+            return "redirect:/volunteer/dashboard";
+        }
+
+        try {
+            String originalFilename = file.getOriginalFilename();
+            String extension = "pdf";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            }
+
+            Path diplomasDir = Paths.get("uploads/diplomas").toAbsolutePath().normalize();
+            Files.createDirectories(diplomasDir);
+
+            String filename = "diploma_" + username + "_" + UUID.randomUUID().toString() + "." + extension;
+            Path targetPath = diplomasDir.resolve(filename);
+
+            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            var voluntario = voluntarioRepository.findByUsuario_Username(username)
+                    .orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
+            
+            voluntario.setDiplomaUrl("/uploads/diplomas/" + filename);
+            voluntarioRepository.save(voluntario);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Documento subido correctamente. Un administrador revisará tu cuenta.");
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al subir el documento: " + e.getMessage());
+        }
+
+        return "redirect:/volunteer/dashboard";
     }
 }

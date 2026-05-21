@@ -31,6 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> {}) // Usa el CorsConfigurationSource bean
             .csrf(csrf -> csrf.disable())
             // Permitimos crear sesión temporal para el flujo OAuth2 (redirects),
             // pero las peticiones REST normales a la API siguen requiriendo el token JWT en el header.

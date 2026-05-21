@@ -36,6 +36,7 @@ public class StudentController {
         if (principal == null) return "redirect:/login";
 
         model.addAttribute("activeTab", tab);
+        model.addAttribute("isDashboard", true);
 
         // Aquí pasaremos solo información de resumen para el panel principal en el futuro
         // Por ahora, el dashboard cargará rápido sin la pesada lógica de horarios.

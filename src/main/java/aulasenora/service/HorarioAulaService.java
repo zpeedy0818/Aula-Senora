@@ -1,11 +1,9 @@
 package aulasenora.service;
 
-import aulasenora.model.Aula;
-import aulasenora.model.HorarioAula;
-import aulasenora.model.SolicitudHorarioAula;
-import aulasenora.model.Usuario;
+import aulasenora.model.*;
 import aulasenora.repository.AulaRepository;
 import aulasenora.repository.HorarioAulaRepository;
+import aulasenora.repository.MiembroAulaRepository;
 import aulasenora.repository.SolicitudHorarioAulaRepository;
 import aulasenora.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -23,15 +21,21 @@ public class HorarioAulaService {
     private final SolicitudHorarioAulaRepository solicitudHorarioAulaRepository;
     private final AulaRepository aulaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final MiembroAulaRepository miembroAulaRepository;
+    private final GoogleCalendarService googleCalendarService;
 
     public HorarioAulaService(HorarioAulaRepository horarioAulaRepository,
                               SolicitudHorarioAulaRepository solicitudHorarioAulaRepository,
                               AulaRepository aulaRepository,
-                              UsuarioRepository usuarioRepository) {
+                              UsuarioRepository usuarioRepository,
+                              MiembroAulaRepository miembroAulaRepository,
+                              GoogleCalendarService googleCalendarService) {
         this.horarioAulaRepository = horarioAulaRepository;
         this.solicitudHorarioAulaRepository = solicitudHorarioAulaRepository;
         this.aulaRepository = aulaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.miembroAulaRepository = miembroAulaRepository;
+        this.googleCalendarService = googleCalendarService;
     }
 
     public List<HorarioAula> getHorariosByAula(Long aulaId) {
@@ -53,6 +57,30 @@ public class HorarioAulaService {
         }
 
         HorarioAula horario = new HorarioAula(aula, fecha, horaInicio, horaFin, materia, esGrupal);
+        
+        // Generate Jitsi Meet link to avoid Google Workspace restrictions
+        String jitsiLink = "https://meet.jit.si/AulaSenora-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+        horario.setMeetLink(jitsiLink);
+        
+        // Generate Google Calendar Event for the Volunteer
+        if (googleCalendarService.isConfigured()) {
+            String title = "Aula Señora: " + aula.getNombreAula() + " - " + materia;
+            String desc = "Sesión virtual con " + aula.getVoluntario().getUsuario().getFirstName() + 
+                          "\n\nÚnete a la clase aquí: " + jitsiLink;
+            String volunteerEmail = aula.getVoluntario().getUsuario().getEmail();
+            
+            try {
+                GoogleCalendarService.EventResult result = googleCalendarService.createEventWithMeet(
+                    title, desc, fecha, horaInicio, horaFin, volunteerEmail, null);
+                
+                if (result != null) {
+                    horario.setGoogleEventId(result.eventId);
+                }
+            } catch (Exception e) {
+                System.err.println("Warning: Could not sync with Google Calendar: " + e.getMessage());
+            }
+        }
+        
         return horarioAulaRepository.save(horario);
     }
 
@@ -117,6 +145,15 @@ public class HorarioAulaService {
 
         solicitud.setEstado("ACEPTADA");
         solicitudHorarioAulaRepository.save(solicitud);
+
+        // Add student to Google Calendar event so they receive an invite and the Meet link
+        if (googleCalendarService.isConfigured() && horario.getGoogleEventId() != null) {
+            String studentEmail = solicitud.getEstudiante().getEmail();
+            String volunteerEmail = horario.getAula().getVoluntario().getUsuario().getEmail();
+            if (studentEmail != null && !studentEmail.isBlank()) {
+                googleCalendarService.addAttendeeToEvent(volunteerEmail, horario.getGoogleEventId(), studentEmail);
+            }
+        }
 
         if (Boolean.FALSE.equals(horario.getEsGrupal())) {
             horario.setEstado("OCUPADO");

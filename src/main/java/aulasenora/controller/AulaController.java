@@ -7,6 +7,7 @@ import aulasenora.model.HorarioAula;
 import aulasenora.model.SolicitudHorarioAula;
 import aulasenora.service.AulaService;
 import aulasenora.service.HorarioAulaService;
+import aulasenora.service.RecursoAulaService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,10 +24,12 @@ public class AulaController {
 
     private final AulaService aulaService;
     private final HorarioAulaService horarioAulaService;
+    private final RecursoAulaService recursoAulaService;
 
-    public AulaController(AulaService aulaService, HorarioAulaService horarioAulaService) {
+    public AulaController(AulaService aulaService, HorarioAulaService horarioAulaService, RecursoAulaService recursoAulaService) {
         this.aulaService = aulaService;
         this.horarioAulaService = horarioAulaService;
+        this.recursoAulaService = recursoAulaService;
     }
 
     // --- VOLUNTEER ENDPOINTS ---
@@ -55,6 +58,7 @@ public class AulaController {
         model.addAttribute("miembros", miembros);
         model.addAttribute("horarios", horarios);
         model.addAttribute("solicitudesHorarios", solicitudesHorarios);
+        model.addAttribute("recursos", recursoAulaService.listarPorAula(id));
         return "volunteer/aula-detail";
     }
 
@@ -196,6 +200,7 @@ public class AulaController {
         model.addAttribute("aula", aula);
         model.addAttribute("horarios", horarios);
         model.addAttribute("misSolicitudes", misSolicitudes);
+        model.addAttribute("recursos", recursoAulaService.listarPorAula(id));
         return "student/aula-detail";
     }
 

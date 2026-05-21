@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import java.util.Collections;
 
 import aulasenora.dto.RegistroDTO;
 import aulasenora.service.UsuarioService;
@@ -61,7 +67,24 @@ public class RegistroViewController {
         }
         
         try {
-            usuarioService.registrar(registroDTO);
+            var nuevoUsuario = usuarioService.registrar(registroDTO);
+            
+            // Auto-login si es voluntario, para que vea la pantalla de verificación inmediatamente
+            if ("VOLUNTARIO".equalsIgnoreCase(nuevoUsuario.getRol())) {
+                var auth = new UsernamePasswordAuthenticationToken(
+                    nuevoUsuario.getUsername(),
+                    null,
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_VOLUNTARIO"))
+                );
+                SecurityContext ctx = SecurityContextHolder.createEmptyContext();
+                ctx.setAuthentication(auth);
+                SecurityContextHolder.setContext(ctx);
+                request.getSession(true).setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, ctx
+                );
+                return "redirect:/volunteer/dashboard";
+            }
+            
             return "redirect:/login?registerSuccess";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());

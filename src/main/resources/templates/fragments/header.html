@@ -7,7 +7,7 @@
 
 <body>
     <!-- Elegant Glassmorphism Header -->
-    <header th:fragment="header" class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/95 border-b border-slate-200 shadow-sm transition-all duration-300">
+    <header th:fragment="header" class="sticky top-0 z-50 w-full bg-brand-900 border-b border-brand-800 shadow-md transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Brand Logo -->
@@ -18,7 +18,7 @@
                             <path d="M6 12v5c3 3 9 3 12 0v-5" />
                         </svg>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-800">Aula <span class="text-brand-600">Señora</span></span>
+                    <span class="font-bold text-xl tracking-tight text-white">Aula <span class="text-brand-400">Señora</span></span>
                 </a>
 
                 <!-- Desktop Navigation -->
@@ -26,18 +26,22 @@
                     
                     <!-- Unauthenticated Users -->
                     <div sec:authorize="!isAuthenticated()" class="flex items-center gap-4">
-                        <a th:href="@{/login}" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Iniciar Sesión</a>
+                        <a th:href="@{/login}" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Iniciar Sesión</a>
                         <a th:href="@{/register}" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-sm hover:shadow-md transition-all">Regístrate</a>
                     </div>
 
                     <!-- Authenticated Users -->
                     <div sec:authorize="isAuthenticated()" class="relative group">
-                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none">
-                            <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold text-sm border border-brand-200">
-                                <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-brand-800 transition-colors focus:outline-none">
+                            <div class="w-8 h-8 rounded-full bg-brand-800 flex items-center justify-center text-white font-bold text-sm border border-brand-700 overflow-hidden">
+                                <img th:if="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}" 
+                                     th:src="${currentUser.profileImageUrl}" 
+                                     alt="Perfil" class="w-full h-full object-cover">
+                                <span th:unless="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}"
+                                      th:text="${currentUser != null and currentUser.firstName != null ? #strings.substring(currentUser.firstName, 0, 1).toUpperCase() : #strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                             </div>
-                            <span class="text-sm font-medium text-slate-700" sec:authentication="name">Usuario</span>
-                            <svg class="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span class="text-sm font-medium text-slate-100" sec:authentication="name">Usuario</span>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
@@ -79,7 +83,7 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors" aria-expanded="false">
+                    <button id="mobile-menu-btn" class="p-2 rounded-lg text-slate-300 hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors" aria-expanded="false">
                         <span class="sr-only">Abrir menú</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -100,8 +104,12 @@
                 <div sec:authorize="isAuthenticated()" class="pt-4 pb-3 border-t border-slate-200">
                     <div class="flex items-center px-3 mb-3">
                         <div class="flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold">
-                                <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                            <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold overflow-hidden">
+                                <img th:if="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}" 
+                                     th:src="${currentUser.profileImageUrl}" 
+                                     alt="Perfil" class="w-full h-full object-cover">
+                                <span th:unless="${currentUser != null and !#strings.isEmpty(currentUser.profileImageUrl)}"
+                                      th:text="${currentUser != null and currentUser.firstName != null ? #strings.substring(currentUser.firstName, 0, 1).toUpperCase() : #strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                             </div>
                         </div>
                         <div class="ml-3">

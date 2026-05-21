@@ -11,7 +11,7 @@ import aulasenora.dto.RecaptchaResponse;
 @Service
 public class RecaptchaService {
 
-    @Value("${RECAPTCHA_SECRET_KEY}")
+    @Value("${RECAPTCHA_SECRET_KEY:}")
     private String recaptchaSecret;
 
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";

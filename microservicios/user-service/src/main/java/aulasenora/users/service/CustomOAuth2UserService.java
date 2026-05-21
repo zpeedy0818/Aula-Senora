@@ -40,9 +40,21 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (usuarioOptional.isPresent()) {
             usuario = usuarioOptional.get();
+            boolean changed = false;
             if (!"GOOGLE".equals(usuario.getProvider())) {
                 usuario.setProvider("GOOGLE");
                 usuario.setProviderId(oAuth2User.getName());
+                changed = true;
+            }
+            // Si ya tiene un rol válido (no PENDIENTE), su perfil está completo de facto
+            String rolActual = usuario.getRol();
+            if (!usuario.isPerfilCompleto()
+                    && rolActual != null
+                    && !"PENDIENTE".equalsIgnoreCase(rolActual)) {
+                usuario.setPerfilCompleto(true);
+                changed = true;
+            }
+            if (changed) {
                 usuarioRepository.save(usuario);
             }
         } else {
