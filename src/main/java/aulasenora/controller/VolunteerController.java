@@ -2,6 +2,7 @@ package aulasenora.controller;
 
 import aulasenora.model.HorarioDisponible;
 import aulasenora.repository.HorarioDisponibleRepository;
+import aulasenora.repository.MiembroAulaRepository;
 import aulasenora.model.SolicitudCupo;
 import aulasenora.repository.SolicitudCupoRepository;
 import aulasenora.repository.VoluntarioRepository;
@@ -34,13 +35,15 @@ public class VolunteerController {
     private final VoluntarioRepository voluntarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
+    private final MiembroAulaRepository miembroAulaRepository;
     private final AulaService aulaService;
     private final UsuarioService usuarioService;
 
-    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, AulaService aulaService, UsuarioService usuarioService) {
+    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, MiembroAulaRepository miembroAulaRepository, AulaService aulaService, UsuarioService usuarioService) {
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
+        this.miembroAulaRepository = miembroAulaRepository;
         this.aulaService = aulaService;
         this.usuarioService = usuarioService;
     }
@@ -88,6 +91,10 @@ public class VolunteerController {
         // Aulas creadas por el voluntario
         List<Aula> misAulas = aulaService.getAulasByVoluntario(username);
         model.addAttribute("misAulas", misAulas);
+        
+        // Contar estudiantes únicos ayudados (sin repetir si están en varias aulas)
+        long estudiantesAyudados = miembroAulaRepository.countDistinctStudentsByVoluntario(voluntario);
+        model.addAttribute("estudiantesAyudados", estudiantesAyudados);
         
         model.addAttribute("activeTab", tab);
 

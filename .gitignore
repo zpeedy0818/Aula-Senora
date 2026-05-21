@@ -53,3 +53,4 @@ node_modules/
 google-credentials.json
 *.log
 
+microservicios/user-service/application.yml
