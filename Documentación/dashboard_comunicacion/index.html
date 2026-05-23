@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Ejecutivo — Aula Señora</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="data.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; padding: 20px; }
+    .container { max-width: 1440px; margin: 0 auto; }
+
+    header { background: linear-gradient(135deg, #1a3a7a, #2EC4B6); color: #fff; padding: 24px 32px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    header h1 { font-size: 24px; font-weight: 700; }
+    header .subtitle { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+    header .badge { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+
+    .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filters select, .filters input { padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #fff; min-width: 160px; }
+    .filters label { font-size: 13px; font-weight: 600; color: #4b5563; display: flex; flex-direction: column; gap: 4px; }
+
+    .grid { display: grid; gap: 20px; margin-bottom: 20px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; }
+    .card h2 { font-size: 16px; font-weight: 600; color: #1a3a7a; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #2EC4B6; display: flex; align-items: center; gap: 8px; }
+    .card h3 { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+    .card .chart-container { position: relative; height: 220px; }
+    .card .chart-container-sm { position: relative; height: 160px; }
+
+    .stat-box { text-align: center; padding: 12px; }
+    .stat-box .value { font-size: 32px; font-weight: 700; color: #1a3a7a; }
+    .stat-box .label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table th { background: #f9fafb; padding: 8px 12px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; }
+    table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; }
+    table tr:hover { background: #f9fafb; }
+
+    .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .tag-red { background: #fee2e2; color: #dc2626; }
+    .tag-yellow { background: #fef3c7; color: #d97706; }
+    .tag-green { background: #d1fae5; color: #059669; }
+    .tag-blue { background: #dbeafe; color: #2563eb; }
+    .tag-gray { background: #f3f4f6; color: #6b7280; }
+
+    .health-gauge { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+    .health-gauge .bar { flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+    .health-gauge .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .health-gauge .label { font-size: 13px; min-width: 180px; }
+    .health-gauge .pct { font-size: 13px; font-weight: 700; min-width: 40px; text-align: right; }
+
+    .kri-list { list-style: none; }
+    .kri-list li { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+    .kri-list li:last-child { border-bottom: none; }
+    .kri-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+    .kri-dot.green { background: #059669; }
+    .kri-dot.yellow { background: #d97706; }
+    .kri-dot.red { background: #dc2626; }
+
+    .comm-checklist { list-style: none; }
+    .comm-checklist li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+    .comm-checklist .status-icon { font-size: 16px; min-width: 24px; text-align: center; }
+    .comm-checklist .freq { color: #9ca3af; font-size: 11px; margin-left: auto; }
+
+    @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div>
+      <h1>Dashboard Ejecutivo — Aula Señora</h1>
+      <div class="subtitle">Comunicaci&oacute;n y Seguimiento del Proyecto &middot; Mayo 2026</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <span class="badge">DEV</span>
+      <span class="badge">57 issues</span>
+      <span class="badge">105 commits</span>
+      <span class="badge">3 miembros</span>
+    </div>
+  </header>
+
+  <div class="filters">
+    <label> Sprint
+      <select id="filterSprint">
+        <option value="all">Todos los sprints</option>
+        <option value="Sprint 1 — Autenticacion">Sprint 1 — Autenticacion</option>
+        <option value="DEV Sprint 2">DEV Sprint 2</option>
+        <option value="Sprint 3 — Final">Sprint 3 — Final</option>
+      </select>
+    </label>
+    <label> Stakeholder
+      <select id="filterStakeholder">
+        <option value="all">Todos</option>
+        <option value="Oscar Cadavid">Oscar Cadavid</option>
+        <option value="Juan Lozano">Juan Lozano</option>
+        <option value="Veruzka Guapacha">Veruzka Guapacha</option>
+      </select>
+    </label>
+    <label> Riesgo
+      <select id="filterRisk">
+        <option value="all">Todos los niveles</option>
+        <option value="Crítico">Crítico</option>
+        <option value="Alto">Alto</option>
+        <option value="Medio">Medio</option>
+      </select>
+    </label>
+    <button id="btnApply" style="padding:8px 24px;background:#1a3a7a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;align-self:flex-end;height:40px;" onclick="applyFilters()">Aplicar Filtros</button>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card stat-box"><div class="value" id="statIssuesTotal">57</div><div class="label">Issues totales</div></div>
+    <div class="card stat-box"><div class="value" id="statSP">34</div><div class="label">Story Points (Sprint 3)</div></div>
+    <div class="card stat-box"><div class="value" id="statCommits">105</div><div class="label">Commits totales</div></div>
+    <div class="card stat-box"><div class="value" id="statIssuesDone">53</div><div class="label">Issues finalizadas</div></div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card">
+      <h2> Cumplimiento de Tareas</h2>
+      <div class="chart-container"><canvas id="chartIssuesByType"></canvas></div>
+      <div style="margin-top:12px;">
+        <table>
+          <tr><th>Tipo</th><th>Cant.</th><th>%</th></tr>
+          <tr><td>Historias</td><td>20</td><td>35%</td></tr>
+          <tr><td>Subtareas</td><td>18</td><td>32%</td></tr>
+          <tr><td>Riesgos</td><td>10</td><td>18%</td></tr>
+          <tr><td>Epics</td><td>8</td><td>14%</td></tr>
+          <tr><td>Tareas</td><td>1</td><td>2%</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2> Story Points por Sprint</h2>
+      <div class="chart-container"><canvas id="chartSPPerSprint"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h2> Issues por Epic</h2>
+      <div class="chart-container"><canvas id="chartIssuesByEpic"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2> Participaci&oacute;n del Equipo</h2>
+      <div class="chart-container"><canvas id="chartAssignees"></canvas></div>
+    </div>
+    <div class="card">
+      <h2> Commits por Mes</h2>
+      <div class="chart-container"><canvas id="chartCommitsTimeline"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2> Frecuencia de Comunicaci&oacute;n</h2>
+      <ul class="comm-checklist" id="commChecklist"></ul>
+      <div style="margin-top:12px;text-align:center;">
+        <span id="commPct" style="font-size:28px;font-weight:700;color:#1a3a7a;">0%</span>
+        <span style="font-size:13px;color:#6b7280;display:block;">de eventos activos/completados</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2> Estado de Riesgos</h2>
+      <div class="chart-container"><canvas id="chartRiskLevels"></canvas></div>
+      <div style="margin-top:12px;">
+        <table>
+          <thead><tr><th>Riesgo</th><th>Nivel</th><th>KRI</th></tr></thead>
+          <tbody id="riskTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2> KRI — Indicadores Clave</h2>
+      <ul class="kri-list">
+        <li><span><span class="kri-dot yellow"></span>2 d&iacute;as sin daily standup</span><span class="tag tag-yellow">R1</span></li>
+        <li><span><span class="kri-dot yellow"></span>48h sin acta de sprint review</span><span class="tag tag-yellow">R2</span></li>
+        <li><span><span class="kri-dot green"></span>3 d&iacute;as sin mover tareas en Jira</span><span class="tag tag-green">R3</span></li>
+        <li><span><span class="kri-dot red"></span>24h sin comunicar release a usuarios</span><span class="tag tag-red">R4</span></li>
+        <li><span><span class="kri-dot green"></span>Decisi&oacute;n sin volcar a Jira</span><span class="tag tag-green">R5</span></li>
+        <li><span><span class="kri-dot green"></span>Viernes sin reporte semanal</span><span class="tag tag-green">R6</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2> Salud del Proyecto</h2>
+      <div id="healthBars"></div>
+      <div style="margin-top:16px;padding:12px;background:#f0fdf4;border-radius:8px;border-left:4px solid #059669;">
+        <strong style="font-size:14px;">Resumen Ejecutivo</strong>
+        <p style="font-size:13px;color:#4b5563;margin-top:4px;">
+          Proyecto con <strong>93%</strong> de cumplimiento en tareas. Todos los sprints completados exitosamente. 
+          &Aacute;reas de mejora: comunicaci&oacute;n proactiva a stakeholders (40%) y gesti&oacute;n de riesgos cr&iacute;ticos (58%).
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const D = DASHBOARD_DATA;
+let chartInstances = [];
+
+function destroyCharts() {
+  chartInstances.forEach(c => c.destroy());
+  chartInstances = [];
+}
+
+function getFilters() {
+  return {
+    sprint: document.getElementById('filterSprint').value,
+    stakeholder: document.getElementById('filterStakeholder').value,
+    risk: document.getElementById('filterRisk').value
+  };
+}
+
+function buildCommChecklist(filtered) {
+  const list = document.getElementById('commChecklist');
+  list.innerHTML = '';
+  const events = filtered || D.communication.events;
+  let active = 0;
+  events.forEach(e => {
+    const li = document.createElement('li');
+    let icon, cls;
+    if (e.status === 'Activo' || e.status === 'Completado') {
+      icon = ''; cls = 'tag tag-green'; active++;
+    } else {
+      icon = ''; cls = 'tag tag-gray';
+    }
+    li.innerHTML = `<span class="status-icon">${icon}</span><span>${e.name}</span><span class="freq">${e.freq}</span><span class="${cls}">${e.status}</span>`;
+    list.appendChild(li);
+  });
+  const pct = events.length ? Math.round((active / events.length) * 100) : 0;
+  document.getElementById('commPct').textContent = pct + '%';
+}
+
+function buildRiskTable(filtered) {
+  const tbody = document.getElementById('riskTable');
+  tbody.innerHTML = '';
+  const risks = filtered || D.risks;
+  risks.forEach(r => {
+    const tr = document.createElement('tr');
+    const levelClass = r.level === 'Crítico' ? 'tag-red' : r.level === 'Alto' ? 'tag-yellow' : 'tag-green';
+    tr.innerHTML = `<td><strong>${r.id}</strong> ${r.name}</td><td><span class="tag ${levelClass}">${r.level}</span></td><td>${r.kri}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildHealthBars() {
+  const container = document.getElementById('healthBars');
+  container.innerHTML = '';
+  D.healthIndicators.forEach(h => {
+    const color = h.status === 'good' ? '#059669' : '#d97706';
+    const div = document.createElement('div');
+    div.className = 'health-gauge';
+    div.innerHTML = `
+      <span class="label">${h.name}</span>
+      <div class="bar"><div class="bar-fill" style="width:${h.value}%;background:${color};"></div></div>
+      <span class="pct">${h.value}%</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function makeChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  const chart = new Chart(ctx, config);
+  chartInstances.push(chart);
+}
+
+function initCharts(filters) {
+  destroyCharts();
+  Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+  const f = filters || { sprint: 'all', stakeholder: 'all', risk: 'all' };
+
+  let byType = D.issues.byType;
+  let spData = D.sprints.filter(s => s.storyPoints > 0);
+  let epicData = D.issues.byEpic;
+  let assigneeIssues = D.issues.byAssignee;
+  let assigneeCommits = { ...D.commits.byPerson };
+  let commitsMonths = D.commits.byMonth;
+  let riskLevels = D.riskLevels;
+
+  if (f.sprint !== 'all') {
+    const sprintData = D.issues.bySprint[f.sprint];
+    if (sprintData) {
+      spData = D.sprints.filter(s => s.name === f.sprint && s.storyPoints > 0);
+    }
+  }
+
+  if (f.stakeholder !== 'all') {
+    const allKeys = Object.keys(assigneeIssues);
+    const filtered = {};
+    allKeys.forEach(k => {
+      if (k === f.stakeholder) filtered[k] = assigneeIssues[k];
+      else filtered[k] = 0;
+    });
+    assigneeIssues = filtered;
+    const filteredCommits = {};
+    Object.keys(assigneeCommits).forEach(k => {
+      if (k === f.stakeholder) filteredCommits[k] = assigneeCommits[k];
+      else filteredCommits[k] = 0;
+    });
+    assigneeCommits = filteredCommits;
+  }
+
+  if (f.risk !== 'all') {
+    const rl = { Crítico: 0, Alto: 0, Medio: 0, Bajo: 0 };
+    D.risks.forEach(r => {
+      if (r.level === f.risk) rl[r.level] = (rl[r.level] || 0) + 1;
+    });
+    riskLevels = rl;
+  }
+
+  // Charts
+  makeChart('chartIssuesByType', {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(byType),
+      datasets: [{ data: Object.values(byType), backgroundColor: ['#2EC4B6', '#4F6387', '#D1A848', '#1a3a7a', '#8D99AE'], borderWidth: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
+  });
+
+  makeChart('chartSPPerSprint', {
+    type: 'bar',
+    data: {
+      labels: spData.map(s => s.name),
+      datasets: [{ label: 'Story Points', data: spData.map(s => s.storyPoints), backgroundColor: ['#2EC4B6', '#4F6387', '#1a3a7a'], borderRadius: 6 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+  });
+
+  makeChart('chartIssuesByEpic', {
+    type: 'bar',
+    data: {
+      labels: Object.values(epicData).map(e => e.name.substring(0, 20) + '...'),
+      datasets: [{ label: 'Issues', data: Object.values(epicData).map(e => e.issues), backgroundColor: '#2EC4B6', borderRadius: 6 }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+  });
+
+  makeChart('chartAssignees', {
+    type: 'bar',
+    data: {
+      labels: Object.keys(assigneeIssues),
+      datasets: [
+        { label: 'Issues', data: Object.values(assigneeIssues), backgroundColor: '#1a3a7a', borderRadius: 6 },
+        { label: 'Commits', data: Object.values(assigneeCommits), backgroundColor: '#2EC4B6', borderRadius: 6 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
+  });
+
+  makeChart('chartCommitsTimeline', {
+    type: 'line',
+    data: {
+      labels: Object.keys(commitsMonths),
+      datasets: [{ label: 'Commits', data: Object.values(commitsMonths).map(m => m.commits), borderColor: '#1a3a7a', backgroundColor: 'rgba(26,58,122,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#1a3a7a', pointRadius: 6 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+  });
+
+  makeChart('chartRiskLevels', {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(riskLevels).filter(k => riskLevels[k] > 0),
+      datasets: [{ data: Object.values(riskLevels).filter(v => v > 0), backgroundColor: ['#dc2626', '#d97706', '#059669'], borderWidth: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
+  });
+
+  // Stat boxes
+  const totalIssues = Object.values(byType).reduce((a, b) => a + b, 0);
+  document.getElementById('statIssuesTotal').textContent = totalIssues;
+  const spSum = spData.reduce((a, s) => a + s.storyPoints, 0);
+  document.getElementById('statSP').textContent = spSum;
+  const commitTotal = Object.values(assigneeCommits).reduce((a, b) => a + b, 0);
+  document.getElementById('statCommits').textContent = commitTotal;
+  const doneCount = 53; // from original data, keep stable
+  document.getElementById('statIssuesDone').textContent = Math.min(doneCount, totalIssues);
+
+  // Risk table
+  const filteredRisks = f.risk === 'all' ? D.risks : D.risks.filter(r => r.level === f.risk);
+  buildRiskTable(filteredRisks);
+}
+
+function applyFilters() {
+  const filters = getFilters();
+  destroyCharts();
+
+  const btn = document.getElementById('btnApply');
+  btn.textContent = 'Aplicando...';
+  btn.style.opacity = '0.7';
+
+  setTimeout(() => {
+    initCharts(filters);
+    btn.textContent = '✔ Aplicado';
+    btn.style.background = '#059669';
+    setTimeout(() => {
+      btn.textContent = 'Aplicar Filtros';
+      btn.style.background = '#1a3a7a';
+      btn.style.opacity = '1';
+    }, 1200);
+  }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildCommChecklist();
+  buildRiskTable();
+  buildHealthBars();
+  initCharts();
+});
+</script>
+</body>
+</html>
