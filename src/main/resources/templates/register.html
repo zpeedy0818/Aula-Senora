@@ -347,7 +347,8 @@
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
+    <script th:inline="javascript">
+        const USER_SERVICE_URL = /*[[${userServiceUrl}]]*/ 'http://localhost:8081';
         function showForm(role) {
             document.getElementById('role-selection').classList.add('hidden');
             document.getElementById('form-container').classList.remove('hidden');
@@ -360,7 +361,7 @@
 
             // Update Google button URL with the selected role
             if (googleBtn) {
-                googleBtn.href = `http://localhost:8081/oauth2/authorization/google?rol=${googleRol}`;
+                googleBtn.href = `${USER_SERVICE_URL}/oauth2/authorization/google?rol=${googleRol}`;
             }
 
             if (role === 'student') {

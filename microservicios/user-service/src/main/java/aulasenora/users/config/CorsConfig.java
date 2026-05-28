@@ -7,14 +7,18 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class CorsConfig {
 
+    @Value("${FRONTEND_URL:http://localhost:8080}")
+    private String frontendUrl;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://127.0.0.1:8080"));
+        config.setAllowedOrigins(List.of(frontendUrl, "http://localhost:8080", "http://127.0.0.1:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

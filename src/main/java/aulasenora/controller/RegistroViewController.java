@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -31,6 +32,14 @@ public class RegistroViewController {
     public RegistroViewController(UsuarioService usuarioService, RecaptchaService recaptchaService) {
         this.usuarioService = usuarioService;
         this.recaptchaService = recaptchaService;
+    }
+
+    @Value("${user.service.url}")
+    private String userServiceUrl;
+
+    @ModelAttribute("userServiceUrl")
+    public String getUserServiceUrl() {
+        return userServiceUrl;
     }
 
     @GetMapping

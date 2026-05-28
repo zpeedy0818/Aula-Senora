@@ -255,8 +255,8 @@
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        const USER_SERVICE_URL = 'http://localhost:8081';
+    <script th:inline="javascript">
+        const USER_SERVICE_URL = /*[[${userServiceUrl}]]*/ 'http://localhost:8081';
 
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);

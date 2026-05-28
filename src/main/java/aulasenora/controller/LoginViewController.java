@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import aulasenora.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 @Controller
 public class LoginViewController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Value("${user.service.url}")
+    private String userServiceUrl;
 
     @GetMapping("/login")
     public String mostrarLogin(
@@ -67,7 +70,8 @@ public class LoginViewController {
         return "index";
     }
     @GetMapping("/login-success")
-    public String loginSuccess() {
+    public String loginSuccess(Model model) {
+        model.addAttribute("userServiceUrl", userServiceUrl);
         return "login-success";
     }
 }
