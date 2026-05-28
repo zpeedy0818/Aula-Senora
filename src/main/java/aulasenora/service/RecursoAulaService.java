@@ -1,5 +1,7 @@
 package aulasenora.service;
 
+import aulasenora.client.FileServiceClient;
+import aulasenora.client.JwtTokenProvider;
 import aulasenora.model.Aula;
 import aulasenora.model.MiembroAula;
 import aulasenora.model.RecursoAula;
@@ -8,24 +10,17 @@ import aulasenora.repository.AulaRepository;
 import aulasenora.repository.MiembroAulaRepository;
 import aulasenora.repository.RecursoAulaRepository;
 import aulasenora.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class RecursoAulaService {
@@ -52,18 +47,21 @@ public class RecursoAulaService {
     private final AulaRepository aulaRepository;
     private final MiembroAulaRepository miembroAulaRepository;
     private final UsuarioRepository usuarioRepository;
-
-    @Value("${app.upload.dir:uploads/recursos}")
-    private String uploadDir;
+    private final FileServiceClient fileServiceClient;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public RecursoAulaService(RecursoAulaRepository recursoRepository,
                               AulaRepository aulaRepository,
                               MiembroAulaRepository miembroAulaRepository,
-                              UsuarioRepository usuarioRepository) {
+                              UsuarioRepository usuarioRepository,
+                              FileServiceClient fileServiceClient,
+                              JwtTokenProvider jwtTokenProvider) {
         this.recursoRepository = recursoRepository;
         this.aulaRepository = aulaRepository;
         this.miembroAulaRepository = miembroAulaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.fileServiceClient = fileServiceClient;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public List<RecursoAula> listarPorAula(Long aulaId) {
@@ -71,7 +69,7 @@ public class RecursoAulaService {
     }
 
     @Transactional
-    public RecursoAula guardarRecurso(MultipartFile file, Long aulaId, String username, String descripcion) throws IOException {
+    public RecursoAula guardarRecurso(MultipartFile file, Long aulaId, String username, String descripcion) {
         if (file == null || file.isEmpty()) {
             throw new RuntimeException("El archivo está vacío.");
         }
@@ -91,30 +89,14 @@ public class RecursoAulaService {
         }
         nombreOriginal = Paths.get(nombreOriginal).getFileName().toString();
 
+        String mimeType = file.getContentType();
         String extension = extraerExtension(nombreOriginal).toLowerCase(Locale.ROOT);
         if (!EXTENSIONES_PERMITIDAS.contains(extension)) {
             throw new RuntimeException("Tipo de archivo no permitido: ." + extension);
         }
-
-        String mimeType = file.getContentType();
         String tipo = MIME_TO_TIPO.getOrDefault(mimeType, deducirTipoPorExtension(extension));
 
-        Path baseDir = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path aulaDir = baseDir.resolve("aula-" + aulaId).normalize();
-        if (!aulaDir.startsWith(baseDir)) {
-            throw new RuntimeException("Ruta de almacenamiento inválida.");
-        }
-        Files.createDirectories(aulaDir);
-
-        String nombreSeguro = UUID.randomUUID().toString() + "." + extension;
-        Path destino = aulaDir.resolve(nombreSeguro).normalize();
-        if (!destino.startsWith(aulaDir)) {
-            throw new RuntimeException("Ruta de destino inválida.");
-        }
-
-        try (var in = file.getInputStream()) {
-            Files.copy(in, destino, StandardCopyOption.REPLACE_EXISTING);
-        }
+        String ruta = guardarArchivo(file, username);
 
         RecursoAula recurso = new RecursoAula();
         recurso.setAula(aula);
@@ -123,13 +105,20 @@ public class RecursoAulaService {
         recurso.setDescripcion(descripcion != null && !descripcion.isBlank() ? descripcion.trim() : null);
         recurso.setTipo(tipo);
         recurso.setMimeType(mimeType);
-        recurso.setRutaRelativa("aula-" + aulaId + "/" + nombreSeguro);
+        recurso.setRutaRelativa(ruta);
         recurso.setTamanoBytes(file.getSize());
         return recursoRepository.save(recurso);
     }
 
+    private String guardarArchivo(MultipartFile file, String username) {
+        String token = jwtTokenProvider.generateToken(username);
+        var uuid = fileServiceClient.upload(file, "RECURSO", token)
+                .orElseThrow(() -> new RuntimeException("Error al subir recurso al servidor de archivos."));
+        return "fs:" + uuid;
+    }
+
     @Transactional
-    public void eliminarRecurso(Long recursoId, String username) throws IOException {
+    public void eliminarRecurso(Long recursoId, String username) {
         RecursoAula recurso = recursoRepository.findById(recursoId)
                 .orElseThrow(() -> new RuntimeException("Recurso no encontrado"));
         Usuario usuario = usuarioRepository.findByUsername(username)
@@ -139,16 +128,16 @@ public class RecursoAulaService {
             throw new RuntimeException("Solo el voluntario del aula puede eliminar este recurso.");
         }
 
-        Path baseDir = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path archivo = baseDir.resolve(recurso.getRutaRelativa()).normalize();
-        if (archivo.startsWith(baseDir)) {
-            Files.deleteIfExists(archivo);
+        String ruta = recurso.getRutaRelativa();
+        if (ruta.startsWith("fs:")) {
+            String token = jwtTokenProvider.generateToken(username);
+            fileServiceClient.delete(ruta.substring(3), token);
         }
 
         recursoRepository.delete(recurso);
     }
 
-    public RecursoAcceso cargarParaUsuario(Long recursoId, String username) throws IOException {
+    public RecursoAcceso cargarParaUsuario(Long recursoId, String username) {
         RecursoAula recurso = recursoRepository.findById(recursoId)
                 .orElseThrow(() -> new RuntimeException("Recurso no encontrado"));
 
@@ -156,14 +145,17 @@ public class RecursoAulaService {
             throw new RuntimeException("Sin acceso a este recurso.");
         }
 
-        Path baseDir = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path archivo = baseDir.resolve(recurso.getRutaRelativa()).normalize();
-        if (!archivo.startsWith(baseDir) || !Files.exists(archivo)) {
-            throw new RuntimeException("Archivo no encontrado en disco.");
+        String ruta = recurso.getRutaRelativa();
+        if (ruta.startsWith("fs:")) {
+            String uuid = ruta.substring(3);
+            var resourceOpt = fileServiceClient.download(uuid);
+            if (resourceOpt.isPresent()) {
+                return new RecursoAcceso(resourceOpt.get(), recurso.getMimeType(), recurso.getNombreOriginal());
+            }
+            throw new RuntimeException("No se pudo cargar el recurso desde el servicio de archivos.");
         }
 
-        Resource resource = new UrlResource(archivo.toUri());
-        return new RecursoAcceso(resource, recurso.getMimeType(), recurso.getNombreOriginal());
+        throw new RuntimeException("Formato de ruta de recurso no soportado: " + ruta);
     }
 
     private boolean tieneAcceso(RecursoAula recurso, String username) {

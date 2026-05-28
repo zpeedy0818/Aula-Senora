@@ -1,9 +1,20 @@
 package aulasenora.controller;
 
-import aulasenora.model.*;
-import aulasenora.repository.*;
+import aulasenora.model.HorarioAula;
+import aulasenora.model.HorarioDisponible;
+import aulasenora.model.SolicitudCupo;
+import aulasenora.model.Usuario;
+import aulasenora.model.Voluntario;
+import aulasenora.repository.HorarioAulaRepository;
+import aulasenora.repository.HorarioDisponibleRepository;
+import aulasenora.repository.SolicitudCupoRepository;
+import aulasenora.repository.UsuarioRepository;
+import aulasenora.repository.VoluntarioRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -35,23 +46,22 @@ public class CalendarController {
         this.horarioAulaRepository = horarioAulaRepository;
     }
 
-    // Retorna la disponibilidad de un voluntario específico
     @GetMapping("/volunteer/{id}/availability")
     public ResponseEntity<List<Map<String, Object>>> getVolunteerAvailability(@PathVariable Long id) {
         Optional<Voluntario> voluntarioOpt = voluntarioRepository.findById(Objects.requireNonNull(id));
         if (voluntarioOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        Voluntario voluntario = voluntarioOpt.get();
 
-        // Añadir solicitudes (Pendientes y Aceptadas) primero para identificar horarios ocupados
-        List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntarioOpt.get());
+        List<SolicitudCupo> solicitudes = solicitudCupoRepository.findByHorario_Voluntario(voluntario);
         java.util.Set<Long> horariosConSolicitudIds = new java.util.HashSet<>();
-        
+
         List<Map<String, Object>> events = new ArrayList<>();
 
         for (SolicitudCupo s : solicitudes) {
             if ("RECHAZADA".equals(s.getEstado())) continue;
-            
+
             horariosConSolicitudIds.add(s.getHorario().getId());
 
             Map<String, Object> event = new HashMap<>();
@@ -59,20 +69,19 @@ public class CalendarController {
             event.put("title", "Tutoría: " + s.getEstudiante().getUsername());
             event.put("start", s.getHorario().getFecha() + "T" + s.getHorario().getHoraInicio());
             event.put("end", s.getHorario().getFecha() + "T" + s.getHorario().getHoraFin());
-            
+
             if ("ACEPTADA".equals(s.getEstado())) {
-                event.put("color", "#6366f1"); // Indigo
+                event.put("color", "#6366f1");
                 event.put("extendedProps", Map.of("materia", s.getHorario().getMateria(), "tipo", "ocupado", "estado", "ACEPTADA", "meetLink", s.getHorario().getMeetLink() != null ? s.getHorario().getMeetLink() : ""));
             } else {
-                event.put("color", "#f59e0b"); // Amber (Pendiente)
+                event.put("color", "#f59e0b");
                 event.put("extendedProps", Map.of("materia", s.getHorario().getMateria(), "tipo", "ocupado", "estado", "PENDIENTE"));
             }
             event.put("textColor", "white");
             events.add(event);
         }
 
-        // Añadir horarios disponibles SOLO si no tienen una solicitud activa
-        List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntarioOpt.get());
+        List<HorarioDisponible> horarios = horarioDisponibleRepository.findByVoluntario(voluntario);
         for (HorarioDisponible h : horarios) {
             if (horariosConSolicitudIds.contains(h.getId())) continue;
 
@@ -81,21 +90,20 @@ public class CalendarController {
             event.put("title", "Disponible: " + h.getMateria());
             event.put("start", h.getFecha() + "T" + h.getHoraInicio());
             event.put("end", h.getFecha() + "T" + h.getHoraFin());
-            event.put("color", "#10b981"); // Verde esmeralda Tailwind
+            event.put("color", "#10b981");
             event.put("textColor", "white");
             event.put("extendedProps", Map.of("materia", h.getMateria(), "tipo", "disponible"));
             events.add(event);
         }
 
-        // Añadir horarios de aula del voluntario
-        List<HorarioAula> horariosAula = horarioAulaRepository.findByAula_Voluntario(voluntarioOpt.get());
+        List<HorarioAula> horariosAula = horarioAulaRepository.findByAula_Voluntario(voluntario);
         for (HorarioAula ha : horariosAula) {
             Map<String, Object> event = new HashMap<>();
             event.put("id", "aula-" + ha.getId());
             event.put("title", "Aula: " + ha.getAula().getNombreAula());
             event.put("start", ha.getFecha() + "T" + ha.getHoraInicio());
             event.put("end", ha.getFecha() + "T" + ha.getHoraFin());
-            event.put("color", "#8b5cf6"); // Violeta Tailwind
+            event.put("color", "#8b5cf6");
             event.put("textColor", "white");
             event.put("extendedProps", Map.of("aula", ha.getAula().getNombreAula(), "tipo", "aula", "meetLink", ha.getMeetLink() != null ? ha.getMeetLink() : ""));
             events.add(event);
@@ -104,7 +112,6 @@ public class CalendarController {
         return ResponseEntity.ok(events);
     }
 
-    // Retorna la disponibilidad del voluntario autenticado
     @GetMapping("/volunteer/my-availability")
     public ResponseEntity<List<Map<String, Object>>> getMyAvailability(Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
@@ -115,7 +122,6 @@ public class CalendarController {
         return getVolunteerAvailability(voluntarioOpt.get().getId());
     }
 
-    // Retorna las clases de un estudiante
     @GetMapping("/student/events")
     public ResponseEntity<List<Map<String, Object>>> getStudentEvents(Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
@@ -132,15 +138,15 @@ public class CalendarController {
             event.put("title", "Tutoría: " + s.getHorario().getMateria());
             event.put("start", s.getHorario().getFecha() + "T" + s.getHorario().getHoraInicio());
             event.put("end", s.getHorario().getFecha() + "T" + s.getHorario().getHoraFin());
-            
+
             if ("ACEPTADA".equals(s.getEstado())) {
-                event.put("color", "#6366f1"); // Indigo
+                event.put("color", "#6366f1");
             } else if ("PENDIENTE".equals(s.getEstado())) {
-                event.put("color", "#f59e0b"); // Amber
+                event.put("color", "#f59e0b");
             } else {
-                event.put("color", "#ef4444"); // Red
+                event.put("color", "#ef4444");
             }
-            
+
             event.put("textColor", "white");
             event.put("extendedProps", Map.of("estado", s.getEstado(), "voluntario", s.getHorario().getVoluntario().getUsuario().getUsername(), "meetLink", s.getHorario().getMeetLink() != null ? s.getHorario().getMeetLink() : ""));
             events.add(event);

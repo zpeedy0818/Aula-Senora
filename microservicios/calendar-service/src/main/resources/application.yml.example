@@ -1,0 +1,12 @@
+# Copia este archivo a application.yml y pon aqui tus valores locales.
+server:
+  port: 8085
+
+spring:
+  application:
+    name: calendar-service
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mi-secreto-super-seguro-de-32-caracteres}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}

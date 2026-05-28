@@ -1,7 +1,8 @@
-package aulasenora.repository;
+package aulasenora.messaging.repository;
 
-import aulasenora.model.MensajeAula;
+import aulasenora.messaging.model.MensajeAula;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 
 public interface MensajeAulaRepository extends JpaRepository<MensajeAula, Long> {

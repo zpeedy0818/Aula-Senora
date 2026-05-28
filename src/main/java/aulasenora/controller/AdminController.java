@@ -1,37 +1,42 @@
 package aulasenora.controller;
 
+import aulasenora.client.AdminServiceClient;
+import aulasenora.client.JwtTokenProvider;
 import aulasenora.model.MensajeGlobal;
 import aulasenora.model.Usuario;
-import aulasenora.repository.AulaRepository;
 import aulasenora.repository.MensajeGlobalRepository;
 import aulasenora.repository.UsuarioRepository;
+import aulasenora.repository.VoluntarioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import aulasenora.model.Voluntario;
-import aulasenora.repository.VoluntarioRepository;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
     private final UsuarioRepository usuarioRepository;
-    private final AulaRepository aulaRepository;
     private final MensajeGlobalRepository mensajeGlobalRepository;
     private final VoluntarioRepository voluntarioRepository;
+    private final AdminServiceClient adminServiceClient;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AdminController(UsuarioRepository usuarioRepository, AulaRepository aulaRepository, MensajeGlobalRepository mensajeGlobalRepository, VoluntarioRepository voluntarioRepository) {
+    public AdminController(UsuarioRepository usuarioRepository,
+                           MensajeGlobalRepository mensajeGlobalRepository,
+                           VoluntarioRepository voluntarioRepository,
+                           AdminServiceClient adminServiceClient,
+                           JwtTokenProvider jwtTokenProvider) {
         this.usuarioRepository = usuarioRepository;
-        this.aulaRepository = aulaRepository;
         this.mensajeGlobalRepository = mensajeGlobalRepository;
         this.voluntarioRepository = voluntarioRepository;
+        this.adminServiceClient = adminServiceClient;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/dashboard")
@@ -39,21 +44,16 @@ public class AdminController {
         model.addAttribute("activeTab", tab);
         model.addAttribute("isDashboard", true);
 
-        List<Voluntario> voluntarios = voluntarioRepository.findAll();
-        Map<Long, Voluntario> voluntarioMap = new HashMap<>();
-        for (Voluntario v : voluntarios) {
-            voluntarioMap.put(v.getId(), v);
-        }
-        model.addAttribute("voluntarios", voluntarios);
-        model.addAttribute("voluntarioMap", voluntarioMap);
-
-        model.addAttribute("totalEstudiantes", usuarioRepository.countByRol("ESTUDIANTE"));
-        model.addAttribute("totalVoluntarios", (long) voluntarios.size());
-        model.addAttribute("totalTutorias", aulaRepository.count());
-        model.addAttribute("reportesPendientes", 0);
-
-        List<Usuario> usuarios = usuarioRepository.findByRolNot("ADMIN");
-        model.addAttribute("usuarios", usuarios);
+        String token = jwtTokenProvider.generateToken("admin");
+        adminServiceClient.getStats(token).ifPresent(stats -> {
+            model.addAttribute("totalEstudiantes", stats.getOrDefault("totalEstudiantes", 0));
+            model.addAttribute("totalVoluntarios", stats.getOrDefault("totalVoluntarios", 0));
+            model.addAttribute("totalTutorias", stats.getOrDefault("totalAulas", 0));
+            model.addAttribute("reportesPendientes", 0);
+        });
+        adminServiceClient.listUsers(token).ifPresent(users -> model.addAttribute("usuarios", users));
+        model.addAttribute("voluntarios", List.of());
+        model.addAttribute("voluntarioMap", Map.of());
 
         List<MensajeGlobal> mensajes = mensajeGlobalRepository.findByActivoTrueOrderByFechaCreacionDesc();
         model.addAttribute("mensajesGlobales", mensajes);
@@ -63,15 +63,8 @@ public class AdminController {
 
     @PostMapping("/users/{id}/toggle-status")
     public String toggleUserStatus(@PathVariable Long id) {
-        Optional<Usuario> userOpt = usuarioRepository.findById(id);
-        if (userOpt.isPresent()) {
-            Usuario user = userOpt.get();
-            // Evitar que el admin se desactive a sí mismo por accidente
-            if (!"ADMIN".equals(user.getRol())) {
-                user.setActivo(!user.isActivo());
-                usuarioRepository.save(user);
-            }
-        }
+        String token = jwtTokenProvider.generateToken("admin");
+        adminServiceClient.toggleUserStatus(id, token);
         return "redirect:/admin/dashboard";
     }
 
@@ -97,12 +90,8 @@ public class AdminController {
 
     @PostMapping("/users/{id}/verify")
     public String verifyVolunteer(@PathVariable Long id) {
-        Optional<Voluntario> volOpt = voluntarioRepository.findById(id);
-        if (volOpt.isPresent()) {
-            Voluntario vol = volOpt.get();
-            vol.setVerificado(true);
-            voluntarioRepository.save(vol);
-        }
+        String token = jwtTokenProvider.generateToken("admin");
+        adminServiceClient.verifyVolunteer(id, token);
         return "redirect:/admin/dashboard?tab=usuarios";
     }
 
@@ -110,10 +99,10 @@ public class AdminController {
     public void downloadUsersReport(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"reporte_usuarios.csv\"");
-        
+
         PrintWriter writer = response.getWriter();
         writer.println("ID,Nombre,Apellido,Email,Rol,Activo,Verificado(Solo Voluntarios)");
-        
+
         List<Usuario> usuarios = usuarioRepository.findAll();
         for (Usuario u : usuarios) {
             String verificado = "N/A";
@@ -121,12 +110,12 @@ public class AdminController {
                 var volOpt = voluntarioRepository.findById(u.getId());
                 verificado = volOpt.map(v -> v.isVerificado() != null && v.isVerificado() ? "SI" : "NO").orElse("NO");
             }
-            writer.printf("%d,%s,%s,%s,%s,%s,%s\n", 
-                u.getId(), 
-                u.getFirstName(), 
-                u.getLastName(), 
-                u.getEmail(), 
-                u.getRol(), 
+            writer.printf("%d,%s,%s,%s,%s,%s,%s\n",
+                u.getId(),
+                u.getFirstName(),
+                u.getLastName(),
+                u.getEmail(),
+                u.getRol(),
                 u.isActivo() ? "SI" : "NO",
                 verificado
             );

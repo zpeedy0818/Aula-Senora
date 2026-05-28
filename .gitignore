@@ -42,8 +42,17 @@ TestDB.class
 *.class
 .agents/
 
-# Ignore local user-service secret config
+# Ignore local secret config for microservicios
 microservicios/user-service/src/main/resources/application.yml
+microservicios/user-service/application.yml
+microservicios/file-service/src/main/resources/application.yml
+microservicios/aula-service/src/main/resources/application.yml
+microservicios/messaging-service/src/main/resources/application.yml
+microservicios/calendar-service/src/main/resources/application.yml
+microservicios/admin-service/src/main/resources/application.yml
+
+# Ignore local datasource credentials for the main app
+src/main/resources/datasource.properties
 
 # Archivos subidos por usuarios (recursos del aula)
 uploads/
@@ -52,5 +61,3 @@ uploads/
 node_modules/
 google-credentials.json
 *.log
-
-microservicios/user-service/application.yml

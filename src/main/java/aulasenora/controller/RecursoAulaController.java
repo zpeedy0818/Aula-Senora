@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -30,6 +29,7 @@ public class RecursoAulaController {
                                 @RequestParam(value = "descripcion", required = false) String descripcion,
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
             recursoService.guardarRecurso(file, aulaId, authentication.getName(), descripcion);
             redirectAttributes.addFlashAttribute("successMessage", "Recurso subido correctamente.");
@@ -44,6 +44,7 @@ public class RecursoAulaController {
                                 @PathVariable Long recursoId,
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
             recursoService.eliminarRecurso(recursoId, authentication.getName());
             redirectAttributes.addFlashAttribute("successMessage", "Recurso eliminado.");
@@ -55,17 +56,17 @@ public class RecursoAulaController {
 
     @GetMapping("/recursos/{recursoId}/view")
     public ResponseEntity<Resource> viewRecurso(@PathVariable Long recursoId,
-                                                Authentication authentication) throws IOException {
+                                                Authentication authentication) {
         return servirRecurso(recursoId, authentication, false);
     }
 
     @GetMapping("/recursos/{recursoId}/download")
     public ResponseEntity<Resource> downloadRecurso(@PathVariable Long recursoId,
-                                                    Authentication authentication) throws IOException {
+                                                    Authentication authentication) {
         return servirRecurso(recursoId, authentication, true);
     }
 
-    private ResponseEntity<Resource> servirRecurso(Long recursoId, Authentication authentication, boolean forzarDescarga) throws IOException {
+    private ResponseEntity<Resource> servirRecurso(Long recursoId, Authentication authentication, boolean forzarDescarga) {
         if (authentication == null || authentication.getName() == null) {
             return ResponseEntity.status(401).build();
         }

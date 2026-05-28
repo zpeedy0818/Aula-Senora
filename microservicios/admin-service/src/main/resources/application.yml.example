@@ -1,0 +1,26 @@
+# Copia este archivo a application.yml y pon aqui tus valores locales.
+server:
+  port: 8086
+
+spring:
+  application:
+    name: admin-service
+  datasource:
+    url: jdbc:postgresql://<HOST>:<PORT>/<DB>?prepareThreshold=0
+    username: <DB_USERNAME>
+    password: <DB_PASSWORD>
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mi-secreto-super-seguro-de-32-caracteres}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}

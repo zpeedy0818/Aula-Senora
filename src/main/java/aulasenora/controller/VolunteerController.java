@@ -1,5 +1,7 @@
 package aulasenora.controller;
 
+import aulasenora.client.FileServiceClient;
+import aulasenora.client.JwtTokenProvider;
 import aulasenora.model.HorarioDisponible;
 import aulasenora.repository.HorarioDisponibleRepository;
 import aulasenora.repository.MiembroAulaRepository;
@@ -19,12 +21,8 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,20 +30,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/volunteer")
 public class VolunteerController {
 
+    private static final Logger log = LoggerFactory.getLogger(VolunteerController.class);
     private final VoluntarioRepository voluntarioRepository;
     private final HorarioDisponibleRepository horarioDisponibleRepository;
     private final SolicitudCupoRepository solicitudCupoRepository;
     private final MiembroAulaRepository miembroAulaRepository;
     private final AulaService aulaService;
     private final UsuarioService usuarioService;
+    private final FileServiceClient fileServiceClient;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, MiembroAulaRepository miembroAulaRepository, AulaService aulaService, UsuarioService usuarioService) {
+    public VolunteerController(VoluntarioRepository voluntarioRepository, HorarioDisponibleRepository horarioDisponibleRepository, SolicitudCupoRepository solicitudCupoRepository, MiembroAulaRepository miembroAulaRepository, AulaService aulaService, UsuarioService usuarioService, FileServiceClient fileServiceClient, JwtTokenProvider jwtTokenProvider) {
         this.voluntarioRepository = voluntarioRepository;
         this.horarioDisponibleRepository = horarioDisponibleRepository;
         this.solicitudCupoRepository = solicitudCupoRepository;
         this.miembroAulaRepository = miembroAulaRepository;
         this.aulaService = aulaService;
         this.usuarioService = usuarioService;
+        this.fileServiceClient = fileServiceClient;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/dashboard")
@@ -247,39 +250,28 @@ public class VolunteerController {
                                 Principal principal,
                                 RedirectAttributes redirectAttributes) {
         if (principal == null) return "redirect:/login";
-
-        String username = principal.getName();
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "El archivo está vacío.");
-            return "redirect:/volunteer/dashboard";
-        }
-
         try {
-            String originalFilename = file.getOriginalFilename();
-            String extension = "pdf";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            String username = principal.getName();
+            if (file.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "El archivo está vacío.");
+                return "redirect:/volunteer/dashboard";
             }
 
-            Path diplomasDir = Paths.get("uploads/diplomas").toAbsolutePath().normalize();
-            Files.createDirectories(diplomasDir);
-
-            String filename = "diploma_" + username + "_" + UUID.randomUUID().toString() + "." + extension;
-            Path targetPath = diplomasDir.resolve(filename);
-
-            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            var voluntario = voluntarioRepository.findByUsuario_Username(username)
-                    .orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
-            
-            voluntario.setDiplomaUrl("/uploads/diplomas/" + filename);
-            voluntarioRepository.save(voluntario);
-
-            redirectAttributes.addFlashAttribute("successMessage", "Documento subido correctamente. Un administrador revisará tu cuenta.");
-        } catch (IOException e) {
+            String token = jwtTokenProvider.generateToken(username);
+            String fileUuid = fileServiceClient.upload(file, "DIPLOMA", token).orElse(null);
+            if (fileUuid != null) {
+                var voluntario = voluntarioRepository.findByUsuario_Username(username)
+                        .orElseThrow(() -> new RuntimeException("Voluntario no encontrado"));
+                voluntario.setDiplomaUrl("fs:" + fileUuid);
+                voluntarioRepository.save(voluntario);
+                redirectAttributes.addFlashAttribute("successMessage", "Documento subido correctamente. Un administrador revisará tu cuenta.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error al subir el documento.");
+            }
+        } catch (Exception e) {
+            log.error("Error al subir diploma", e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error al subir el documento: " + e.getMessage());
         }
-
         return "redirect:/volunteer/dashboard";
     }
 }
