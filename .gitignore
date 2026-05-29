@@ -51,8 +51,6 @@ microservicios/messaging-service/src/main/resources/application.yml
 microservicios/calendar-service/src/main/resources/application.yml
 microservicios/admin-service/src/main/resources/application.yml
 
-# Ignore local datasource credentials for the main app
-src/main/resources/datasource.properties
 
 # Archivos subidos por usuarios (recursos del aula)
 uploads/
