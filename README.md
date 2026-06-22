@@ -34,6 +34,3 @@ Una vez configurado el archivo `.env`, puedes ejecutar la aplicación directamen
 
 **Nota para usuarios de Windows:** Asegúrate de que las variables de entorno de tu archivo `.env` estén cargadas en tu sesión de PowerShell antes de ejecutar `mvnw`.
 
-## Notas Adicionales
-- El archivo `.env` está en el `.gitignore` por seguridad. **Nunca** lo subas al repositorio.
-- Si ves errores de "Bad SQL Grammar" al inicio, es normal mientras Hibernate sincroniza las tablas por primera vez.
